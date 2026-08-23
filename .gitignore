@@ -1,4 +1,10 @@
-# Dependencies
+node_modules/
+.env
+.env.*
+!.env.example
+dist/
+coverage/
+*.log# Dependencies
 node_modules/
 
 # Environment variables
