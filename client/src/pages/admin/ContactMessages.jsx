@@ -23,7 +23,8 @@ export default function ContactMessages() {
   };
 
   useEffect(() => {
-    load();
+    const timer = setTimeout(load, 0);
+    return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status]);
 
