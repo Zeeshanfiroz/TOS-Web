@@ -7,6 +7,7 @@ const milestones = [
   { year: '2024', text: 'Rakshabandhan-inspired awareness drive at Kirba school' },
   { year: '2024', text: 'Sustainability quizzes & trash-to-treasure events at SAMAVESH' },
   { year: '2025', text: 'Sambalpuri Jewelry & Accessories workshop with Sambalpuri Hub — empowering 72 underprivileged women' },
+  { year: '2025', text: 'Hosted a Research bootcamp for curious minds exploring the research domain' },
   { year: '2025', text: 'Pitched our idea at IIT Bhubaneswar on World Standards Day' },
   { year: '2025', text: 'VIRTOSWA 2K25 orientation — welcoming the next generation of changemakers' },
 ];
@@ -38,12 +39,12 @@ const projects = [
   {
     icon: '☀️',
     name: 'Solar Tracker',
-    text: 'LDR sensors sense the sun\u2019s direction, an Arduino Uno processes the data and servo motors rotate the solar panel to maximise energy capture — with a GSM module for monitoring.',
+    text: 'Automatically adjusts the position of solar panels throughout the day to follow the sun\u2019s path, maximising energy capture. Hardware: Arduino Uno, Light Dependent Resistors (LDR), servo motors, GSM module and a solar panel module.',
   },
   {
     icon: '♻️',
-    name: 'Waste Segregation Bin',
-    text: 'Automatically classifies different types of waste and directs them to their respective bins — making waste sorting effortless.',
+    name: 'Waste Segregation System',
+    text: 'Simplifies waste sorting by automatically classifying waste and directing it to the respective bins. Hardware: Arduino Uno, motor driver, metal detector (inductive sensor), wet detector (moisture sensor) and IR sensor.',
   },
 ];
 

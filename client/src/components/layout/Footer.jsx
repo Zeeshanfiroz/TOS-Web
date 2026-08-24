@@ -47,7 +47,8 @@ export default function Footer() {
             <ul className="space-y-2 text-sm text-forest-200/80">
               <li>📍 VSSUT, Burla, Sambalpur, Odisha</li>
               <li>📧 teamofsustainability@vssut.ac.in</li>
-              <li>📷 @teamofsustainability on Instagram</li>
+              <li>📷 @teamofsustainability_vssut</li>
+              <li>🏆 @tos_virtoswa</li>
             </ul>
           </div>
         </div>
