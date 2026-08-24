@@ -56,7 +56,7 @@ const processQueue = async () => {
     while (attempt < MAX_RETRIES) {
       try {
         await getTransporter().sendMail({
-          from: `"Sustainability Club" <${process.env.GMAIL_USER}>`,
+          from: `"TOS VSSUT" <${process.env.GMAIL_USER}>`,
           ...job,
         });
         console.log(`📧 Email sent successfully to ${job.to} (${job.subject})`);
@@ -74,6 +74,19 @@ const processQueue = async () => {
   }
 
   processing = false;
+};
+
+/**
+ * SMTP diagnostic — verifies the Gmail credentials actually work.
+ * Returns { ok: true } or { ok: false, error } — never leaks secrets.
+ */
+export const verifyEmail = async () => {
+  try {
+    await getTransporter().verify();
+    return { ok: true };
+  } catch (err) {
+    return { ok: false, error: err.message };
+  }
 };
 
 /**

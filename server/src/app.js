@@ -13,6 +13,7 @@ import galleryRoutes from './routes/galleryRoutes.js';
 import contactRoutes from './routes/contactRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import { notFound, errorHandler, sanitizeNoSql } from './middleware/error.js';
+import { verifyEmail } from './config/mailer.js';
 
 const app = express();
 
@@ -64,6 +65,16 @@ app.get('/api/health', (req, res) =>
     emailConfigured: Boolean(process.env.GMAIL_USER && process.env.GMAIL_APP_PASSWORD),
   })
 );
+
+// Email SMTP diagnostic — checks Gmail credentials actually authenticate
+app.get('/api/health/email', async (req, res) => {
+  const configured = Boolean(process.env.GMAIL_USER && process.env.GMAIL_APP_PASSWORD);
+  if (!configured) {
+    return res.json({ configured: false, smtpVerified: false, error: 'GMAIL_USER / GMAIL_APP_PASSWORD missing' });
+  }
+  const result = await verifyEmail();
+  res.json({ configured: true, smtpVerified: result.ok, error: result.error || null });
+});
 
 // API routes
 app.use('/api/auth', authRoutes);
