@@ -24,10 +24,13 @@ let transporter = null;
 
 const getTransporter = () => {
   if (!transporter) {
+    // Port 587 (STARTTLS) — some cloud hosts (like Render) have flaky/blocked
+    // outbound 465; 587 is the standard mail-submission port and usually open.
     transporter = nodemailer.createTransport({
       host: 'smtp.gmail.com',
-      port: 465,
-      secure: true, // 465 = implicit TLS
+      port: 587,
+      secure: false, // 587 = STARTTLS (upgrades after connect)
+      tls: { rejectUnauthorized: true },
       auth: {
         user: process.env.GMAIL_USER,
         pass: process.env.GMAIL_APP_PASSWORD,
