@@ -58,7 +58,11 @@ app.use(sanitizeNoSql);
 
 // Health check (for Render/Railway uptime monitoring)
 app.get('/api/health', (req, res) =>
-  res.json({ success: true, message: 'API is running 🌱' })
+  res.json({
+    success: true,
+    message: 'API is running 🌱',
+    emailConfigured: Boolean(process.env.GMAIL_USER && process.env.GMAIL_APP_PASSWORD),
+  })
 );
 
 // API routes
