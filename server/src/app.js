@@ -73,7 +73,13 @@ app.get('/api/health/email', async (req, res) => {
     return res.json({ configured: false, smtpVerified: false, error: 'GMAIL_USER / GMAIL_APP_PASSWORD missing' });
   }
   const result = await verifyEmail();
-  res.json({ configured: true, smtpVerified: result.ok, error: result.error || null });
+  res.json({
+    configured: true,
+    smtpVerified: result.ok,
+    error: result.error || null,
+    smtpPort: 587,
+    checkedAt: new Date().toISOString(),
+  });
 });
 
 // API routes
