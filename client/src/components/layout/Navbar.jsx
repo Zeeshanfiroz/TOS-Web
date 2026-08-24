@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -16,10 +16,19 @@ const links = [
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const user = useSelector(selectUser);
   const isAdmin = useSelector(selectIsAdmin);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  // Shrink + deepen blur/shadow once the user scrolls
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 24);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   const handleLogout = async () => {
     await dispatch(logout());
@@ -28,21 +37,38 @@ export default function Navbar() {
   };
 
   const linkClass = ({ isActive }) =>
-    `px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-      isActive
-        ? 'text-forest-700 bg-forest-100'
-        : 'text-gray-600 hover:text-forest-700 hover:bg-forest-50'
+    `relative px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+      isActive ? 'text-forest-700' : 'text-gray-600 hover:text-forest-700'
     }`;
 
   return (
-    <header className="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-forest-100">
+    <motion.header
+      initial={{ y: -70, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+      className={`sticky top-0 z-50 border-b transition-all duration-300 ${
+        scrolled
+          ? 'glass border-forest-100 shadow-[0_8px_30px_-12px_rgba(21,128,61,0.25)]'
+          : 'bg-white/90 backdrop-blur border-transparent'
+      }`}
+    >
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+        <div
+          className={`flex items-center justify-between transition-all duration-300 ${
+            scrolled ? 'h-14' : 'h-16'
+          }`}
+        >
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2" onClick={() => setOpen(false)}>
-            <span className="text-2xl">🌱</span>
+            <motion.span
+              className="text-2xl"
+              animate={{ rotate: [0, -8, 8, 0] }}
+              transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+            >
+              🌱
+            </motion.span>
             <span className="font-display font-bold text-base sm:text-lg text-forest-800 leading-tight">
-              Team of <span className="text-forest-500">Sustainability</span>
+              Team of <span className="text-gradient">Sustainability</span>
               <span className="block text-[10px] font-medium text-gray-400 -mt-0.5">
                 VSSUT, Burla
               </span>
@@ -53,7 +79,18 @@ export default function Navbar() {
           <div className="hidden lg:flex items-center gap-1">
             {links.map((l) => (
               <NavLink key={l.to} to={l.to} className={linkClass} end={l.to === '/'}>
-                {l.label}
+                {({ isActive }) => (
+                  <>
+                    {l.label}
+                    {isActive && (
+                      <motion.span
+                        layoutId="nav-underline"
+                        className="absolute inset-x-2 -bottom-0.5 h-0.5 rounded-full bg-forest-500"
+                        transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                      />
+                    )}
+                  </>
+                )}
               </NavLink>
             ))}
           </div>
@@ -176,6 +213,6 @@ export default function Navbar() {
           </motion.div>
         )}
       </AnimatePresence>
-    </header>
+    </motion.header>
   );
 }

@@ -7,6 +7,8 @@ import { fetchAnnouncements as fetchAnns } from '../../features/announcements/an
 import { fetchGallery as fetchGal } from '../../features/gallery/gallerySlice';
 import EventCard from '../../components/events/EventCard';
 import Spinner from '../../components/ui/Spinner';
+import MagneticButton from '../../components/ui/MagneticButton';
+import Marquee from '../../components/ui/Marquee';
 
 /* ---------- Animated counter ---------- */
 function Counter({ target, suffix = '' }) {
@@ -91,7 +93,17 @@ export default function Home() {
   return (
     <div>
       {/* ================= HERO ================= */}
-      <section className="relative bg-gradient-to-b from-forest-50 via-white to-white">
+      <section className="relative bg-gradient-to-b from-forest-50 via-white to-white overflow-hidden">
+        {/* Animated gradient blobs */}
+        <div className="absolute -top-32 -left-32 w-[28rem] h-[28rem] bg-forest-300/40 rounded-full blur-3xl animate-blob" />
+        <div
+          className="absolute top-32 -right-32 w-[26rem] h-[26rem] bg-emerald-300/40 rounded-full blur-3xl animate-blob"
+          style={{ animationDelay: '-7s' }}
+        />
+        <div
+          className="absolute bottom-0 left-1/3 w-80 h-80 bg-teal-200/30 rounded-full blur-3xl animate-blob"
+          style={{ animationDelay: '-3s' }}
+        />
         <FloatingLeaves />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-32 relative">
           <motion.div
@@ -100,37 +112,107 @@ export default function Home() {
             transition={{ duration: 0.6 }}
             className="max-w-3xl mx-auto text-center"
           >
-            <span className="inline-block px-4 py-1.5 rounded-full bg-forest-100 text-forest-700 text-sm font-semibold mb-6">
+            {/* Badge */}
+            <motion.span
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.15, type: 'spring', stiffness: 200, damping: 15 }}
+              className="inline-block px-4 py-1.5 rounded-full glass border border-forest-200 text-forest-700 text-sm font-semibold mb-6 shadow-sm"
+            >
               🌱 Official Sustainability Club of VSSUT, Burla
-            </span>
+            </motion.span>
+
+            {/* Word-stagger headline */}
             <h1 className="font-display text-4xl md:text-6xl font-extrabold text-gray-900 leading-tight">
-              Small Actions,
+              {['Small', 'Actions,'].map((w, i) => (
+                <motion.span
+                  key={w}
+                  className="inline-block mr-3"
+                  initial={{ opacity: 0, y: 40, rotate: 4 }}
+                  animate={{ opacity: 1, y: 0, rotate: 0 }}
+                  transition={{ delay: 0.25 + i * 0.12, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+                >
+                  {w}
+                </motion.span>
+              ))}
               <br />
-              <span className="text-forest-600">Big Impact.</span>
+              {['Big', 'Impact.'].map((w, i) => (
+                <motion.span
+                  key={w}
+                  className={`inline-block mr-3 ${i === 1 ? 'text-gradient' : ''}`}
+                  initial={{ opacity: 0, y: 40, rotate: -4 }}
+                  animate={{ opacity: 1, y: 0, rotate: 0 }}
+                  transition={{ delay: 0.55 + i * 0.12, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+                >
+                  {w}
+                </motion.span>
+              ))}
             </h1>
-            <p className="mt-6 text-lg text-gray-600 leading-relaxed">
+
+            <motion.p
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.85, duration: 0.6 }}
+              className="mt-6 text-lg text-gray-600 leading-relaxed"
+            >
               We are <strong>Team of Sustainability</strong> — working towards the
               UN Sustainable Development Goals through IoT projects, plantation
               drives, workshops and awareness campaigns. Together, we learn,
               create and drive change.
-            </p>
-            <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
-              <Link
-                to="/signup"
-                className="px-8 py-3.5 rounded-xl bg-forest-600 hover:bg-forest-700 text-white font-semibold shadow-lg shadow-forest-200 transition-all hover:-translate-y-0.5"
-              >
-                Join the Club →
-              </Link>
-              <Link
-                to="/events"
-                className="px-8 py-3.5 rounded-xl bg-white border border-forest-200 text-forest-700 font-semibold hover:bg-forest-50 transition-colors"
-              >
-                Explore Events
-              </Link>
-            </div>
+            </motion.p>
+
+            {/* Magnetic CTA buttons */}
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1, duration: 0.6 }}
+              className="mt-10 flex flex-col sm:flex-row gap-4 justify-center items-center"
+            >
+              <MagneticButton>
+                <Link
+                  to="/signup"
+                  className="shine inline-block px-8 py-3.5 rounded-xl bg-forest-600 hover:bg-forest-700 text-white font-semibold shadow-lg shadow-forest-300/60 transition-all"
+                >
+                  Join the Club →
+                </Link>
+              </MagneticButton>
+              <MagneticButton>
+                <Link
+                  to="/events"
+                  className="inline-block px-8 py-3.5 rounded-xl glass border border-forest-200 text-forest-700 font-semibold hover:bg-forest-50 transition-colors"
+                >
+                  Explore Events
+                </Link>
+              </MagneticButton>
+            </motion.div>
+          </motion.div>
+
+          {/* Scroll cue */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.6 }}
+            className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 text-forest-500"
+          >
+            <span className="text-xs font-medium tracking-widest uppercase">Scroll</span>
+            <span className="animate-bounce-soft text-xl">↓</span>
           </motion.div>
         </div>
       </section>
+
+      {/* ================= MARQUEE ================= */}
+      <Marquee
+        items={[
+          { icon: '🌱', label: 'Plantation Drives' },
+          { icon: '🤖', label: 'IoT Projects' },
+          { icon: '♻️', label: 'Waste Management' },
+          { icon: '☀️', label: 'Solar Innovation' },
+          { icon: '🔬', label: 'Research' },
+          { icon: '🎨', label: 'Design & Content' },
+          { icon: '📢', label: 'Awareness Campaigns' },
+          { icon: '🏆', label: 'Competitions' },
+        ]}
+      />
 
       {/* ================= STATS ================= */}
       <section className="bg-forest-900 py-14">
