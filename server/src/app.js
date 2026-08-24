@@ -66,18 +66,11 @@ app.get('/api/health', (req, res) =>
   })
 );
 
-// Email SMTP diagnostic — checks Gmail credentials actually authenticate
+// Email provider diagnostic — checks whichever provider is active
 app.get('/api/health/email', async (req, res) => {
-  const configured = Boolean(process.env.GMAIL_USER && process.env.GMAIL_APP_PASSWORD);
-  if (!configured) {
-    return res.json({ configured: false, smtpVerified: false, error: 'GMAIL_USER / GMAIL_APP_PASSWORD missing' });
-  }
   const result = await verifyEmail();
   res.json({
-    configured: true,
-    smtpVerified: result.ok,
-    error: result.error || null,
-    smtpPort: 587,
+    ...result,
     checkedAt: new Date().toISOString(),
   });
 });
