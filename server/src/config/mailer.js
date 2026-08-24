@@ -59,6 +59,7 @@ const processQueue = async () => {
           from: `"Sustainability Club" <${process.env.GMAIL_USER}>`,
           ...job,
         });
+        console.log(`📧 Email sent successfully to ${job.to} (${job.subject})`);
         break;
       } catch (err) {
         attempt += 1;
