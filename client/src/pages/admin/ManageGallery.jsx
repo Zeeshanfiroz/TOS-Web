@@ -29,8 +29,7 @@ export default function ManageGallery() {
   };
 
   useEffect(() => {
-    const timer = setTimeout(load, 0);
-    return () => clearTimeout(timer);
+    load();
   }, []);
 
   const handleUpload = async (e) => {

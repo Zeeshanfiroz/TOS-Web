@@ -27,8 +27,7 @@ export default function ManageEvents() {
   };
 
   useEffect(() => {
-    const timer = setTimeout(loadEvents, 0);
-    return () => clearTimeout(timer);
+    loadEvents();
   }, []);
 
   const openCreate = () => {

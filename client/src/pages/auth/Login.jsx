@@ -34,7 +34,7 @@ export default function Login() {
         <div className="text-center mb-8">
           <span className="text-4xl">🌱</span>
           <h1 className="font-display text-3xl font-bold text-gray-900 mt-3">Welcome back</h1>
-          <p className="text-gray-500 mt-2">Login to your GreenSoul account</p>
+          <p className="text-gray-500 mt-2">Login to your TOS account</p>
         </div>
 
         <div className="bg-white rounded-3xl border border-forest-100 p-8 shadow-sm">

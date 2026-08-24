@@ -2,27 +2,48 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
 const milestones = [
-  { year: '2024', text: 'Club founded by a group of 12 passionate students' },
-  { year: '2025', text: 'First 500-tree plantation drive completed on campus' },
-  { year: '2025', text: 'Partnership with college administration for recycling bins' },
-  { year: '2026', text: 'Launched digital platform — you are here! 🌱' },
+  { year: '2023', text: 'Exhibited our paper recycling project at Makers Fest 2023' },
+  { year: '2024', text: 'Won multiple competitions & participated in Robosumo at NIT Rourkela Innovision 2024' },
+  { year: '2024', text: 'Rakshabandhan-inspired awareness drive at Kirba school' },
+  { year: '2024', text: 'Sustainability quizzes & trash-to-treasure events at SAMAVESH' },
+  { year: '2025', text: 'Sambalpuri Jewelry & Accessories workshop with Sambalpuri Hub — empowering 72 underprivileged women' },
+  { year: '2025', text: 'Pitched our idea at IIT Bhubaneswar on World Standards Day' },
+  { year: '2025', text: 'VIRTOSWA 2K25 orientation — welcoming the next generation of changemakers' },
 ];
 
-const values = [
+const domains = [
   {
-    icon: '🌳',
-    title: 'Plant & Protect',
-    text: 'We plant native trees and protect existing green cover across campus.',
+    icon: '🤖',
+    title: 'Technical',
+    text: 'IoT-based embedded systems, sensors and robotics to monitor, collect data and solve real-life sustainability problems.',
+  },
+  {
+    icon: '🎨',
+    title: 'Design & Content',
+    text: 'Posters, infographics, videos and social media — plus compelling narratives around sustainability goals and impact.',
+  },
+  {
+    icon: '📋',
+    title: 'Event Management',
+    text: 'Eco-conscious events with minimal waste, awareness campaigns, workshops and clean-up drives.',
+  },
+  {
+    icon: '🔬',
+    title: 'Research & Development',
+    text: 'Researching and developing new sustainable methods, plus bootcamps and research programmes.',
+  },
+];
+
+const projects = [
+  {
+    icon: '☀️',
+    name: 'Solar Tracker',
+    text: 'LDR sensors sense the sun\u2019s direction, an Arduino Uno processes the data and servo motors rotate the solar panel to maximise energy capture — with a GSM module for monitoring.',
   },
   {
     icon: '♻️',
-    title: 'Reduce & Recycle',
-    text: 'E-waste drives, plastic-free campaigns and proper waste segregation.',
-  },
-  {
-    icon: '📣',
-    title: 'Educate & Inspire',
-    text: 'Workshops and campaigns that turn awareness into everyday action.',
+    name: 'Waste Segregation Bin',
+    text: 'Automatically classifies different types of waste and directs them to their respective bins — making waste sorting effortless.',
   },
 ];
 
@@ -37,11 +58,12 @@ export default function About() {
           className="bg-gradient-to-br from-forest-600 to-forest-800 rounded-3xl p-8 md:p-10 text-white"
         >
           <span className="text-3xl">🎯</span>
-          <h2 className="font-display text-2xl font-bold mt-4">Our Mission</h2>
+          <h2 className="font-display text-2xl font-bold mt-4">Our Vision</h2>
           <p className="mt-3 text-forest-50/90 leading-relaxed">
-            To make sustainability a way of life on our campus — through hands-on
-            environmental action, student-led initiatives and community
-            participation that creates measurable impact.
+            To ignite a global culture of conscious living by pioneering
+            innovative, inclusive and impactful solutions that harmonize human
+            progress with the planet&rsquo;s well-being — where sustainability is
+            not a choice but a shared responsibility.
           </p>
         </motion.div>
 
@@ -51,21 +73,25 @@ export default function About() {
           transition={{ delay: 0.15 }}
           className="bg-forest-50 rounded-3xl p-8 md:p-10 border border-forest-100"
         >
-          <span className="text-3xl">🔭</span>
-          <h2 className="font-display text-2xl font-bold mt-4 text-forest-900">Our Vision</h2>
+          <span className="text-3xl">🌍</span>
+          <h2 className="font-display text-2xl font-bold mt-4 text-forest-900">Who We Are</h2>
           <p className="mt-3 text-gray-600 leading-relaxed">
-            A zero-waste, carbon-conscious campus where every student understands
-            their environmental footprint — and has the tools and community
-            support to shrink it.
+            We are the official sustainability club of <strong>VSSUT, Burla</strong> —
+            a group of passionate individuals working towards the UN Sustainable
+            Development Goals. From hands-on technical projects to awareness
+            drives and industry visits, we make sustainability a way of life.
           </p>
         </motion.div>
       </div>
 
-      {/* Values */}
+      {/* Domains */}
       <div className="mt-20">
-        <h2 className="section-title text-center">What We Stand For</h2>
-        <div className="mt-10 grid md:grid-cols-3 gap-6">
-          {values.map((v, i) => (
+        <h2 className="section-title text-center">Our Domains</h2>
+        <p className="text-center text-gray-500 mt-2">
+          Whatever your skill, there&rsquo;s a place for you here.
+        </p>
+        <div className="mt-10 grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {domains.map((v, i) => (
             <motion.div
               key={v.title}
               initial={{ opacity: 0, y: 24 }}
@@ -82,9 +108,30 @@ export default function About() {
         </div>
       </div>
 
+      {/* Technical Projects */}
+      <div className="mt-20">
+        <h2 className="section-title text-center">Our Technical Projects</h2>
+        <div className="mt-10 grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+          {projects.map((p, i) => (
+            <motion.div
+              key={p.name}
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.12 }}
+              className="bg-gradient-to-br from-forest-50 to-white rounded-2xl border border-forest-100 p-8 shadow-sm hover:shadow-lg transition-shadow"
+            >
+              <span className="text-4xl">{p.icon}</span>
+              <h3 className="font-display font-semibold text-xl mt-4">{p.name}</h3>
+              <p className="text-sm text-gray-600 mt-2 leading-relaxed">{p.text}</p>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+
       {/* Milestones timeline */}
       <div className="mt-20 max-w-2xl mx-auto">
-        <h2 className="section-title text-center">Our Journey</h2>
+        <h2 className="section-title text-center">Events & Achievements</h2>
         <div className="mt-10 space-y-0 relative before:absolute before:left-[19px] before:top-2 before:bottom-2 before:w-0.5 before:bg-forest-200">
           {milestones.map((m, i) => (
             <motion.div

@@ -58,6 +58,10 @@ const initialState = {
   user: null,
   isLoading: false,
   error: null,
+  // false until the initial session check (getMe) resolves on app load.
+  // Route guards must NOT redirect while this is false — otherwise a
+  // logged-in user refreshing an admin page gets bounced to /login.
+  isInitialized: false,
 };
 
 const authSlice = createSlice({
@@ -108,12 +112,19 @@ const authSlice = createSlice({
       .addCase(logout.fulfilled, (state) => {
         state.user = null;
       })
-      // Get me
+      // Get me — resolves the initial session check
+      .addCase(getMe.pending, (state) => {
+        state.isLoading = true;
+      })
       .addCase(getMe.fulfilled, (state, action) => {
         state.user = action.payload;
+        state.isLoading = false;
+        state.isInitialized = true;
       })
       .addCase(getMe.rejected, (state) => {
         state.user = null;
+        state.isLoading = false;
+        state.isInitialized = true;
       });
   },
 });
@@ -121,5 +132,6 @@ const authSlice = createSlice({
 // Selectors
 export const selectUser = (state) => state.auth.user;
 export const selectIsAdmin = (state) => state.auth.user?.role === 'admin';
+export const selectIsInitialized = (state) => state.auth.isInitialized;
 
 export default authSlice.reducer;

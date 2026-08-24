@@ -44,9 +44,9 @@ export default function Contact() {
 
           <div className="mt-10 space-y-5">
             {[
-              ['📍', 'Visit Us', 'Room 204, Student Activity Center, Main Campus'],
-              ['📧', 'Email Us', 'greencampus@college.edu'],
-              ['📷', 'Follow Us', '@greensoul.club on Instagram'],
+              ['📍', 'Visit Us', 'VSSUT Campus, Burla, Sambalpur, Odisha'],
+              ['📧', 'Email Us', 'teamofsustainability@vssut.ac.in'],
+              ['📷', 'Follow Us', '@teamofsustainability on Instagram'],
             ].map(([icon, title, detail]) => (
               <div key={title} className="flex items-start gap-4">
                 <span className="w-11 h-11 rounded-xl bg-forest-100 flex items-center justify-center text-xl shrink-0">

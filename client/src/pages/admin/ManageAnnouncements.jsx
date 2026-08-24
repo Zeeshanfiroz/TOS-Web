@@ -26,8 +26,7 @@ export default function ManageAnnouncements() {
   };
 
   useEffect(() => {
-    const timer = setTimeout(load, 0);
-    return () => clearTimeout(timer);
+    load();
   }, []);
 
   const handleSave = async (e) => {

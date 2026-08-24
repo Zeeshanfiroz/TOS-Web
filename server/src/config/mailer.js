@@ -1,18 +1,38 @@
+/**
+ * Email via Gmail SMTP with App Password.
+ *
+ * Why Gmail instead of Brevo:
+ *  • NO IP restrictions — works from any network (dynamic IPs fine)
+ *  • No extra signup — uses your existing Google account
+ *  • Free: 500 emails/day (plenty for a college club)
+ *
+ * One-time setup (2 min):
+ *  1. myaccount.google.com → Security → turn ON "2-Step Verification"
+ *  2. Google Account → search "App passwords" → create one (name: "club")
+ *  3. Copy the 16-character password into .env → GMAIL_APP_PASSWORD
+ *
+ * Requires in .env:
+ *  GMAIL_USER=you@gmail.com
+ *  GMAIL_APP_PASSWORD=xxxxxxxxxxxxxxxx   (16 chars, NOT your normal password)
+ *
+ * Public interface: sendEmail(to, subject, html) — fire-and-forget queue.
+ */
+
 import nodemailer from 'nodemailer';
 
-// Created lazily on first send so it always picks up fully-loaded env vars
 let transporter = null;
 
 const getTransporter = () => {
   if (!transporter) {
     transporter = nodemailer.createTransport({
-      host: process.env.EMAIL_HOST,
-      port: Number(process.env.EMAIL_PORT) || 587,
-      secure: Number(process.env.EMAIL_PORT) === 465, // true for 465, false for other ports
+      host: 'smtp.gmail.com',
+      port: 465,
+      secure: true, // 465 = implicit TLS
       auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
+        user: process.env.GMAIL_USER,
+        pass: process.env.GMAIL_APP_PASSWORD,
       },
+      connectionTimeout: 15000, // fail fast instead of hanging
     });
   }
   return transporter;
@@ -35,7 +55,10 @@ const processQueue = async () => {
     let attempt = 0;
     while (attempt < MAX_RETRIES) {
       try {
-        await getTransporter().sendMail(job.mail);
+        await getTransporter().sendMail({
+          from: `"Sustainability Club" <${process.env.GMAIL_USER}>`,
+          ...job,
+        });
         break;
       } catch (err) {
         attempt += 1;
@@ -59,17 +82,9 @@ const processQueue = async () => {
  * @param {string} html - HTML body
  */
 export const sendEmail = (to, subject, html) => {
-  emailQueue.push({
-    mail: {
-      from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
-      to,
-      subject,
-      html,
-    },
-  });
+  emailQueue.push({ to, subject, html });
   processQueue().catch((err) =>
     console.error(`📧 Email queue error: ${err.message}`)
   );
 };
 
-export default transporter;

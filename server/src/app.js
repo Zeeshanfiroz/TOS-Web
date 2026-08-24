@@ -12,7 +12,7 @@ import announcementRoutes from './routes/announcementRoutes.js';
 import galleryRoutes from './routes/galleryRoutes.js';
 import contactRoutes from './routes/contactRoutes.js';
 import userRoutes from './routes/userRoutes.js';
-import { notFound, errorHandler } from './middleware/error.js';
+import { notFound, errorHandler, sanitizeNoSql } from './middleware/error.js';
 
 const app = express();
 
@@ -52,6 +52,9 @@ app.use(globalLimiter);
 app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+
+// Strip Mongo operators ($gt, $ne, dotted keys...) from user input (#82 NoSQL injection)
+app.use(sanitizeNoSql);
 
 // Health check (for Render/Railway uptime monitoring)
 app.get('/api/health', (req, res) =>

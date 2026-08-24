@@ -41,8 +41,11 @@ export default function Navbar() {
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2" onClick={() => setOpen(false)}>
             <span className="text-2xl">🌱</span>
-            <span className="font-display font-bold text-lg text-forest-800">
-              Green<span className="text-forest-500">Soul</span>
+            <span className="font-display font-bold text-base sm:text-lg text-forest-800 leading-tight">
+              Team of <span className="text-forest-500">Sustainability</span>
+              <span className="block text-[10px] font-medium text-gray-400 -mt-0.5">
+                VSSUT, Burla
+              </span>
             </span>
           </Link>
 

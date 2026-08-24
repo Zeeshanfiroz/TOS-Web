@@ -1,16 +1,11 @@
-node_modules/
-.env
-.env.*
-!.env.example
-dist/
-coverage/
-*.log# Dependencies
+# Dependencies
 node_modules/
 
-# Environment variables
+# Environment variables (NEVER commit — contains real API keys!)
 .env
 .env.local
 .env.production
+.env.*
 
 # Build output
 dist/

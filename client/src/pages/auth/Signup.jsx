@@ -89,7 +89,7 @@ export default function Signup() {
         <div className="text-center mb-8">
           <span className="text-4xl">🌱</span>
           <h1 className="font-display text-3xl font-bold text-gray-900 mt-3">
-            {step === 1 ? 'Join GreenSoul' : 'Verify Your Email'}
+            {step === 1 ? 'Join Team of Sustainability' : 'Verify Your Email'}
           </h1>
           <p className="text-gray-500 mt-2">
             {step === 1

@@ -1,30 +1,41 @@
 import { motion } from 'framer-motion';
 
-// Placeholder team data — replace names/photos with your real team.
+// Real team details from the club's official deck.
+// Add/adjust members and photos here as the team changes.
 const teams = [
   {
-    role: 'Core Committee',
+    role: 'Guiding Hands',
     members: [
-      { name: 'Aarav Sharma', position: 'President', img: 'https://i.pravatar.cc/300?img=12' },
-      { name: 'Priya Verma', position: 'Vice President', img: 'https://i.pravatar.cc/300?img=47' },
-      { name: 'Rohan Gupta', position: 'General Secretary', img: 'https://i.pravatar.cc/300?img=33' },
+      {
+        name: 'Dr. Trupti Ranjan Mahapatra',
+        position: 'Technical Society Vice President',
+        img: 'https://i.pravatar.cc/300?img=60',
+      },
+      {
+        name: 'Dr. Sasmita Behera',
+        position: 'Faculty Advisor',
+        img: 'https://i.pravatar.cc/300?img=32',
+      },
     ],
   },
   {
-    role: 'Leads',
+    role: 'Office Bearers',
     members: [
-      { name: 'Sneha Patel', position: 'Events Lead', img: 'https://i.pravatar.cc/300?img=44' },
-      { name: 'Arjun Mehta', position: 'Outreach Lead', img: 'https://i.pravatar.cc/300?img=59' },
-      { name: 'Ishita Rao', position: 'Design Lead', img: 'https://i.pravatar.cc/300?img=26' },
-      { name: 'Kabir Singh', position: 'Tech Lead', img: 'https://i.pravatar.cc/300?img=68' },
-    ],
-  },
-  {
-    role: 'Volunteers',
-    members: [
-      { name: 'Ananya Iyer', position: 'Volunteer', img: 'https://i.pravatar.cc/300?img=31' },
-      { name: 'Dev Malhotra', position: 'Volunteer', img: 'https://i.pravatar.cc/300?img=53' },
-      { name: 'Meera Nair', position: 'Volunteer', img: 'https://i.pravatar.cc/300?img=45' },
+      {
+        name: 'Abhisek Bharadwaj',
+        position: 'Club Coordinator • EEE',
+        img: 'https://i.pravatar.cc/300?img=13',
+      },
+      {
+        name: 'Archana Maharana',
+        position: 'Assistant Coordinator • EEE',
+        img: 'https://i.pravatar.cc/300?img=47',
+      },
+      {
+        name: 'Prabhu Kalyan Sethi',
+        position: 'Assistant Coordinator • ETC',
+        img: 'https://i.pravatar.cc/300?img=33',
+      },
     ],
   },
 ];
@@ -55,7 +66,9 @@ export default function Team() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center">
         <h1 className="section-title">Meet The Team</h1>
-        <p className="text-gray-500 mt-2">The people driving change behind the scenes.</p>
+        <p className="text-gray-500 mt-2">
+          The people driving change at Team of Sustainability, VSSUT Burla.
+        </p>
       </motion.div>
 
       {teams.map((group) => (
@@ -72,8 +85,28 @@ export default function Team() {
         </section>
       ))}
 
+      {/* Join the team CTA */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="mt-16 bg-gradient-to-r from-forest-700 to-forest-500 rounded-3xl p-10 text-center text-white"
+      >
+        <h2 className="font-display text-2xl font-bold">Want your name here?</h2>
+        <p className="text-forest-100 mt-2 max-w-xl mx-auto">
+          Whether you're into IoT projects, design, event management or research —
+          there's a domain for you. Join the club and become part of the team!
+        </p>
+        <a
+          href="/signup"
+          className="inline-block mt-6 px-8 py-3 rounded-xl bg-white text-forest-800 font-semibold shadow-lg hover:-translate-y-0.5 transition-transform"
+        >
+          Join Us 🌱
+        </a>
+      </motion.div>
+
       <p className="text-center text-xs text-gray-400 mt-12">
-        * Placeholder photos — update with real team photos in src/pages/public/Team.jsx
+        * Placeholder photos — replace with real team photos in src/pages/public/Team.jsx
       </p>
     </div>
   );

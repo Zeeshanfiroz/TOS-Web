@@ -32,6 +32,7 @@ const userSchema = new mongoose.Schema(
     otp: {
       code: { type: String, select: false },
       expiresAt: { type: Date, select: false },
+      attempts: { type: Number, default: 0, select: false }, // brute-force counter
     },
     avatar: { url: String, fileId: String },
     joinedAt: { type: Date, default: Date.now },

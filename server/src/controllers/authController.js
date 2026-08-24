@@ -1,8 +1,11 @@
 import User from '../models/User.js';
+import crypto from 'crypto';
 import generateToken from '../utils/generateToken.js';
 import { sendEmail } from '../config/mailer.js';
 
 const COOKIE_NAME = 'token';
+const OTP_TTL_MINUTES = 10;
+const MAX_OTP_ATTEMPTS = 5;
 
 // Cookie options — httpOnly so JS can't steal the token (XSS protection)
 const cookieOptions = {
@@ -12,18 +15,23 @@ const cookieOptions = {
   maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
 };
 
-const OTP_TTL_MINUTES = 10;
+/**
+ * Generate a 6-digit OTP using a cryptographically secure RNG.
+ * (Math.random() is predictable — #114 Insecure Randomness)
+ */
+const generateOtpCode = () => crypto.randomInt(100000, 1000000).toString();
 
 /**
- * Generate a 6-digit OTP, store it (hashed expiry) on the user and email it.
+ * Generate an OTP, store it on the user (with attempt counter + expiry) and email it.
  * In development the OTP is also logged to the console so you can test
  * without a working SMTP connection.
  */
 const issueOtp = async (user) => {
-  const code = String(Math.floor(100000 + Math.random() * 900000));
+  const code = generateOtpCode();
   user.otp = {
     code,
     expiresAt: new Date(Date.now() + OTP_TTL_MINUTES * 60 * 1000),
+    attempts: 0,
   };
   await user.save();
 
@@ -81,18 +89,34 @@ export const signup = async (req, res) => {
 export const verifyOtp = async (req, res) => {
   const { email, otp } = req.body;
 
-  const user = await User.findOne({ email }).select('+otp.code +otp.expiresAt');
+  const user = await User.findOne({ email }).select('+otp.code +otp.expiresAt +otp.attempts');
   if (!user) {
     return res.status(404).json({ success: false, message: 'Account not found' });
   }
   if (user.isVerified) {
     return res.status(400).json({ success: false, message: 'Account already verified — please login' });
   }
+
+  // Brute-force guard: too many wrong attempts invalidates the OTP (#51)
+  if ((user.otp?.attempts || 0) >= MAX_OTP_ATTEMPTS) {
+    user.otp = undefined;
+    await user.save();
+    return res.status(429).json({
+      success: false,
+      message: 'Too many wrong attempts. Please request a new OTP.',
+    });
+  }
+
   if (
     !user.otp?.code ||
     user.otp.code !== String(otp).trim() ||
     new Date(user.otp.expiresAt) < new Date()
   ) {
+    // Count the failed attempt against this account
+    if (user.otp?.code) {
+      user.otp.attempts = (user.otp.attempts || 0) + 1;
+      await user.save();
+    }
     return res.status(400).json({ success: false, message: 'Invalid or expired OTP' });
   }
 

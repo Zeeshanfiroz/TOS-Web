@@ -18,4 +18,12 @@ export default defineConfig([
       parserOptions: { ecmaFeatures: { jsx: true } },
     },
   },
+  {
+    rules: {
+      // False positive with async data-loading effects that use
+      // try/catch/finally (needed to show error toasts). The setState here
+      // happens after an await, not synchronously in the effect body.
+      'react-hooks/set-state-in-effect': 'off',
+    },
+  },
 ])

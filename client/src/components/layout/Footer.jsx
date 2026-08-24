@@ -10,12 +10,13 @@ export default function Footer() {
             <div className="flex items-center gap-2 mb-3">
               <span className="text-2xl">🌱</span>
               <span className="font-display font-bold text-xl text-white">
-                Green<span className="text-forest-400">Soul</span>
+                Team of <span className="text-forest-400">Sustainability</span>
               </span>
             </div>
             <p className="text-sm text-forest-200/80 leading-relaxed">
-              A student-led sustainability club working towards a greener campus
-              and a cleaner planet — one drive at a time.
+              The official sustainability club of VSSUT, Burla — working towards
+              the UN Sustainable Development Goals through hands-on projects,
+              awareness drives and research. Small actions, big impact.
             </p>
           </div>
 
@@ -44,15 +45,15 @@ export default function Footer() {
           <div>
             <h3 className="font-display font-semibold text-white mb-3">Get in Touch</h3>
             <ul className="space-y-2 text-sm text-forest-200/80">
-              <li>📍 Your College, Campus Road</li>
-              <li>📧 greencampus@college.edu</li>
-              <li>📷 @greensoul.club</li>
+              <li>📍 VSSUT, Burla, Sambalpur, Odisha</li>
+              <li>📧 teamofsustainability@vssut.ac.in</li>
+              <li>📷 @teamofsustainability on Instagram</li>
             </ul>
           </div>
         </div>
 
         <div className="border-t border-forest-800 mt-10 pt-6 text-center text-xs text-forest-300/60">
-          © {new Date().getFullYear()} GreenSoul Sustainability Club. Made with 💚 by students.
+          © {new Date().getFullYear()} Team of Sustainability — VSSUT, Burla. Made with 💚 by students.
         </div>
       </div>
     </footer>

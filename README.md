@@ -1,4 +1,4 @@
-# 🌱 GreenSoul — College Sustainability Club Website
+# 🌱 Team of Sustainability (TOS) — VSSUT Burla Club Website
 
 A full-stack web platform for a college sustainability club: public website,
 member accounts with event RSVPs, and a complete admin panel.

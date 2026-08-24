@@ -101,17 +101,18 @@ export default function Home() {
             className="max-w-3xl mx-auto text-center"
           >
             <span className="inline-block px-4 py-1.5 rounded-full bg-forest-100 text-forest-700 text-sm font-semibold mb-6">
-              🌱 Student-led • Campus-wide • Planet-first
+              🌱 Official Sustainability Club of VSSUT, Burla
             </span>
             <h1 className="font-display text-4xl md:text-6xl font-extrabold text-gray-900 leading-tight">
-              Growing a <span className="text-forest-600">Greener</span> Campus,
+              Small Actions,
               <br />
-              Together.
+              <span className="text-forest-600">Big Impact.</span>
             </h1>
             <p className="mt-6 text-lg text-gray-600 leading-relaxed">
-              Join our sustainability club — tree plantation drives, e-waste
-              collection, recycling programs and awareness campaigns that make a
-              real difference right here on campus.
+              We are <strong>Team of Sustainability</strong> — working towards the
+              UN Sustainable Development Goals through IoT projects, plantation
+              drives, workshops and awareness campaigns. Together, we learn,
+              create and drive change.
             </p>
             <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
               <Link
@@ -265,14 +266,14 @@ export default function Home() {
               Ready to make an impact?
             </h2>
             <p className="text-forest-100 mt-3 max-w-xl mx-auto relative">
-              Become a member today and join hundreds of students driving real
-              environmental change on campus.
+              Join Team of Sustainability and be part of a community working on
+              IoT projects, awareness drives and research for a greener future.
             </p>
             <Link
               to="/signup"
               className="inline-block mt-8 px-8 py-3.5 rounded-xl bg-white text-forest-800 font-semibold shadow-lg hover:-translate-y-0.5 transition-transform relative"
             >
-              Join GreenSoul Today 🌱
+              Join TOS Today 🌱
             </Link>
           </motion.div>
         </div>

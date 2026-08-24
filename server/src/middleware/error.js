@@ -1,4 +1,29 @@
 /**
+ * NoSQL injection sanitizer (#82).
+ * Strips any keys starting with `$` or containing `.` from req.body and
+ * req.params — these are Mongo operator/prefix characters. Without this,
+ * a login like { "email": { "$gt": "" } } could manipulate queries.
+ * (req.query is skipped: Express 5 makes it a read-only getter, and our
+ * query params are validated + used in structured filters, never raw.)
+ */
+const clean = (obj) => {
+  for (const key of Object.keys(obj)) {
+    if (key.startsWith('$') || key.includes('.')) {
+      delete obj[key];
+    } else if (typeof obj[key] === 'object' && obj[key] !== null && !Array.isArray(obj[key])) {
+      clean(obj[key]);
+    }
+  }
+  return obj;
+};
+
+export const sanitizeNoSql = (req, res, next) => {
+  if (req.body && typeof req.body === 'object') clean(req.body);
+  if (req.params && typeof req.params === 'object') clean(req.params);
+  next();
+};
+
+/**
  * 404 handler — for routes that don't exist.
  */
 export const notFound = (req, res, next) => {
