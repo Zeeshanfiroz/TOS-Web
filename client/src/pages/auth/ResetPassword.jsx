@@ -5,6 +5,7 @@ import * as Yup from 'yup';
 import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
 import api from '../../api/axios';
+import PasswordInput from '../../components/ui/PasswordInput';
 
 const resetSchema = Yup.object({
   password: Yup.string()
@@ -79,6 +80,7 @@ export default function ResetPassword() {
                       name="password"
                       type="password"
                       placeholder="Min. 8 characters"
+                      component={PasswordInput}
                       className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-forest-300 focus:border-forest-400"
                     />
                     <ErrorMessage name="password" component="p" className="text-xs text-red-500 mt-1" />
@@ -96,6 +98,7 @@ export default function ResetPassword() {
                       name="confirmPassword"
                       type="password"
                       placeholder="Repeat new password"
+                      component={PasswordInput}
                       className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-forest-300 focus:border-forest-400"
                     />
                     <ErrorMessage

@@ -7,6 +7,7 @@ import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
 import { login } from '../../features/auth/authSlice';
 import { API_BASE } from '../../api/axios';
+import PasswordInput from '../../components/ui/PasswordInput';
 
 const loginSchema = Yup.object({
   email: Yup.string().email('Invalid email address').required('Email is required'),
@@ -82,6 +83,7 @@ export default function Login() {
                     name="password"
                     type="password"
                     placeholder="••••••••"
+                    component={PasswordInput}
                     className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-forest-300 focus:border-forest-400"
                   />
                   <ErrorMessage name="password" component="p" className="text-xs text-red-500 mt-1" />
