@@ -121,6 +121,13 @@ const seed = async () => {
   console.log('🔑 Login credentials:');
   console.log('   Admin : admin@club.com / admin12345');
   console.log('   Member: member@club.com / member12345');
+  console.warn(
+    '\n⚠️  WARNING: These are PUBLIC, well-known seeded credentials!\n' +
+      '   Before going live, either rotate them (login → change password)\n' +
+      '   or use `npm run create-admin you@email.com StrongPass "Name"`\n' +
+      '   and DELETE the seeded admin@club.com account. Anyone who reads\n' +
+      '   this repo can log in as admin with the defaults otherwise!'
+  );
 
   mongoose.connection.close();
 };

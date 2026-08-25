@@ -8,7 +8,10 @@
     "start": "node server.js",
     "dev": "nodemon server.js",
     "seed": "node src/seeder.js",
-    "create-admin": "node src/create-admin.js"
+    "create-admin": "node src/create-admin.js",
+    "test:auth": "node test-auth.mjs",
+    "test:mailer": "node test-mailer.mjs",
+    "test:security": "node test-security.mjs"
   },
   "keywords": [],
   "author": "",

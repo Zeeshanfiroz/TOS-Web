@@ -59,6 +59,11 @@ if (process.env.NODE_ENV !== 'production') {
 
 // Global rate limiter — generous: protects against abuse without
 // blocking a launch-day burst of real users.
+// ⚠️ NAT/shared-IP caveat: the limit is per-IP, so many users behind ONE
+// public IP (campus wifi, college NAT, corporate VPN) share this budget —
+// 1000 req/15min can be exhausted by ~50-100 active users on the same
+// network. If you ever see legit campus users hitting 429s, raise `max`
+// here rather than removing the limiter.
 const globalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 1000, // per IP per 15 min — far above what a real user generates
