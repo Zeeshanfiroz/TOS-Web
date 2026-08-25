@@ -141,15 +141,16 @@ export const sendEmail = (to, subject, html) => {
  */
 export const verifyEmail = async () => {
   if (useBrevo()) {
+    const sender = parseSender(process.env.EMAIL_FROM || 'TOS VSSUT <zeeshanfiroz9@gmail.com>');
     try {
       await sendViaBrevo({
-        to: parseSender(process.env.EMAIL_FROM).email,
+        to: sender.email,
         subject: 'Diagnostic ping',
         html: '<p>Diagnostic ping — safe to ignore.</p>',
       });
-      return { provider: 'brevo-api', ok: true };
+      return { provider: 'brevo-api', ok: true, sender: sender.email };
     } catch (err) {
-      return { provider: 'brevo-api', ok: false, error: err.message };
+      return { provider: 'brevo-api', ok: false, error: err.message, sender: sender.email };
     }
   }
   try {
