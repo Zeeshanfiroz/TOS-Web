@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { motion } from 'framer-motion';
 import { fetchAnnouncements } from '../../features/announcements/announcementsSlice';
-import Spinner from '../../components/ui/Spinner';
+import { SkeletonCard } from '../../components/ui/SkeletonCard';
 
 export default function Announcements() {
   const dispatch = useDispatch();
@@ -22,7 +22,11 @@ export default function Announcements() {
       </motion.div>
 
       {isLoading && page === 1 ? (
-        <Spinner fullPage />
+        <div className="mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <SkeletonCard key={i} hasImage={false} />
+          ))}
+        </div>
       ) : list.length === 0 ? (
         <div className="text-center py-20">
           <span className="text-5xl">📢</span>

@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { motion } from 'framer-motion';
 import { fetchEvents } from '../../features/events/eventsSlice';
 import EventCard from '../../components/events/EventCard';
-import Spinner from '../../components/ui/Spinner';
+import { SkeletonGrid } from '../../components/ui/SkeletonCard';
 
 const filters = [
   { key: 'upcoming', label: 'Upcoming' },
@@ -73,7 +73,9 @@ export default function Events() {
 
       {/* Grid */}
       {isLoading ? (
-        <Spinner fullPage />
+        <div className="mt-10">
+          <SkeletonGrid count={6} />
+        </div>
       ) : list.length === 0 ? (
         <div className="text-center py-20">
           <span className="text-5xl">🌱</span>

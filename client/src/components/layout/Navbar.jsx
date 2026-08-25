@@ -165,18 +165,29 @@ export default function Navbar() {
             className="lg:hidden overflow-hidden border-t border-forest-100 bg-white"
           >
             <div className="px-4 py-3 space-y-1">
-              {links.map((l) => (
-                <NavLink
+              {links.map((l, i) => (
+                <motion.div
                   key={l.to}
-                  to={l.to}
-                  className={linkClass}
-                  end={l.to === '/'}
-                  onClick={() => setOpen(false)}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: i * 0.05, duration: 0.3 }}
                 >
-                  {l.label}
-                </NavLink>
+                  <NavLink
+                    to={l.to}
+                    className={linkClass}
+                    end={l.to === '/'}
+                    onClick={() => setOpen(false)}
+                  >
+                    {l.label}
+                  </NavLink>
+                </motion.div>
               ))}
-              <div className="pt-2 border-t border-forest-100 space-y-1">
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: links.length * 0.05, duration: 0.3 }}
+                className="pt-2 border-t border-forest-100 space-y-1"
+              >
                 {user ? (
                   <>
                     <Link to="/dashboard" className={linkClass} onClick={() => setOpen(false)}>
@@ -208,7 +219,7 @@ export default function Navbar() {
                     </Link>
                   </>
                 )}
-              </div>
+              </motion.div>
             </div>
           </motion.div>
         )}

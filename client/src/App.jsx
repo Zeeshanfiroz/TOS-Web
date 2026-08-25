@@ -23,6 +23,9 @@ import OAuthSuccess from './pages/auth/OAuthSuccess';
 import ForgotPassword from './pages/auth/ForgotPassword';
 import ResetPassword from './pages/auth/ResetPassword';
 
+// 404
+import NotFound from './pages/public/NotFound';
+
 // Member
 import Dashboard from './pages/member/Dashboard';
 
@@ -75,18 +78,7 @@ export default function App() {
         </Route>
 
         {/* 404 */}
-        <Route
-          path="*"
-          element={
-            <div className="min-h-[60vh] flex flex-col items-center justify-center gap-4">
-              <span className="text-6xl">🍂</span>
-              <h1 className="section-title">Page not found</h1>
-              <a href="/" className="text-forest-600 hover:underline font-medium">
-                Back to Home
-              </a>
-            </div>
-          }
-        />
+        <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>
   );
