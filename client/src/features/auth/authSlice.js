@@ -67,7 +67,12 @@ const initialState = {
 const authSlice = createSlice({
   name: 'auth',
   initialState,
-  reducers: {},
+  reducers: {
+    // OAuth flow: /oauth-success passes the token here before getMe()
+    setOAuthToken: (state, action) => {
+      state.user = action.payload || state.user;
+    },
+  },
   extraReducers: (builder) => {
     builder
       // Signup — returns { email, needsVerification }, user NOT logged in yet

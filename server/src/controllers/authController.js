@@ -1,11 +1,17 @@
 import User from '../models/User.js';
 import crypto from 'crypto';
-import generateToken from '../utils/generateToken.js';
+import jwt from 'jsonwebtoken';
+import {
+  generateAccessToken,
+  generateRefreshToken,
+} from '../utils/generateToken.js';
 import { sendEmail } from '../config/mailer.js';
 
 const COOKIE_NAME = 'token';
+const REFRESH_COOKIE_NAME = 'refreshToken';
 const OTP_TTL_MINUTES = 10;
 const MAX_OTP_ATTEMPTS = 5;
+const RESET_TOKEN_TTL_MINUTES = 30;
 
 // Cookie options — httpOnly so JS can't steal the token (XSS protection)
 const cookieOptions = {
@@ -13,6 +19,27 @@ const cookieOptions = {
   secure: process.env.NODE_ENV === 'production',
   sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
   maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+};
+
+/**
+ * Issue the full token pair (spec C4.5-6):
+ *  - Access token (1h): httpOnly cookie + returned in body (for OAuth redirect)
+ *  - Refresh token (7d): ALWAYS httpOnly cookie
+ */
+const issueTokens = (user, res) => {
+  const accessToken = generateAccessToken(user._id);
+  const refreshToken = generateRefreshToken(user._id);
+
+  res.cookie(COOKIE_NAME, accessToken, {
+    ...cookieOptions,
+    maxAge: 60 * 60 * 1000, // 1 hour
+  });
+  res.cookie(REFRESH_COOKIE_NAME, refreshToken, cookieOptions);
+
+  user.lastLogin = new Date();
+  user.save().catch(() => {}); // fire-and-forget
+
+  return accessToken;
 };
 
 /**
@@ -124,8 +151,8 @@ export const verifyOtp = async (req, res) => {
   user.otp = undefined;
   await user.save();
 
-  // Log them in right away
-  res.cookie(COOKIE_NAME, generateToken(user._id), cookieOptions);
+  // Log them in right away (access + refresh tokens)
+  const accessToken = issueTokens(user, res);
 
   // Welcome email in the background queue
   sendEmail(
@@ -139,7 +166,13 @@ export const verifyOtp = async (req, res) => {
   res.json({
     success: true,
     message: 'Email verified successfully!',
-    data: { _id: user._id, name: user.name, email: user.email, role: user.role },
+    data: {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      accessToken,
+    },
   });
 };
 
@@ -173,7 +206,19 @@ export const login = async (req, res) => {
 
   // password is select:false in the model, so explicitly include it
   const user = await User.findOne({ email }).select('+password');
-  if (!user || !(await user.matchPassword(password))) {
+  if (!user) {
+    return res.status(401).json({ success: false, message: 'Invalid email or password' });
+  }
+
+  // OAuth users have no password — point them to the right flow
+  if (user.authProvider !== 'local') {
+    return res.status(400).json({
+      success: false,
+      message: `This account uses ${user.authProvider} login. Please continue with ${user.authProvider}.`,
+    });
+  }
+
+  if (!(await user.matchPassword(password))) {
     return res.status(401).json({ success: false, message: 'Invalid email or password' });
   }
 
@@ -187,24 +232,139 @@ export const login = async (req, res) => {
     });
   }
 
-  res.cookie(COOKIE_NAME, generateToken(user._id), cookieOptions);
+  const accessToken = issueTokens(user, res);
 
   res.json({
     success: true,
-    data: { _id: user._id, name: user.name, email: user.email, role: user.role },
+    data: {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      accessToken,
+    },
   });
 };
 
 /**
- * POST /api/auth/logout
+ * POST /api/auth/logout — clears both cookies
  */
 export const logout = (req, res) => {
-  res.clearCookie(COOKIE_NAME, {
+  const clearOpts = {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-  });
+  };
+  res.clearCookie(COOKIE_NAME, clearOpts);
+  res.clearCookie(REFRESH_COOKIE_NAME, clearOpts);
   res.json({ success: true, message: 'Logged out' });
+};
+
+/**
+ * POST /api/auth/refresh (spec C5)
+ * Reads the refresh-token cookie, verifies it, issues a fresh access token
+ * and rotates the refresh token.
+ */
+export const refresh = async (req, res) => {
+  const refreshToken = req.cookies?.[REFRESH_COOKIE_NAME];
+  if (!refreshToken) {
+    return res.status(401).json({ success: false, message: 'No refresh token' });
+  }
+
+  try {
+    const decoded = jwt.verify(
+      refreshToken,
+      process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET
+    );
+    const user = await User.findById(decoded.id);
+    if (!user) {
+      return res.status(401).json({ success: false, message: 'User no longer exists' });
+    }
+
+    const accessToken = generateAccessToken(user._id);
+    res.cookie(COOKIE_NAME, accessToken, {
+      ...cookieOptions,
+      maxAge: 60 * 60 * 1000, // 1 hour
+    });
+
+    res.json({
+      success: true,
+      data: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        accessToken,
+      },
+    });
+  } catch {
+    return res.status(401).json({ success: false, message: 'Invalid or expired refresh token' });
+  }
+};
+
+/**
+ * POST /api/auth/forgot-password (spec C7)
+ * Always responds success (never reveals whether the email exists).
+ */
+export const forgotPassword = async (req, res) => {
+  const { email } = req.body;
+
+  const user = await User.findOne({ email });
+  if (user && user.authProvider === 'local') {
+    // Raw token goes in the email link; only the HASH is stored (spec C7.2)
+    const rawToken = crypto.randomBytes(32).toString('hex');
+    user.resetPasswordToken = crypto.createHash('sha256').update(rawToken).digest('hex');
+    user.resetPasswordExpiry = new Date(Date.now() + RESET_TOKEN_TTL_MINUTES * 60 * 1000);
+    await user.save();
+
+    const resetUrl = `${process.env.CLIENT_URL}/reset-password/${rawToken}`;
+    sendEmail(
+      user.email,
+      'Reset Your Password 🌱',
+      `<h2>Password Reset Request</h2>
+       <p>Hi ${user.name}, click the link below to reset your password.
+       This link expires in ${RESET_TOKEN_TTL_MINUTES} minutes:</p>
+       <p><a href="${resetUrl}" style="display:inline-block;padding:12px 24px;background:#16a34a;color:#fff;border-radius:8px;text-decoration:none;">Reset Password</a></p>
+       <p style="color:#888;font-size:13px;">If you didn't request this, you can safely ignore this email.</p>`
+    );
+  }
+
+  res.json({
+    success: true,
+    message: 'If that account exists, a password reset link has been sent.',
+  });
+};
+
+/**
+ * POST /api/auth/reset-password/:token (spec C8)
+ */
+export const resetPassword = async (req, res) => {
+  const { token } = req.params;
+  const { password } = req.body;
+
+  const hashed = crypto.createHash('sha256').update(token).digest('hex');
+  const user = await User.findOne({
+    resetPasswordToken: hashed,
+    resetPasswordExpiry: { $gt: new Date() },
+    authProvider: 'local',
+  }).select('+resetPasswordToken +resetPasswordExpiry +password');
+
+  if (!user) {
+    return res.status(400).json({
+      success: false,
+      message: 'Reset link is invalid or has expired. Please request a new one.',
+    });
+  }
+
+  user.password = password;
+  user.resetPasswordToken = undefined;
+  user.resetPasswordExpiry = undefined;
+  await user.save();
+
+  res.json({
+    success: true,
+    message: 'Password reset successful! Please login with your new password.',
+  });
 };
 
 /**
@@ -222,4 +382,16 @@ export const getMe = (req, res) => {
       joinedAt: req.user.joinedAt,
     },
   });
+};
+
+/**
+ * OAuth callback handler (spec D3) — after passport authenticates:
+ * issue tokens, set refresh cookie, redirect to frontend with access token.
+ */
+export const oauthSuccess = (provider) => (req, res) => {
+  if (!req.user) {
+    return res.redirect(`${process.env.CLIENT_URL}/login?error=oauth_failed`);
+  }
+  const accessToken = issueTokens(req.user, res);
+  res.redirect(`${process.env.CLIENT_URL}/oauth-success?token=${accessToken}`);
 };

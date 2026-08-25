@@ -1,5 +1,8 @@
 import axios from 'axios';
 
+// Exported for OAuth links (plain <a href> redirects, not axios calls)
+export const API_BASE = import.meta.env.VITE_API_URL || '/api';
+
 const api = axios.create({
   // Dev: Vite proxies /api to localhost:5000.
   // Prod: set VITE_API_URL in the environment (e.g., https://your-api.onrender.com/api)

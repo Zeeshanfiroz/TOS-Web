@@ -19,6 +19,9 @@ import Contact from './pages/public/Contact';
 // Auth
 import Login from './pages/auth/Login';
 import Signup from './pages/auth/Signup';
+import OAuthSuccess from './pages/auth/OAuthSuccess';
+import ForgotPassword from './pages/auth/ForgotPassword';
+import ResetPassword from './pages/auth/ResetPassword';
 
 // Member
 import Dashboard from './pages/member/Dashboard';
@@ -50,6 +53,9 @@ export default function App() {
         {/* Auth */}
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/oauth-success" element={<OAuthSuccess />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
 
         {/* Member area (protected) */}
         <Route element={<ProtectedRoute />}>

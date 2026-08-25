@@ -14,8 +14,12 @@ import contactRoutes from './routes/contactRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import { notFound, errorHandler, sanitizeNoSql } from './middleware/error.js';
 import { verifyEmail } from './config/mailer.js';
+import { configurePassport } from './config/passport.js';
 
 const app = express();
+
+// OAuth strategies (Google + GitHub) — no-op if env vars missing
+configurePassport();
 
 // Behind Render/Railway proxy — makes req.ip correct for rate limiting
 app.set('trust proxy', 1);
