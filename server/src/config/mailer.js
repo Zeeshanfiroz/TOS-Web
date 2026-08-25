@@ -25,10 +25,12 @@ const BREVO_API_URL = 'https://api.brevo.com/v3/smtp/email';
 const useBrevo = () => Boolean(process.env.BREVO_API_KEY);
 
 // Parse "Name <email@x.com>" into { name, email }
+// Also strips stray quotes (Render env vars don't auto-strip them like dotenv)
 const parseSender = (raw) => {
-  const match = raw?.match(/^(.*?)\s*<(.+)>$/);
-  if (match) return { name: match[1].trim().replace(/^"|"$/g, ''), email: match[2].trim() };
-  return { name: 'TOS VSSUT', email: raw };
+  const clean = raw?.replace(/"/g, '').trim();
+  const match = clean?.match(/^(.*?)\s*<(.+)>$/);
+  if (match) return { name: match[1].trim(), email: match[2].trim() };
+  return { name: 'TOS VSSUT', email: clean };
 };
 
 // ── Provider: Brevo HTTP API (production) ──

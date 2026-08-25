@@ -47,30 +47,42 @@ const oauthVerify = (provider) => async (req, accessToken, refreshToken, profile
 };
 
 export const configurePassport = () => {
-  passport.use(
-    new GoogleStrategy(
-      {
-        clientID: process.env.GOOGLE_CLIENT_ID,
-        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        callbackURL: process.env.GOOGLE_CALLBACK_URL,
-        passReqToCallback: true,
-      },
-      (req, accessToken, refreshToken, profile, done) =>
-        oauthVerify('google')(req, accessToken, refreshToken, profile, done)
-    )
-  );
+  // Graceful degradation: only register strategies whose env vars exist.
+  // Without this, a missing key would crash the whole server on boot.
+  if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
+    passport.use(
+      new GoogleStrategy(
+        {
+          clientID: process.env.GOOGLE_CLIENT_ID,
+          clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+          callbackURL: process.env.GOOGLE_CALLBACK_URL,
+          passReqToCallback: true,
+        },
+        (req, accessToken, refreshToken, profile, done) =>
+          oauthVerify('google')(req, accessToken, refreshToken, profile, done)
+      )
+    );
+    console.log('🔐 Google OAuth strategy loaded');
+  } else {
+    console.warn('⚠️  Google OAuth DISABLED — GOOGLE_CLIENT_ID/SECRET missing');
+  }
 
-  passport.use(
-    new GitHubStrategy(
-      {
-        clientID: process.env.GITHUB_CLIENT_ID,
-        clientSecret: process.env.GITHUB_CLIENT_SECRET,
-        callbackURL: process.env.GITHUB_CALLBACK_URL,
-        scope: ['user:email'],
-        passReqToCallback: true,
-      },
-      (req, accessToken, refreshToken, profile, done) =>
-        oauthVerify('github')(req, accessToken, refreshToken, profile, done)
-    )
-  );
+  if (process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET) {
+    passport.use(
+      new GitHubStrategy(
+        {
+          clientID: process.env.GITHUB_CLIENT_ID,
+          clientSecret: process.env.GITHUB_CLIENT_SECRET,
+          callbackURL: process.env.GITHUB_CALLBACK_URL,
+          scope: ['user:email'],
+          passReqToCallback: true,
+        },
+        (req, accessToken, refreshToken, profile, done) =>
+          oauthVerify('github')(req, accessToken, refreshToken, profile, done)
+      )
+    );
+    console.log('🔐 GitHub OAuth strategy loaded');
+  } else {
+    console.warn('⚠️  GitHub OAuth DISABLED — GITHUB_CLIENT_ID/SECRET missing');
+  }
 };
