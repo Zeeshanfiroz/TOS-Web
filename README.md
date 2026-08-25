@@ -39,9 +39,17 @@ member accounts with event RSVPs, and a complete admin panel.
 
 ### Security
 - httpOnly cookie sessions (XSS-safe token storage)
+- Refresh token rotation with replay detection (sha256 hash on user doc)
 - Rate limiting on auth endpoints + global limiter
-- Helmet security headers, CORS restricted to frontend origin
-- Input validation on every endpoint (express-validator)
+- Helmet security headers (custom CSP for ImageKit/avatars), CORS restricted to frontend origin
+- Input validation on every endpoint (express-validator) + NoSQL operator sanitization
+- OTP brute-force guard (5 wrong attempts → OTP invalidated)
+
+### Known Accepted Risks
+
+| Package | Severity | Reason Accepted | Revisit When |
+|---|---|---|---|
+| `uuid` (via `imagekit`) | Moderate | Vulnerability only affects uuid v3/v5/v6 with a buffer argument — ImageKit uses v4, so not exploitable in our usage. `npm audit fix --force` would downgrade imagekit 6 → 1.5 (breaking). | ImageKit updates its own `uuid` dependency |
 
 ## Project Structure
 
