@@ -25,7 +25,21 @@ configurePassport();
 app.set('trust proxy', 1);
 
 // Security headers
-app.use(helmet());
+// CSP: default helmet config blocks external images (img-src 'self' data:) —
+// we need ImageKit photos, OAuth avatars and picsum placeholders to load.
+// GA4 script allowed for when analytics is consented on the frontend.
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        ...helmet.contentSecurityPolicy.getDefaultDirectives(),
+        'img-src': ["'self'", 'data:', 'https:'],
+        'connect-src': ["'self'", 'https:'],
+        'script-src': ["'self'", 'https://www.googletagmanager.com'],
+      },
+    },
+  })
+);
 
 // CORS — only allow the frontend origin, with credentials for cookies
 app.use(
