@@ -43,7 +43,10 @@ const issueTokens = async (user, res) => {
   });
   res.cookie(REFRESH_COOKIE_NAME, refreshToken, cookieOptions);
 
-  return accessToken;
+  // Return BOTH tokens — the client stores them in localStorage and uses
+  // Authorization: Bearer headers when browsers block third-party cookies
+  // (cross-site deployments). Cookies remain for same-origin deployments.
+  return { accessToken, refreshToken };
 };
 
 /**
@@ -156,7 +159,7 @@ export const verifyOtp = async (req, res) => {
   await user.save();
 
   // Log them in right away (access + refresh tokens)
-  const accessToken = await issueTokens(user, res);
+  const { accessToken, refreshToken } = await issueTokens(user, res);
 
   // Welcome email in the background queue
   sendEmail(
@@ -176,6 +179,7 @@ export const verifyOtp = async (req, res) => {
       email: user.email,
       role: user.role,
       accessToken,
+      refreshToken,
     },
   });
 };
@@ -236,7 +240,7 @@ export const login = async (req, res) => {
     });
   }
 
-  const accessToken = await issueTokens(user, res);
+  const { accessToken, refreshToken } = await issueTokens(user, res);
 
   res.json({
     success: true,
@@ -246,6 +250,7 @@ export const login = async (req, res) => {
       email: user.email,
       role: user.role,
       accessToken,
+      refreshToken,
     },
   });
 };
@@ -255,7 +260,8 @@ export const login = async (req, res) => {
  * refresh hash, so the (still-unexpired) refresh token can't be replayed.
  */
 export const logout = async (req, res) => {
-  const refreshToken = req.cookies?.[REFRESH_COOKIE_NAME];
+  // Cookie OR body (header-auth clients keep the refresh token in localStorage)
+  const refreshToken = req.cookies?.[REFRESH_COOKIE_NAME] || req.body?.refreshToken;
   if (refreshToken) {
     try {
       const decoded = jwt.verify(
@@ -290,7 +296,9 @@ export const logout = async (req, res) => {
  *     fresh access token
  */
 export const refresh = async (req, res) => {
-  const refreshToken = req.cookies?.[REFRESH_COOKIE_NAME];
+  // Cookie first (same-origin deploys); body fallback (cross-site deploys,
+  // where browsers may drop the Set-Cookie header entirely).
+  const refreshToken = req.cookies?.[REFRESH_COOKIE_NAME] || req.body?.refreshToken;
   if (!refreshToken) {
     return res.status(401).json({ success: false, message: 'No refresh token' });
   }
@@ -343,6 +351,7 @@ export const refresh = async (req, res) => {
       email: user.email,
       role: user.role,
       accessToken,
+      refreshToken: newRefreshToken, // rotated — client must replace the old one
     },
   });
 };
@@ -437,6 +446,8 @@ export const oauthSuccess = (provider) => async (req, res) => {
   if (!req.user) {
     return res.redirect(`${process.env.CLIENT_URL}/login?error=oauth_failed`);
   }
-  const accessToken = await issueTokens(req.user, res);
-  res.redirect(`${process.env.CLIENT_URL}/oauth-success?token=${accessToken}`);
+  const { accessToken, refreshToken } = await issueTokens(req.user, res);
+  res.redirect(
+    `${process.env.CLIENT_URL}/oauth-success?token=${accessToken}&refresh=${refreshToken}`
+  );
 };

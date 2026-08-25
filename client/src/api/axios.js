@@ -3,18 +3,55 @@ import axios from 'axios';
 // Exported for OAuth links (plain <a href> redirects, not axios calls)
 export const API_BASE = import.meta.env.VITE_API_URL || '/api';
 
+/* ── Token storage (localStorage) ─────────────────────────────────────
+   Cookies alone broke on cross-site deploys: browsers (Chrome 3rd-party
+   cookie phase-out, Safari ITP, Brave, Firefox strict) silently drop
+   Set-Cookie headers from cross-origin XHR responses. So the server now
+   ALSO returns both tokens in the response body, and we attach them via
+   Authorization: Bearer headers. Cookies keep working as a fallback on
+   same-origin deployments. ────────────────────────────────────────────*/
+const ACCESS_KEY = 'accessToken';
+const REFRESH_KEY = 'refreshToken';
+
+export const getAccessToken = () => localStorage.getItem(ACCESS_KEY);
+export const getRefreshToken = () => localStorage.getItem(REFRESH_KEY);
+
+export const setAuthTokens = (access, refresh) => {
+  if (access) localStorage.setItem(ACCESS_KEY, access);
+  if (refresh) localStorage.setItem(REFRESH_KEY, refresh);
+};
+
+export const clearAuthTokens = () => {
+  localStorage.removeItem(ACCESS_KEY);
+  localStorage.removeItem(REFRESH_KEY);
+};
+
 const api = axios.create({
   baseURL: API_BASE,
-  withCredentials: true, // send httpOnly cookie with every request
-  timeout: 20000, // never hang forever if the server is down/restarting —
-  // without this a stuck TCP connection leaves spinners (e.g. "Creating
-  // account...") disabled indefinitely with no error shown to the user.
+  withCredentials: true, // cookies still work on same-origin deployments
+  timeout: 20000,
 });
+
+// Attach the Bearer token to every request when we have one
+api.interceptors.request.use((config) => {
+  const token = getAccessToken();
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+// Persist tokens from auth responses (login / verify-otp / refresh / OAuth)
+const saveTokensFromResponse = (res) => {
+  const { accessToken, refreshToken } = res.data?.data || {};
+  if (accessToken || refreshToken) setAuthTokens(accessToken, refreshToken);
+};
 
 /**
  * Single-flight session refresh (race-condition safe).
- * Multiple parallel 401s share ONE /auth/refresh call via this promise;
- * the queue releases only after the refresh settles (success OR failure).
+ * Multiple parallel 401s share ONE /auth/refresh call via this promise.
+ * Sends the refresh token in the BODY (works even when cookies are
+ * blocked) — the server accepts cookie OR body.
  */
 let refreshPromise = null;
 
@@ -23,22 +60,29 @@ const refreshSession = () => {
     refreshPromise = axios
       .post(
         `${API_BASE}/auth/refresh`,
-        {},
+        { refreshToken: getRefreshToken() },
         { withCredentials: true, timeout: 15000 }
       )
-      .then(() => true)
+      .then((res) => {
+        // Rotation: the server returns a NEW refresh token — store both
+        const { accessToken, refreshToken } = res.data?.data || {};
+        if (accessToken) setAuthTokens(accessToken, refreshToken);
+        return true;
+      })
       .catch(() => false)
       .finally(() => {
-        // Release the queue so future 401s can trigger a fresh cycle
         refreshPromise = null;
       });
   }
   return refreshPromise;
 };
 
-// Response interceptor — network-error normalization + 401 auto-refresh
+// Response interceptor — token capture + network normalization + 401 refresh
 api.interceptors.response.use(
-  (res) => res,
+  (res) => {
+    saveTokensFromResponse(res);
+    return res;
+  },
   async (err) => {
     const original = err.config;
     const status = err.response?.status;
@@ -76,10 +120,11 @@ api.interceptors.response.use(
       const refreshed = await refreshSession();
 
       if (refreshed) {
-        return api(original); // retry with the fresh session cookie
+        return api(original); // retry — request interceptor adds the NEW token
       }
 
       // Refresh also failed — session is truly dead. Force logout.
+      clearAuthTokens();
       window.dispatchEvent(new Event('auth:logout'));
       err.response.data = {
         ...err.response.data,
@@ -88,9 +133,9 @@ api.interceptors.response.use(
       return Promise.reject(err);
     }
 
-    // 401 on non-login protected calls without retry (e.g. refresh was
-    // already attempted elsewhere) — keep the session clean.
+    // 401 on non-login protected calls without retry — keep session clean.
     if (status === 401 && !isAuthFlow) {
+      clearAuthTokens();
       window.dispatchEvent(new Event('auth:logout'));
     }
 

@@ -3,12 +3,13 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { motion } from 'framer-motion';
 import { getMe } from '../../features/auth/authSlice';
+import { setAuthTokens } from '../../api/axios';
 import Spinner from '../../components/ui/Spinner';
 
 /**
- * OAuth landing page — the backend redirects here with ?token=...
- * Cookies are already set server-side; we just refresh the session
- * and move the user to their dashboard.
+ * OAuth landing page — the backend redirects here with ?token=...&refresh=...
+ * Store both tokens (header auth works even where cookies are blocked),
+ * then refresh the session and move the user to their dashboard.
  */
 export default function OAuthSuccess() {
   const [params] = useSearchParams();
@@ -16,11 +17,17 @@ export default function OAuthSuccess() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Strip the token from the URL for cleanliness (spec D4.4)
+    // Persist the tokens from the URL (header-based auth)
+    const token = params.get('token');
+    const refresh = params.get('refresh');
+    if (token || refresh) setAuthTokens(token, refresh);
+
+    // Strip the tokens from the URL for cleanliness (spec D4.4)
     window.history.replaceState({}, '', '/oauth-success');
     dispatch(getMe()).finally(() => {
       navigate('/dashboard', { replace: true });
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, navigate]);
 
   return (

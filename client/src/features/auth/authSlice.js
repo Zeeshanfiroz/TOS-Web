@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import api from '../../api/axios';
+import api, { clearAuthTokens } from '../../api/axios';
 
 // Thunks
 export const signup = createAsyncThunk('auth/signup', async (formData, { rejectWithValue }) => {
@@ -43,6 +43,7 @@ export const login = createAsyncThunk('auth/login', async (formData, { rejectWit
 
 export const logout = createAsyncThunk('auth/logout', async () => {
   await api.post('/auth/logout');
+  clearAuthTokens(); // remove localStorage tokens (header auth)
 });
 
 export const getMe = createAsyncThunk('auth/getMe', async (_, { rejectWithValue }) => {
