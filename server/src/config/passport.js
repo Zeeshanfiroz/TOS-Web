@@ -46,6 +46,35 @@ const oauthVerify = (provider) => async (req, accessToken, refreshToken, profile
   }
 };
 
+/**
+ * GitHub quirk: users with PRIVATE emails don't expose email in the profile,
+ * even with user:email scope. Fetch it explicitly from the emails API.
+ */
+const enrichGithubEmail = async (accessToken, profile) => {
+  if (profile.emails?.length) return profile;
+  if (!accessToken) return profile;
+  try {
+    const res = await fetch('https://api.github.com/user/emails', {
+      headers: {
+        Authorization: `token ${accessToken}`,
+        Accept: 'application/vnd.github+json',
+        'User-Agent': 'tos-vssut-club',
+      },
+      signal: AbortSignal.timeout(10000),
+    });
+    if (res.ok) {
+      const emails = await res.json();
+      const primary = emails.find((e) => e.primary && e.verified) || emails.find((e) => e.verified) || emails[0];
+      if (primary?.email) {
+        profile.emails = [{ value: primary.email.toLowerCase() }];
+      }
+    }
+  } catch {
+    // fall through — oauthVerify will handle the missing email gracefully
+  }
+  return profile;
+};
+
 export const configurePassport = () => {
   // Graceful degradation: only register strategies whose env vars exist.
   // Without this, a missing key would crash the whole server on boot.
@@ -77,8 +106,11 @@ export const configurePassport = () => {
           scope: ['user:email'],
           passReqToCallback: true,
         },
-        (req, accessToken, refreshToken, profile, done) =>
-          oauthVerify('github')(req, accessToken, refreshToken, profile, done)
+        async (req, accessToken, refreshToken, profile, done) => {
+          // Private emails need an extra API call to fetch
+          profile = await enrichGithubEmail(accessToken, profile);
+          return oauthVerify('github')(req, accessToken, refreshToken, profile, done);
+        }
       )
     );
     console.log('🔐 GitHub OAuth strategy loaded');
