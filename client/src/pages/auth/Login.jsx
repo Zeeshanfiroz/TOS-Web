@@ -8,6 +8,7 @@ import { toast } from 'react-toastify';
 import { login } from '../../features/auth/authSlice';
 import { API_BASE } from '../../api/axios';
 import PasswordInput from '../../components/ui/PasswordInput';
+import SEO from '../../components/common/SEO';
 
 const loginSchema = Yup.object({
   email: Yup.string().email('Invalid email address').required('Email is required'),
@@ -36,6 +37,10 @@ export default function Login() {
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center px-4 py-16 bg-gradient-to-b from-forest-50 to-white">
+      <SEO
+        title="Login"
+        description="Login to your Team of Sustainability account — RSVP to events, track your activity and stay updated."
+      />
       <motion.div
         initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}

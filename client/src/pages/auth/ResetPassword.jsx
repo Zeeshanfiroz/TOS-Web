@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
 import api from '../../api/axios';
 import PasswordInput from '../../components/ui/PasswordInput';
+import SEO from '../../components/common/SEO';
 
 const resetSchema = Yup.object({
   password: Yup.string()
@@ -28,6 +29,7 @@ export default function ResetPassword() {
         className="w-full max-w-md"
       >
         <div className="text-center mb-8">
+          <SEO title="Reset Password" description="Set a new password for your Team of Sustainability account." />
           <span className="text-4xl">🔐</span>
           <h1 className="font-display text-3xl font-bold text-gray-900 mt-3">
             {done ? 'Password Reset!' : 'Set New Password'}

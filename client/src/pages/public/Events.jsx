@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { fetchEvents } from '../../features/events/eventsSlice';
 import EventCard from '../../components/events/EventCard';
 import { SkeletonGrid } from '../../components/ui/SkeletonCard';
+import SEO from '../../components/common/SEO';
 
 const filters = [
   { key: 'upcoming', label: 'Upcoming' },
@@ -28,6 +29,10 @@ export default function Events() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <SEO
+        title="Events"
+        description="Upcoming and past sustainability events at VSSUT Burla — plantation drives, e-waste collection, workshops and competitions. RSVP and join us!"
+      />
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
         <h1 className="section-title">Club Events</h1>
         <p className="text-gray-500 mt-2">

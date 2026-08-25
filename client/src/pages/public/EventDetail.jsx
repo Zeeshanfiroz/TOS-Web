@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 import { fetchEventById, toggleRsvp } from '../../features/events/eventsSlice';
 import { selectUser } from '../../features/auth/authSlice';
 import Spinner from '../../components/ui/Spinner';
+import SEO from '../../components/common/SEO';
 
 const formatDate = (d) =>
   new Date(d).toLocaleDateString('en-IN', {
@@ -51,6 +52,10 @@ export default function EventDetail() {
 
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <SEO
+        title={event.title}
+        description={`${event.title} — ${formatDate(event.date)} at ${event.location}. ${event.description?.slice(0, 100) || ''}`}
+      />
       <Link to="/events" className="text-forest-600 font-medium hover:underline text-sm">
         ← Back to events
       </Link>

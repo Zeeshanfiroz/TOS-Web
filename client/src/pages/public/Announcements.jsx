@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { motion } from 'framer-motion';
 import { fetchAnnouncements } from '../../features/announcements/announcementsSlice';
 import { SkeletonCard } from '../../components/ui/SkeletonCard';
+import SEO from '../../components/common/SEO';
 
 export default function Announcements() {
   const dispatch = useDispatch();
@@ -16,6 +17,10 @@ export default function Announcements() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <SEO
+        title="Announcements"
+        description="Latest news, updates and stories from Team of Sustainability — VSSUT Burla's official sustainability club."
+      />
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
         <h1 className="section-title">Announcements & Blog</h1>
         <p className="text-gray-500 mt-2">News, updates and stories from the club.</p>

@@ -7,6 +7,7 @@ import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
 import { signup, verifyOtp, resendOtp } from '../../features/auth/authSlice';
 import PasswordInput from '../../components/ui/PasswordInput';
+import SEO from '../../components/common/SEO';
 
 const signupSchema = Yup.object({
   name: Yup.string().trim().required('Name is required').max(80),
@@ -82,6 +83,10 @@ export default function Signup() {
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center px-4 py-16 bg-gradient-to-b from-forest-50 to-white">
+      <SEO
+        title="Join the Club"
+        description="Become a member of Team of Sustainability — VSSUT Burla's official sustainability club. Join IoT projects, drives and workshops."
+      />
       <motion.div
         initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}

@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#14532d"/>
+      <stop offset="60%" stop-color="#166534"/>
+      <stop offset="100%" stop-color="#0d9488"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <circle cx="1050" cy="90" r="220" fill="#22c55e" opacity="0.15"/>
+  <circle cx="120" cy="560" r="180" fill="#4ade80" opacity="0.12"/>
+  <text x="600" y="200" font-family="Arial, sans-serif" font-size="52" fill="#bbf7d0" text-anchor="middle">🌱 Official Sustainability Club</text>
+  <text x="600" y="310" font-family="Arial, sans-serif" font-size="84" font-weight="bold" fill="#ffffff" text-anchor="middle">Team of Sustainability</text>
+  <text x="600" y="400" font-family="Arial, sans-serif" font-size="40" fill="#dcfce7" text-anchor="middle">VSSUT, Burla — Small Actions, Big Impact</text>
+  <text x="600" y="510" font-family="Arial, sans-serif" font-size="28" fill="#86efac" text-anchor="middle">IoT Projects • Plantation Drives • Research • Awareness</text>
+</svg>

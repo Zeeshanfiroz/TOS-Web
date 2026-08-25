@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
 import { fetchGallery } from '../../features/gallery/gallerySlice';
 import Spinner from '../../components/ui/Spinner';
+import SEO from '../../components/common/SEO';
 
 export default function Gallery() {
   const dispatch = useDispatch();
@@ -31,6 +32,10 @@ export default function Gallery() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <SEO
+        title="Gallery"
+        description="Photo highlights from Team of Sustainability events — plantation drives, workshops, clean-ups and competitions at VSSUT Burla."
+      />
       <h1 className="section-title">Gallery</h1>
       <p className="text-gray-500 mt-2">Moments from our drives, workshops and clean-ups.</p>
 

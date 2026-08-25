@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import SEO from '../../components/common/SEO';
 
 const milestones = [
   { year: '2023', text: 'Exhibited our paper recycling project at Makers Fest 2023' },
@@ -51,6 +52,10 @@ const projects = [
 export default function About() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <SEO
+        title="About Us"
+        description="Learn about Team of Sustainability — our vision, four domains (Technical, Design, Events, R&D), technical projects and achievements at VSSUT, Burla."
+      />
       {/* Mission / Vision */}
       <div className="grid md:grid-cols-2 gap-8">
         <motion.div

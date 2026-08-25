@@ -105,8 +105,18 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="border-t border-forest-800 mt-10 pt-6 text-center text-xs text-forest-300/60">
-          © {new Date().getFullYear()} Team of Sustainability — VSSUT, Burla. Made with 💚 by students.
+        <div className="border-t border-forest-800 mt-10 pt-6 flex flex-col md:flex-row items-center justify-between gap-3 text-xs text-forest-300/60">
+          <span>
+            © {new Date().getFullYear()} Team of Sustainability — VSSUT, Burla. Made with 💚 by students.
+          </span>
+          <div className="flex gap-4">
+            <Link to="/privacy-policy" className="hover:text-white transition-colors">
+              Privacy Policy
+            </Link>
+            <Link to="/terms" className="hover:text-white transition-colors">
+              Terms of Use
+            </Link>
+          </div>
         </div>
       </div>
     </footer>

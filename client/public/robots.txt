@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /admin/
+Disallow: /dashboard
+
+Sitemap: https://tos-web-mauve.vercel.app/sitemap.xml

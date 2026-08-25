@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import SEO from '../../components/common/SEO';
 
 /**
  * 404 — animated not-found page.
@@ -7,6 +8,7 @@ import { motion } from 'framer-motion';
 export default function NotFound() {
   return (
     <div className="min-h-[70vh] flex flex-col items-center justify-center px-4 text-center relative overflow-hidden">
+      <SEO title="Page Not Found" />
       {/* Floating leaves */}
       {['🍃', '🌿', '🍂'].map((leaf, i) => (
         <motion.span

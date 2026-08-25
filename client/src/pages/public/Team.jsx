@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import SEO from '../../components/common/SEO';
 
 // Real team details from the club's official deck.
 // Add/adjust members and photos here as the team changes.
@@ -65,6 +66,10 @@ export default function Team() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center">
+        <SEO
+          title="Our Team"
+          description="Meet the team behind Team of Sustainability — faculty advisors, coordinators and student leaders driving sustainability at VSSUT, Burla."
+        />
         <h1 className="section-title">Meet The Team</h1>
         <p className="text-gray-500 mt-2">
           The people driving change at Team of Sustainability, VSSUT Burla.

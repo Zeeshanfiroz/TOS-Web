@@ -78,7 +78,8 @@ export default function ManageMembers() {
         <Spinner />
       ) : (
         <div className="mt-6 bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm">
-          <table className="w-full text-sm">
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm min-w-[560px]">
             <thead className="bg-forest-50 text-left text-forest-800">
               <tr>
                 <th className="px-5 py-3 font-semibold">Member</th>
@@ -133,6 +134,7 @@ export default function ManageMembers() {
               )}
             </tbody>
           </table>
+          </div>
         </div>
       )}
 

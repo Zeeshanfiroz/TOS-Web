@@ -1,10 +1,12 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
 import { submitContact, clearContactState } from '../../features/contact/contactSlice';
+import SEO from '../../components/common/SEO';
 
 const contactSchema = Yup.object({
   name: Yup.string().trim().required('Name is required').max(100),
@@ -17,21 +19,26 @@ const contactSchema = Yup.object({
 
 export default function Contact() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { isSubmitting, successMessage, error } = useSelector((s) => s.contact);
 
   useEffect(() => {
     if (successMessage) {
-      toast.success(successMessage);
       dispatch(clearContactState());
+      navigate('/thank-you');
     }
     if (error) {
       toast.error(error);
       dispatch(clearContactState());
     }
-  }, [successMessage, error, dispatch]);
+  }, [successMessage, error, dispatch, navigate]);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <SEO
+        title="Contact Us"
+        description="Get in touch with Team of Sustainability at VSSUT Burla — collaborate on green initiatives, events or ask us anything."
+      />
       <div className="grid lg:grid-cols-2 gap-12 items-start">
         {/* Info side */}
         <motion.div initial={{ opacity: 0, x: -24 }} animate={{ opacity: 1, x: 0 }}>

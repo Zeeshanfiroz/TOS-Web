@@ -1,4 +1,5 @@
-import { Routes, Route } from 'react-router-dom';
+import { useEffect } from 'react';
+import { Routes, Route, useLocation } from 'react-router-dom';
 
 // Layout
 import Layout from './components/layout/Layout';
@@ -23,8 +24,16 @@ import OAuthSuccess from './pages/auth/OAuthSuccess';
 import ForgotPassword from './pages/auth/ForgotPassword';
 import ResetPassword from './pages/auth/ResetPassword';
 
+// Post-action & legal
+import ThankYou from './pages/public/ThankYou';
+import PrivacyPolicy from './pages/public/PrivacyPolicy';
+import Terms from './pages/public/Terms';
+
 // 404
 import NotFound from './pages/public/NotFound';
+
+// Analytics (consent-gated)
+import { initAnalytics, trackPageview } from './analytics';
 
 // Member
 import Dashboard from './pages/member/Dashboard';
@@ -39,6 +48,21 @@ import ManageMembers from './pages/admin/ManageMembers';
 import ContactMessages from './pages/admin/ContactMessages';
 
 export default function App() {
+  const location = useLocation();
+
+  // Load analytics only after cookie consent (item #17)
+  useEffect(() => {
+    if (localStorage.getItem('cookie-consent') === 'accepted') initAnalytics();
+    const handler = () => initAnalytics();
+    window.addEventListener('cookie-consent-accepted', handler);
+    return () => window.removeEventListener('cookie-consent-accepted', handler);
+  }, []);
+
+  // SPA pageview tracking on every route change
+  useEffect(() => {
+    trackPageview(location.pathname);
+  }, [location.pathname]);
+
   return (
     <Routes>
       {/* Public */}
@@ -59,6 +83,11 @@ export default function App() {
         <Route path="/oauth-success" element={<OAuthSuccess />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
+
+        {/* Post-action & legal */}
+        <Route path="/thank-you" element={<ThankYou />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/terms" element={<Terms />} />
 
         {/* Member area (protected) */}
         <Route element={<ProtectedRoute />}>

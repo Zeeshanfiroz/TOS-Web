@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { motion, useInView } from 'framer-motion';
+import { motion, AnimatePresence, useInView } from 'framer-motion';
 import { fetchEvents } from '../../features/events/eventsSlice';
 import { fetchAnnouncements as fetchAnns } from '../../features/announcements/announcementsSlice';
 import { fetchGallery as fetchGal } from '../../features/gallery/gallerySlice';
@@ -9,6 +9,7 @@ import EventCard from '../../components/events/EventCard';
 import Spinner from '../../components/ui/Spinner';
 import MagneticButton from '../../components/ui/MagneticButton';
 import Marquee from '../../components/ui/Marquee';
+import SEO from '../../components/common/SEO';
 
 /* ---------- Animated counter ---------- */
 function Counter({ target, suffix = '' }) {
@@ -83,6 +84,14 @@ export default function Home() {
   const eventsLoading = useSelector((s) => s.events.isLoading);
   const announcements = useSelector((s) => s.announcements.list);
   const galleryImages = useSelector((s) => s.gallery.images);
+  const [showStickyCTA, setShowStickyCTA] = useState(false);
+
+  // Sticky mobile CTA appears after scrolling past the hero (item #10)
+  useEffect(() => {
+    const onScroll = () => setShowStickyCTA(window.scrollY > 500);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   useEffect(() => {
     dispatch(fetchEvents({ filter: 'upcoming', page: 1 }));
@@ -92,6 +101,10 @@ export default function Home() {
 
   return (
     <div>
+      <SEO
+        title="Home"
+        description="Team of Sustainability — the official sustainability club of VSSUT, Burla. Join us for plantation drives, IoT projects, workshops and awareness drives for the UN SDGs."
+      />
       {/* ================= HERO ================= */}
       <section className="relative bg-gradient-to-b from-forest-50 via-white to-white overflow-hidden">
         {/* Animated gradient blobs */}
@@ -360,6 +373,26 @@ export default function Home() {
           </motion.div>
         </div>
       </section>
+
+      {/* Sticky mobile CTA (item #10) */}
+      <AnimatePresence>
+        {showStickyCTA && (
+          <motion.div
+            initial={{ y: 90 }}
+            animate={{ y: 0 }}
+            exit={{ y: 90 }}
+            transition={{ type: 'spring', stiffness: 260, damping: 25 }}
+            className="fixed bottom-0 inset-x-0 z-40 md:hidden p-3 glass border-t border-forest-200 shadow-[0_-8px_30px_-12px_rgba(21,128,61,0.35)]"
+          >
+            <Link
+              to="/signup"
+              className="block w-full text-center py-3.5 rounded-xl bg-forest-600 hover:bg-forest-700 text-white font-semibold shadow-lg transition-colors"
+            >
+              Join the Club — It's Free 🌱
+            </Link>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

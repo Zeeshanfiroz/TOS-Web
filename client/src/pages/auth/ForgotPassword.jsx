@@ -5,6 +5,7 @@ import * as Yup from 'yup';
 import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
 import api from '../../api/axios';
+import SEO from '../../components/common/SEO';
 
 const forgotSchema = Yup.object({
   email: Yup.string().email('Invalid email address').required('Email is required'),
@@ -15,6 +16,10 @@ export default function ForgotPassword() {
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center px-4 py-16 bg-gradient-to-b from-forest-50 to-white">
+      <SEO
+        title="Forgot Password"
+        description="Reset your Team of Sustainability account password — we'll email you a secure reset link."
+      />
       <motion.div
         initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
