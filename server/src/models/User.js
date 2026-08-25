@@ -44,6 +44,9 @@ const userSchema = new mongoose.Schema(
     resetPasswordToken: { type: String, select: false }, // stored hashed
     resetPasswordExpiry: { type: Date, select: false },
     lastLogin: { type: Date },
+    // Refresh token rotation: sha256 hash of the currently valid refresh
+    // token. A mismatch on /refresh means the token was reused/stolen.
+    refreshTokenHash: { type: String, select: false },
     avatar: { url: String, fileId: String },
     joinedAt: { type: Date, default: Date.now },
   },

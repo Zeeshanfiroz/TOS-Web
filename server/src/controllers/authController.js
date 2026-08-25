@@ -21,23 +21,27 @@ const cookieOptions = {
   maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
 };
 
+const sha256 = (value) => crypto.createHash('sha256').update(value).digest('hex');
+
 /**
- * Issue the full token pair (spec C4.5-6):
- *  - Access token (1h): httpOnly cookie + returned in body (for OAuth redirect)
- *  - Refresh token (7d): ALWAYS httpOnly cookie
+ * Issue the full token pair (spec C4.5-6) with REFRESH TOKEN ROTATION:
+ *  - Access token (1h): httpOnly cookie + returned in body (OAuth redirect)
+ *  - Refresh token (7d): httpOnly cookie, its sha256 hash stored on the
+ *    user. Reuse of an old refresh token = replay/theft → session revoked.
  */
-const issueTokens = (user, res) => {
+const issueTokens = async (user, res) => {
   const accessToken = generateAccessToken(user._id);
   const refreshToken = generateRefreshToken(user._id);
+
+  user.refreshTokenHash = sha256(refreshToken);
+  user.lastLogin = new Date();
+  await user.save();
 
   res.cookie(COOKIE_NAME, accessToken, {
     ...cookieOptions,
     maxAge: 60 * 60 * 1000, // 1 hour
   });
   res.cookie(REFRESH_COOKIE_NAME, refreshToken, cookieOptions);
-
-  user.lastLogin = new Date();
-  user.save().catch(() => {}); // fire-and-forget
 
   return accessToken;
 };
@@ -152,7 +156,7 @@ export const verifyOtp = async (req, res) => {
   await user.save();
 
   // Log them in right away (access + refresh tokens)
-  const accessToken = issueTokens(user, res);
+  const accessToken = await issueTokens(user, res);
 
   // Welcome email in the background queue
   sendEmail(
@@ -232,7 +236,7 @@ export const login = async (req, res) => {
     });
   }
 
-  const accessToken = issueTokens(user, res);
+  const accessToken = await issueTokens(user, res);
 
   res.json({
     success: true,
@@ -247,9 +251,26 @@ export const login = async (req, res) => {
 };
 
 /**
- * POST /api/auth/logout — clears both cookies
+ * POST /api/auth/logout — clears both cookies AND invalidates the stored
+ * refresh hash, so the (still-unexpired) refresh token can't be replayed.
  */
-export const logout = (req, res) => {
+export const logout = async (req, res) => {
+  const refreshToken = req.cookies?.[REFRESH_COOKIE_NAME];
+  if (refreshToken) {
+    try {
+      const decoded = jwt.verify(
+        refreshToken,
+        process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET
+      );
+      await User.updateOne(
+        { _id: decoded.id },
+        { $unset: { refreshTokenHash: 1 } }
+      );
+    } catch {
+      // invalid/expired token — nothing to invalidate
+    }
+  }
+
   const clearOpts = {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
@@ -261,9 +282,12 @@ export const logout = (req, res) => {
 };
 
 /**
- * POST /api/auth/refresh (spec C5)
- * Reads the refresh-token cookie, verifies it, issues a fresh access token
- * and rotates the refresh token.
+ * POST /api/auth/refresh (spec C5) — with REFRESH TOKEN ROTATION:
+ *  1. Verify the refresh token's signature + expiry
+ *  2. Compare its sha256 hash with the one stored on the user — a mismatch
+ *     means an old/rotated token was REUSED (theft/replay) → revoke session
+ *  3. On success: rotate — issue a NEW refresh token (new hash stored) and a
+ *     fresh access token
  */
 export const refresh = async (req, res) => {
   const refreshToken = req.cookies?.[REFRESH_COOKIE_NAME];
@@ -271,35 +295,56 @@ export const refresh = async (req, res) => {
     return res.status(401).json({ success: false, message: 'No refresh token' });
   }
 
+  let decoded;
   try {
-    const decoded = jwt.verify(
+    decoded = jwt.verify(
       refreshToken,
       process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET
     );
-    const user = await User.findById(decoded.id);
-    if (!user) {
-      return res.status(401).json({ success: false, message: 'User no longer exists' });
-    }
-
-    const accessToken = generateAccessToken(user._id);
-    res.cookie(COOKIE_NAME, accessToken, {
-      ...cookieOptions,
-      maxAge: 60 * 60 * 1000, // 1 hour
-    });
-
-    res.json({
-      success: true,
-      data: {
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        accessToken,
-      },
-    });
   } catch {
     return res.status(401).json({ success: false, message: 'Invalid or expired refresh token' });
   }
+
+  const user = await User.findById(decoded.id).select('+refreshTokenHash');
+  if (!user) {
+    return res.status(401).json({ success: false, message: 'User no longer exists' });
+  }
+
+  // Replay detection: the presented token must match the stored hash.
+  // If not, this token was already rotated away → likely theft → revoke.
+  if (!user.refreshTokenHash || user.refreshTokenHash !== sha256(refreshToken)) {
+    user.refreshTokenHash = undefined; // kill the session entirely
+    await user.save();
+    res.clearCookie(COOKIE_NAME, cookieOptions);
+    res.clearCookie(REFRESH_COOKIE_NAME, cookieOptions);
+    return res.status(401).json({
+      success: false,
+      message: 'Session revoked due to suspicious activity. Please login again.',
+    });
+  }
+
+  // Rotate: new refresh token (new stored hash) + fresh access token
+  const accessToken = generateAccessToken(user._id);
+  const newRefreshToken = generateRefreshToken(user._id);
+  user.refreshTokenHash = sha256(newRefreshToken);
+  await user.save();
+
+  res.cookie(COOKIE_NAME, accessToken, {
+    ...cookieOptions,
+    maxAge: 60 * 60 * 1000, // 1 hour
+  });
+  res.cookie(REFRESH_COOKIE_NAME, newRefreshToken, cookieOptions);
+
+  res.json({
+    success: true,
+    data: {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      accessToken,
+    },
+  });
 };
 
 /**
@@ -388,10 +433,10 @@ export const getMe = (req, res) => {
  * OAuth callback handler (spec D3) — after passport authenticates:
  * issue tokens, set refresh cookie, redirect to frontend with access token.
  */
-export const oauthSuccess = (provider) => (req, res) => {
+export const oauthSuccess = (provider) => async (req, res) => {
   if (!req.user) {
     return res.redirect(`${process.env.CLIENT_URL}/login?error=oauth_failed`);
   }
-  const accessToken = issueTokens(req.user, res);
+  const accessToken = await issueTokens(req.user, res);
   res.redirect(`${process.env.CLIENT_URL}/oauth-success?token=${accessToken}`);
 };
