@@ -2,7 +2,8 @@ import { useEffect, useMemo, useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
 import { fetchGallery } from '../../features/gallery/gallerySlice';
-import Lightbox from '../../components/ui/Lightbox';
+import useLockBodyScroll from '../../hooks/useLockBodyScroll';
+import useFocusTrap from '../../hooks/useFocusTrap';
 import Spinner from '../../components/ui/Spinner';
 import ErrorState from '../../components/ui/ErrorState';
 import SEO from '../../components/common/SEO';
@@ -146,23 +147,64 @@ export default function Gallery() {
         </div>
       )}
 
-      {/* Lightbox — shared infrastructure (ui/Lightbox) */}
+      {/* Lightbox */}
       <AnimatePresence>
         {lightbox !== null && images[lightbox] && (
-          <Lightbox
-            open
-            onClose={close}
-            label="Image lightbox"
-            item={{
-              src: images[lightbox].imageUrl,
-              alt: images[lightbox].caption || '',
-              title: images[lightbox].caption || 'Club moment',
-            }}
-            onPrev={lightbox > 0 ? () => setLightbox(lightbox - 1) : undefined}
-            onNext={
-              lightbox < images.length - 1 ? () => setLightbox(lightbox + 1) : undefined
-            }
-          />
+          <motion.div
+            ref={trapRef}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Image lightbox"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center p-4"
+            onClick={close}
+          >
+            <button
+              className="absolute top-5 right-5 text-white/80 hover:text-white text-3xl"
+              onClick={close}
+              aria-label="Close"
+            >
+              ×
+            </button>
+            {lightbox > 0 && (
+              <button
+                className="absolute left-4 text-white/70 hover:text-white text-4xl px-3"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setLightbox(lightbox - 1);
+                }}
+                aria-label="Previous"
+              >
+                ‹
+              </button>
+            )}
+            <motion.img
+              key={images[lightbox]._id}
+              initial={{ scale: 0.9 }}
+              animate={{ scale: 1 }}
+              src={images[lightbox].imageUrl}
+              alt={images[lightbox].caption || ''}
+              className="max-h-[85vh] max-w-full rounded-xl shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            />
+            {lightbox < images.length - 1 && (
+              <button
+                className="absolute right-4 text-white/70 hover:text-white text-4xl px-3"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setLightbox(lightbox + 1);
+                }}
+                aria-label="Next"
+              >
+                ›
+              </button>
+            )}
+            {images[lightbox].caption && (
+              <p className="absolute bottom-6 text-white/80 text-sm">{images[lightbox].caption}</p>
+            )}
+          </motion.div>
         )}
       </AnimatePresence>
     </div>
