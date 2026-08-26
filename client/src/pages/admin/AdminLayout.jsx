@@ -15,7 +15,7 @@ export default function AdminLayout() {
       <div className="flex flex-col lg:flex-row gap-8">
         {/* Sidebar */}
         <aside className="lg:w-56 shrink-0">
-          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3 px-2">
+          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3 px-2">
             Admin Panel
           </p>
           <nav className="flex lg:flex-col gap-1 overflow-x-auto pb-2 lg:pb-0">

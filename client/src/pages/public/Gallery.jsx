@@ -1,13 +1,16 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useMemo, useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
 import { fetchGallery } from '../../features/gallery/gallerySlice';
+import useLockBodyScroll from '../../hooks/useLockBodyScroll';
+import useFocusTrap from '../../hooks/useFocusTrap';
 import Spinner from '../../components/ui/Spinner';
+import ErrorState from '../../components/ui/ErrorState';
 import SEO from '../../components/common/SEO';
 
 export default function Gallery() {
   const dispatch = useDispatch();
-  const { images, pagination, isLoading } = useSelector((s) => s.gallery);
+  const { images, pagination, isLoading, error } = useSelector((s) => s.gallery);
   const [eventRef, setEventRef] = useState('');
   const [page, setPage] = useState(1);
   const [lightbox, setLightbox] = useState(null); // index of open image
@@ -17,6 +20,21 @@ export default function Gallery() {
   }, [dispatch, eventRef, page]);
 
   const close = useCallback(() => setLightbox(null), []);
+
+  // Freeze background scroll while the lightbox is open
+  useLockBodyScroll(lightbox !== null);
+
+  // Trap keyboard focus inside the lightbox; restore focus on close
+  const trapRef = useFocusTrap(lightbox !== null);
+
+  // Unique events for the filter chips — derived once per `images` change,
+  // not re-computed on every render (typing, hover, lightbox state, etc.)
+  const uniqueEvents = useMemo(
+    () => [
+      ...new Map(images.filter((i) => i.eventRef).map((i) => [i.eventRef._id, i.eventRef])).values(),
+    ],
+    [images]
+  );
 
   // Keyboard navigation in lightbox
   useEffect(() => {
@@ -53,8 +71,7 @@ export default function Gallery() {
           All Photos
         </button>
         {/* Unique events from loaded images */}
-        {[...new Map(images.filter((i) => i.eventRef).map((i) => [i.eventRef._id, i.eventRef])).values()].map(
-          (ev) => (
+        {uniqueEvents.map((ev) => (
             <button
               key={ev._id}
               onClick={() => {
@@ -76,6 +93,11 @@ export default function Gallery() {
       {/* Masonry-ish grid */}
       {isLoading && page === 1 ? (
         <Spinner fullPage />
+      ) : error && page === 1 ? (
+        <ErrorState
+          message={error}
+          onRetry={() => dispatch(fetchGallery({ eventRef, page }))}
+        />
       ) : images.length === 0 ? (
         <div className="text-center py-20">
           <span className="text-5xl">📷</span>
@@ -92,11 +114,15 @@ export default function Gallery() {
               onClick={() => setLightbox(i)}
               className="block w-full rounded-2xl overflow-hidden group relative"
             >
+              {/* Placeholder bg + reserved min-height reduce layout shift
+                  while the image loads (masonry ratios are unknown until
+                  upload dimensions are read) */}
               <img
                 src={img.imageUrl}
                 alt={img.caption || 'Club moment'}
                 loading="lazy"
-                className="w-full object-cover group-hover:scale-105 transition-transform duration-300"
+                decoding="async"
+                className="w-full min-h-[160px] bg-forest-100/70 object-cover group-hover:scale-105 transition-transform duration-300"
               />
               {img.caption && (
                 <span className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/60 to-transparent text-white text-xs p-3 text-left opacity-0 group-hover:opacity-100 transition-opacity">
@@ -125,6 +151,10 @@ export default function Gallery() {
       <AnimatePresence>
         {lightbox !== null && images[lightbox] && (
           <motion.div
+            ref={trapRef}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Image lightbox"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}

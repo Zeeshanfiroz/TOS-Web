@@ -4,15 +4,28 @@ import { useDispatch, useSelector } from 'react-redux';
 import { motion } from 'framer-motion';
 import { fetchAnnouncementById } from '../../features/announcements/announcementsSlice';
 import Spinner from '../../components/ui/Spinner';
+import ErrorState from '../../components/ui/ErrorState';
 
 export default function AnnouncementDetail() {
   const { id } = useParams();
   const dispatch = useDispatch();
-  const { current: post, isLoading } = useSelector((s) => s.announcements);
+  const { current: post, isLoading, error } = useSelector((s) => s.announcements);
 
   useEffect(() => {
     dispatch(fetchAnnouncementById(id));
   }, [dispatch, id]);
+
+  // Error → friendly state with retry (was previously an infinite spinner!)
+  if (error && !post) {
+    return (
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <ErrorState
+          message={error}
+          onRetry={() => dispatch(fetchAnnouncementById(id))}
+        />
+      </div>
+    );
+  }
 
   if (isLoading || !post) return <Spinner fullPage />;
 

@@ -1,11 +1,12 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { Formik, Form, Field, ErrorMessage } from 'formik';
+import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
 import { submitContact, clearContactState } from '../../features/contact/contactSlice';
+import TextField, { TextArea } from '../../components/ui/FormFields';
 import SEO from '../../components/common/SEO';
 
 const contactSchema = Yup.object({
@@ -82,55 +83,36 @@ export default function Contact() {
               dispatch(submitContact(values)).then(() => resetForm());
             }}
           >
-            {() => (
+            {({ errors }) => (
               <Form className="space-y-5">
-                <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1.5">
-                    Your Name
-                  </label>
-                  <Field
-                    id="name"
-                    name="name"
-                    type="text"
-                    placeholder="Jane Doe"
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-forest-300 focus:border-forest-400"
-                  />
-                  <ErrorMessage name="name" component="p" className="text-xs text-red-500 mt-1" />
-                </div>
+                <TextField
+                  label="Your Name"
+                  name="name"
+                  type="text"
+                  placeholder="Jane Doe"
+                  errors={errors}
+                />
 
-                <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1.5">
-                    Email Address
-                  </label>
-                  <Field
-                    id="email"
-                    name="email"
-                    type="email"
-                    placeholder="jane@college.edu"
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-forest-300 focus:border-forest-400"
-                  />
-                  <ErrorMessage name="email" component="p" className="text-xs text-red-500 mt-1" />
-                </div>
+                <TextField
+                  label="Email Address"
+                  name="email"
+                  type="email"
+                  placeholder="jane@college.edu"
+                  errors={errors}
+                />
 
-                <div>
-                  <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1.5">
-                    Message
-                  </label>
-                  <Field
-                    as="textarea"
-                    id="message"
-                    name="message"
-                    rows={5}
-                    placeholder="Tell us what's on your mind..."
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-forest-300 focus:border-forest-400 resize-none"
-                  />
-                  <ErrorMessage name="message" component="p" className="text-xs text-red-500 mt-1" />
-                </div>
+                <TextArea
+                  label="Message"
+                  name="message"
+                  rows={5}
+                  placeholder="Tell us what's on your mind..."
+                  errors={errors}
+                />
 
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full py-3.5 rounded-xl bg-forest-600 hover:bg-forest-700 text-white font-semibold shadow-lg shadow-forest-200 transition-colors disabled:opacity-60"
+                  className="btn btn-primary w-full py-3.5"
                 >
                   {isSubmitting ? 'Sending...' : 'Send Message 🌱'}
                 </button>

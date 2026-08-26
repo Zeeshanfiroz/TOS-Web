@@ -65,7 +65,7 @@ export default function PrivacyPolicy() {
         description="How Team of Sustainability (VSSUT Burla) collects, uses and protects your data — cookies, third-party services and your rights."
       />
       <h1 className="section-title">Privacy Policy</h1>
-      <p className="text-sm text-gray-400 mt-2">Last updated: August 2026</p>
+      <p className="text-sm text-gray-500 mt-2">Last updated: August 2026</p>
 
       <p className="text-gray-600 mt-6 leading-relaxed">
         Team of Sustainability (&quot;we&quot;, &quot;the club&quot;), VSSUT

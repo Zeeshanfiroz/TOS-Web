@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { motion, AnimatePresence, useInView } from 'framer-motion';
+import { motion, AnimatePresence, useInView, useReducedMotion } from 'framer-motion';
 import { fetchEvents } from '../../features/events/eventsSlice';
 import { fetchAnnouncements as fetchAnns } from '../../features/announcements/announcementsSlice';
 import { fetchGallery as fetchGal } from '../../features/gallery/gallerySlice';
@@ -11,14 +11,20 @@ import MagneticButton from '../../components/ui/MagneticButton';
 import Marquee from '../../components/ui/Marquee';
 import SEO from '../../components/common/SEO';
 
-/* ---------- Animated counter ---------- */
+/* ---------- Animated counter (respects prefers-reduced-motion) ---------- */
 function Counter({ target, suffix = '' }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true });
+  const reduceMotion = useReducedMotion();
   const [value, setValue] = useState(0);
 
   useEffect(() => {
     if (!inView) return;
+    // Reduced motion → show the final number instantly, no counting
+    if (reduceMotion) {
+      setValue(target);
+      return;
+    }
     const duration = 1500;
     const start = performance.now();
     let raf;
@@ -29,7 +35,7 @@ function Counter({ target, suffix = '' }) {
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [inView, target]);
+  }, [inView, target, reduceMotion]);
 
   return (
     <span ref={ref}>
@@ -39,8 +45,11 @@ function Counter({ target, suffix = '' }) {
   );
 }
 
-/* ---------- Floating leaf decoration ---------- */
+/* ---------- Floating leaf decoration (skipped for reduced motion) ---------- */
 function FloatingLeaves() {
+  const reduceMotion = useReducedMotion();
+  if (reduceMotion) return null;
+
   const leaves = [
     { left: '8%', delay: 0, size: 28 },
     { left: '22%', delay: 1.5, size: 20 },

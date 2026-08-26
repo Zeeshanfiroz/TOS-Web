@@ -1,13 +1,14 @@
 import { useEffect } from 'react';
 import { Link, useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { Formik, Form, Field, ErrorMessage } from 'formik';
+import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
 import { login } from '../../features/auth/authSlice';
 import { API_BASE } from '../../api/axios';
 import PasswordInput from '../../components/ui/PasswordInput';
+import TextField from '../../components/ui/FormFields';
 import SEO from '../../components/common/SEO';
 
 const loginSchema = Yup.object({
@@ -63,21 +64,15 @@ export default function Login() {
                 .catch((msg) => toast.error(msg));
             }}
           >
-            {() => (
+            {({ errors }) => (
               <Form className="space-y-5">
-                <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1.5">
-                    Email
-                  </label>
-                  <Field
-                    id="email"
-                    name="email"
-                    type="email"
-                    placeholder="you@college.edu"
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-forest-300 focus:border-forest-400"
-                  />
-                  <ErrorMessage name="email" component="p" className="text-xs text-red-500 mt-1" />
-                </div>
+                <TextField
+                  label="Email"
+                  name="email"
+                  type="email"
+                  placeholder="you@college.edu"
+                  errors={errors}
+                />
 
                 <div>
                   <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1.5">
@@ -89,15 +84,19 @@ export default function Login() {
                     type="password"
                     placeholder="••••••••"
                     component={PasswordInput}
+                    aria-describedby="password-error"
+                    aria-invalid={errors.password ? true : undefined}
                     className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-forest-300 focus:border-forest-400"
                   />
-                  <ErrorMessage name="password" component="p" className="text-xs text-red-500 mt-1" />
+                  <p id="password-error" className="text-xs text-red-500 mt-1 empty:hidden">
+                    {errors.password}
+                  </p>
                 </div>
 
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full py-3.5 rounded-xl bg-forest-600 hover:bg-forest-700 text-white font-semibold shadow-lg shadow-forest-200 transition-colors disabled:opacity-60"
+                  className="btn btn-primary w-full py-3.5"
                 >
                   {isLoading ? 'Logging in...' : 'Login'}
                 </button>
@@ -114,7 +113,7 @@ export default function Login() {
                 {/* OAuth divider */}
                 <div className="flex items-center gap-3 py-2">
                   <span className="flex-1 h-px bg-gray-200" />
-                  <span className="text-xs text-gray-400 uppercase tracking-wider">or continue with</span>
+                  <span className="text-xs text-gray-500 uppercase tracking-wider">or continue with</span>
                   <span className="flex-1 h-px bg-gray-200" />
                 </div>
 

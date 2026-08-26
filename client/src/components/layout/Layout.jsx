@@ -9,15 +9,24 @@ export default function Layout() {
 
   return (
     <div className="min-h-screen flex flex-col">
+      {/* Skip-to-content — first tabbable element for keyboard users (item 7) */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[200] focus:px-4 focus:py-2 focus:rounded-lg focus:bg-forest-600 focus:text-white focus:font-semibold focus:shadow-lg"
+      >
+        Skip to main content
+      </a>
       <Navbar />
       <AnimatePresence mode="wait">
         <motion.main
+          id="main-content"
           key={location.pathname}
           initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -10 }}
           transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
           className="flex-1"
+          tabIndex={-1}
         >
           <Outlet />
         </motion.main>

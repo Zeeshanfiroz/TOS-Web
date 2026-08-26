@@ -7,6 +7,7 @@ import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
 import { signup, verifyOtp, resendOtp } from '../../features/auth/authSlice';
 import PasswordInput from '../../components/ui/PasswordInput';
+import TextField from '../../components/ui/FormFields';
 import SEO from '../../components/common/SEO';
 
 const signupSchema = Yup.object({
@@ -112,35 +113,23 @@ export default function Signup() {
               validationSchema={signupSchema}
               onSubmit={handleSignup}
             >
-              {() => (
+              {({ errors }) => (
                 <Form className="space-y-5">
-                  <div>
-                    <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1.5">
-                      Full Name
-                    </label>
-                    <Field
-                      id="name"
-                      name="name"
-                      type="text"
-                      placeholder="Jane Doe"
-                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-forest-300 focus:border-forest-400"
-                    />
-                    <ErrorMessage name="name" component="p" className="text-xs text-red-500 mt-1" />
-                  </div>
+                  <TextField
+                    label="Full Name"
+                    name="name"
+                    type="text"
+                    placeholder="Jane Doe"
+                    errors={errors}
+                  />
 
-                  <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1.5">
-                      Email
-                    </label>
-                    <Field
-                      id="email"
-                      name="email"
-                      type="email"
-                      placeholder="you@college.edu"
-                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-forest-300 focus:border-forest-400"
-                    />
-                    <ErrorMessage name="email" component="p" className="text-xs text-red-500 mt-1" />
-                  </div>
+                  <TextField
+                    label="Email"
+                    name="email"
+                    type="email"
+                    placeholder="you@college.edu"
+                    errors={errors}
+                  />
 
                   <div>
                     <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1.5">
@@ -152,9 +141,16 @@ export default function Signup() {
                       type="password"
                       placeholder="Min. 8 characters"
                       component={PasswordInput}
+                      aria-describedby="password-error"
+                      aria-invalid={errors.password ? true : undefined}
                       className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-forest-300 focus:border-forest-400"
                     />
-                    <ErrorMessage name="password" component="p" className="text-xs text-red-500 mt-1" />
+                    <ErrorMessage
+                      id="password-error"
+                      name="password"
+                      component="p"
+                      className="text-xs text-red-500 mt-1"
+                    />
                   </div>
 
                   <div>
@@ -170,9 +166,12 @@ export default function Signup() {
                       type="password"
                       placeholder="Repeat your password"
                       component={PasswordInput}
+                      aria-describedby="confirmPassword-error"
+                      aria-invalid={errors.confirmPassword ? true : undefined}
                       className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-forest-300 focus:border-forest-400"
                     />
                     <ErrorMessage
+                      id="confirmPassword-error"
                       name="confirmPassword"
                       component="p"
                       className="text-xs text-red-500 mt-1"
@@ -182,7 +181,7 @@ export default function Signup() {
                   <button
                     type="submit"
                     disabled={isLoading}
-                    className="w-full py-3.5 rounded-xl bg-forest-600 hover:bg-forest-700 text-white font-semibold shadow-lg shadow-forest-200 transition-colors disabled:opacity-60"
+                    className="btn btn-primary w-full py-3.5"
                   >
                     {isLoading ? 'Creating account...' : 'Create Account →'}
                   </button>
@@ -215,18 +214,18 @@ export default function Signup() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full py-3.5 rounded-xl bg-forest-600 hover:bg-forest-700 text-white font-semibold shadow-lg shadow-forest-200 transition-colors disabled:opacity-60"
+                className="btn btn-primary w-full py-3.5"
               >
                 {isLoading ? 'Verifying...' : 'Verify & Join 🌱'}
               </button>
 
               <div className="text-center text-sm space-y-2">
-                <p className="text-gray-400">Didn't get the code?</p>
+                <p className="text-gray-500">Didn't get the code?</p>
                 <button
                   type="button"
                   onClick={handleResend}
                   disabled={resendIn > 0}
-                  className="font-semibold text-forest-600 hover:underline disabled:text-gray-400 disabled:no-underline disabled:cursor-not-allowed"
+                  className="font-semibold text-forest-600 hover:underline disabled:text-gray-500 disabled:no-underline disabled:cursor-not-allowed"
                 >
                   {resendIn > 0 ? `Resend code in ${resendIn}s` : 'Resend Code'}
                 </button>

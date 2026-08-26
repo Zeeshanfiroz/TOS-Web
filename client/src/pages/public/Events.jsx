@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { fetchEvents } from '../../features/events/eventsSlice';
 import EventCard from '../../components/events/EventCard';
 import { SkeletonGrid } from '../../components/ui/SkeletonCard';
+import ErrorState from '../../components/ui/ErrorState';
 import SEO from '../../components/common/SEO';
 
 const filters = [
@@ -13,7 +14,7 @@ const filters = [
 
 export default function Events() {
   const dispatch = useDispatch();
-  const { list, pagination, isLoading } = useSelector((s) => s.events);
+  const { list, pagination, isLoading, error } = useSelector((s) => s.events);
 
   const [filter, setFilter] = useState('upcoming');
   const [search, setSearch] = useState('');
@@ -72,7 +73,7 @@ export default function Events() {
             placeholder="Search events..."
             className="w-full sm:w-72 pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-forest-300 focus:border-forest-400"
           />
-          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">🔍</span>
+          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">🔍</span>
         </div>
       </div>
 
@@ -81,6 +82,11 @@ export default function Events() {
         <div className="mt-10">
           <SkeletonGrid count={6} />
         </div>
+      ) : error ? (
+        <ErrorState
+          message={error}
+          onRetry={() => dispatch(fetchEvents({ filter, search, page }))}
+        />
       ) : list.length === 0 ? (
         <div className="text-center py-20">
           <span className="text-5xl">🌱</span>

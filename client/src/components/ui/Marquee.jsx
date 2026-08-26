@@ -1,6 +1,11 @@
 /**
  * Marquee — infinite scrolling strip. Duplicates content for a seamless loop.
- * Pauses on hover (see .marquee-hover in index.css).
+ * Pauses on hover (see .marquee-hover in index.css). Respects
+ * prefers-reduced-motion via the global CSS media query.
+ *
+ * Props:
+ *   items     — array of { icon: ReactNode, label: string }
+ *   className — extra classes on the outer container
  */
 export default function Marquee({ items, className = '' }) {
   const row = (key) => (

@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Formik, Form, Field, ErrorMessage } from 'formik';
+import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
 import api from '../../api/axios';
+import TextField from '../../components/ui/FormFields';
 import SEO from '../../components/common/SEO';
 
 const forgotSchema = Yup.object({
@@ -70,26 +71,20 @@ export default function ForgotPassword() {
                 }
               }}
             >
-              {({ isSubmitting }) => (
+              {({ isSubmitting, errors }) => (
                 <Form className="space-y-5">
-                  <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1.5">
-                      Email
-                    </label>
-                    <Field
-                      id="email"
-                      name="email"
-                      type="email"
-                      placeholder="you@college.edu"
-                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-forest-300 focus:border-forest-400"
-                    />
-                    <ErrorMessage name="email" component="p" className="text-xs text-red-500 mt-1" />
-                  </div>
+                  <TextField
+                    label="Email"
+                    name="email"
+                    type="email"
+                    placeholder="you@college.edu"
+                    errors={errors}
+                  />
 
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full py-3.5 rounded-xl bg-forest-600 hover:bg-forest-700 text-white font-semibold shadow-lg shadow-forest-200 transition-colors disabled:opacity-60"
+                    className="btn btn-primary w-full py-3.5"
                   >
                     {isSubmitting ? 'Sending...' : 'Send Reset Link 📧'}
                   </button>

@@ -4,11 +4,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { motion } from 'framer-motion';
 import { fetchAnnouncements } from '../../features/announcements/announcementsSlice';
 import { SkeletonCard } from '../../components/ui/SkeletonCard';
+import ErrorState from '../../components/ui/ErrorState';
 import SEO from '../../components/common/SEO';
 
 export default function Announcements() {
   const dispatch = useDispatch();
-  const { list, pagination, isLoading } = useSelector((s) => s.announcements);
+  const { list, pagination, isLoading, error } = useSelector((s) => s.announcements);
   const [page, setPage] = useState(1);
 
   useEffect(() => {
@@ -32,6 +33,14 @@ export default function Announcements() {
             <SkeletonCard key={i} hasImage={false} />
           ))}
         </div>
+      ) : error ? (
+        <ErrorState
+          message={error}
+          onRetry={() => {
+            setPage(1);
+            dispatch(fetchAnnouncements({ page: 1 }));
+          }}
+        />
       ) : list.length === 0 ? (
         <div className="text-center py-20">
           <span className="text-5xl">📢</span>

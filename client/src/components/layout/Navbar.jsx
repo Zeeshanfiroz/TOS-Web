@@ -69,7 +69,7 @@ export default function Navbar() {
             </motion.span>
             <span className="font-display font-bold text-base sm:text-lg text-forest-800 leading-tight">
               Team of <span className="text-gradient">Sustainability</span>
-              <span className="block text-[10px] font-medium text-gray-400 -mt-0.5">
+              <span className="block text-[10px] font-medium text-gray-500 -mt-0.5">
                 VSSUT, Burla
               </span>
             </span>
@@ -142,7 +142,9 @@ export default function Navbar() {
           <button
             className="lg:hidden p-2 rounded-lg hover:bg-forest-50"
             onClick={() => setOpen(!open)}
-            aria-label="Toggle menu"
+            aria-label={open ? 'Close menu' : 'Open menu'}
+            aria-expanded={open}
+            aria-controls="mobile-menu"
           >
             <svg className="w-6 h-6 text-forest-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               {open ? (
@@ -159,6 +161,7 @@ export default function Navbar() {
       <AnimatePresence>
         {open && (
           <motion.div
+            id="mobile-menu"
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}

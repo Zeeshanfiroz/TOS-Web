@@ -71,7 +71,7 @@ export default function ResetPassword() {
                 }
               }}
             >
-              {({ isSubmitting }) => (
+              {({ isSubmitting, errors }) => (
                 <Form className="space-y-5">
                   <div>
                     <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1.5">
@@ -83,9 +83,16 @@ export default function ResetPassword() {
                       type="password"
                       placeholder="Min. 8 characters"
                       component={PasswordInput}
+                      aria-describedby="password-error"
+                      aria-invalid={errors.password ? true : undefined}
                       className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-forest-300 focus:border-forest-400"
                     />
-                    <ErrorMessage name="password" component="p" className="text-xs text-red-500 mt-1" />
+                    <ErrorMessage
+                      id="password-error"
+                      name="password"
+                      component="p"
+                      className="text-xs text-red-500 mt-1"
+                    />
                   </div>
 
                   <div>
@@ -101,9 +108,12 @@ export default function ResetPassword() {
                       type="password"
                       placeholder="Repeat new password"
                       component={PasswordInput}
+                      aria-describedby="confirmPassword-error"
+                      aria-invalid={errors.confirmPassword ? true : undefined}
                       className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-forest-300 focus:border-forest-400"
                     />
                     <ErrorMessage
+                      id="confirmPassword-error"
                       name="confirmPassword"
                       component="p"
                       className="text-xs text-red-500 mt-1"
@@ -113,7 +123,7 @@ export default function ResetPassword() {
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full py-3.5 rounded-xl bg-forest-600 hover:bg-forest-700 text-white font-semibold shadow-lg shadow-forest-200 transition-colors disabled:opacity-60"
+                    className="btn btn-primary w-full py-3.5"
                   >
                     {isSubmitting ? 'Resetting...' : 'Reset Password 🔐'}
                   </button>

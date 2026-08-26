@@ -52,7 +52,7 @@ export default function Terms() {
         description="Terms of use for the Team of Sustainability website — accounts, acceptable use, content ownership and liability."
       />
       <h1 className="section-title">Terms of Use</h1>
-      <p className="text-sm text-gray-400 mt-2">Last updated: August 2026</p>
+      <p className="text-sm text-gray-500 mt-2">Last updated: August 2026</p>
 
       <p className="text-gray-600 mt-6 leading-relaxed">
         By using this website and becoming a member of Team of Sustainability,

@@ -4,6 +4,11 @@ import { motion, useMotionValue, useSpring } from 'framer-motion';
 /**
  * MagneticButton — element gently follows the cursor, springs back on leave.
  * Wrap any button/link: <MagneticButton><Link .../></MagneticButton>
+ *
+ * Props:
+ *   children — the interactive element to wrap
+ *   className — extra classes on the motion wrapper
+ *   strength — 0..1, how strongly the element follows the cursor (default 0.3)
  */
 export default function MagneticButton({ children, className = '', strength = 0.3 }) {
   const ref = useRef(null);

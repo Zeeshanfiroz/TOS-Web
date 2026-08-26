@@ -67,7 +67,7 @@ export default function ContactMessages() {
       ) : messages.length === 0 ? (
         <div className="text-center py-16">
           <span className="text-4xl">📭</span>
-          <p className="text-gray-400 mt-3">No {status || ''} messages.</p>
+          <p className="text-gray-500 mt-3">No {status || ''} messages.</p>
         </div>
       ) : (
         <div className="mt-6 space-y-4">
@@ -87,7 +87,7 @@ export default function ContactMessages() {
                       ({msg.email})
                     </a>
                   </p>
-                  <p className="text-xs text-gray-400 mt-0.5">
+                  <p className="text-xs text-gray-500 mt-0.5">
                     {new Date(msg.createdAt).toLocaleString('en-IN')}
                   </p>
                 </div>

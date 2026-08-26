@@ -49,6 +49,85 @@ body {
   background: #15803d;
 }
 
+/* ── Shared button system (item 14) ──
+   One source of truth for hover/active/focus/disabled so buttons feel
+   identical everywhere. Compose in markup: className="btn btn-primary w-full" */
+.btn {
+  @apply inline-flex items-center justify-center gap-2 rounded-xl font-semibold
+    transition-all duration-200 select-none
+    focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-forest-300
+    focus-visible:ring-offset-2
+    disabled:opacity-60 disabled:cursor-not-allowed;
+}
+.btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+.btn-primary {
+  @apply bg-forest-600 hover:bg-forest-700 text-white
+    shadow-lg shadow-forest-200 hover:shadow-forest-300;
+}
+.btn-secondary {
+  @apply bg-white border border-forest-200 text-forest-700
+    hover:bg-forest-50 active:bg-forest-100;
+}
+.btn-danger-ghost {
+  @apply bg-red-50 hover:bg-red-100 text-red-600 border border-red-200;
+}
+
+/* ── Toast theming (item 15) — match the forest palette ── */
+.Toastify__toast {
+  border-radius: 0.75rem;
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  box-shadow: 0 10px 30px -10px rgba(20, 83, 45, 0.25);
+}
+.Toastify__toast--success {
+  border-left: 4px solid #16a34a;
+}
+.Toastify__toast--error {
+  border-left: 4px solid #dc2626;
+}
+.Toastify__toast--info {
+  border-left: 4px solid #0d9488;
+}
+.Toastify__progress-bar--success {
+  background: linear-gradient(90deg, #22c55e, #15803d);
+}
+.Toastify__progress-bar--error {
+  background: #dc2626;
+}
+
+/* ── Accessible keyboard focus (item 7) ──
+   Consistent, highly-visible focus ring for keyboard users on ALL
+   interactive elements. `focus-visible` keeps mouse clicks clean. */
+:focus-visible {
+  outline: 3px solid #16a34a;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ── Reduced motion (item 10) ──
+   Users who opt out of animations at the OS level get a calm experience:
+   decorative CSS animations stop, smooth scroll becomes instant. Framer
+   Motion animations are handled via <MotionConfig reducedMotion="user">. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .animate-blob,
+  .animate-marquee,
+  .animate-float-y,
+  .animate-pulse-soft,
+  .animate-bounce-soft {
+    animation: none;
+  }
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+  }
+}
+
 /* Utility for section headings */
 .section-title {
   @apply text-3xl md:text-4xl font-bold font-display text-forest-900;

@@ -1,3 +1,10 @@
+/**
+ * Spinner — loading indicator in the brand forest palette.
+ *
+ * Props:
+ *   fullPage — when true, wraps the spinner in a tall centered container
+ *              (use for full-page route/loading states)
+ */
 export default function Spinner({ fullPage = false }) {
   const spinner = (
     <div className="flex items-center justify-center py-16">

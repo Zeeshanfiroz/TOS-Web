@@ -110,7 +110,7 @@ export default function Team() {
         </a>
       </motion.div>
 
-      <p className="text-center text-xs text-gray-400 mt-12">
+      <p className="text-center text-xs text-gray-500 mt-12">
         * Placeholder photos — replace with real team photos in src/pages/public/Team.jsx
       </p>
     </div>

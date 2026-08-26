@@ -71,7 +71,7 @@ export default function ManageMembers() {
           placeholder="Search by name or email..."
           className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-forest-300"
         />
-        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">🔍</span>
+        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">🔍</span>
       </div>
 
       {loading ? (
@@ -127,7 +127,7 @@ export default function ManageMembers() {
               ))}
               {members.length === 0 && (
                 <tr>
-                  <td colSpan={4} className="px-5 py-10 text-center text-gray-400">
+                  <td colSpan={4} className="px-5 py-10 text-center text-gray-500">
                     No members found.
                   </td>
                 </tr>

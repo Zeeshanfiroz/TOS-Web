@@ -6,7 +6,10 @@ const SITE_URL = 'https://tos-web-mauve.vercel.app';
 
 /**
  * SEO — per-page title, description, Open Graph & Twitter cards.
- * Usage: <SEO title="Events" description="..." />
+ *
+ * Props:
+ *   title       — page title (site name is appended automatically)
+ *   description — meta description; omitted from tags when not provided
  */
 export default function SEO({ title, description }) {
   const fullTitle = title ? `${title} | TOS VSSUT` : SITE_NAME;

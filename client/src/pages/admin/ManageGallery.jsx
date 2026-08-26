@@ -137,7 +137,7 @@ export default function ManageGallery() {
       {loading ? (
         <Spinner />
       ) : images.length === 0 ? (
-        <p className="text-center text-gray-400 py-10">No images yet.</p>
+        <p className="text-center text-gray-500 py-10">No images yet.</p>
       ) : (
         <div className="mt-8 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
           {images.map((img) => (

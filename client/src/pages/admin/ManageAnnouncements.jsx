@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import api from '../../api/axios';
 import { toast } from 'react-toastify';
+import useLockBodyScroll from '../../hooks/useLockBodyScroll';
+import useFocusTrap from '../../hooks/useFocusTrap';
 import Spinner from '../../components/ui/Spinner';
 
 const emptyForm = { title: '', content: '' };
@@ -12,6 +14,12 @@ export default function ManageAnnouncements() {
   const [editing, setEditing] = useState(null);
   const [form, setForm] = useState(emptyForm);
   const [saving, setSaving] = useState(false);
+
+  // Freeze background scroll while the modal is open
+  useLockBodyScroll(showModal);
+
+  // Trap keyboard focus inside the modal; restore focus on close
+  const trapRef = useFocusTrap(showModal);
 
   const load = async () => {
     setLoading(true);
@@ -74,7 +82,7 @@ export default function ManageAnnouncements() {
             setForm(emptyForm);
             setShowModal(true);
           }}
-          className="px-5 py-2.5 rounded-xl bg-forest-600 hover:bg-forest-700 text-white text-sm font-semibold"
+          className="btn btn-primary px-5 py-2.5 text-sm"
         >
           ➕ New Post
         </button>
@@ -92,7 +100,7 @@ export default function ManageAnnouncements() {
               <div className="min-w-0">
                 <p className="font-semibold text-gray-900">{p.title}</p>
                 <p className="text-sm text-gray-500 mt-1 line-clamp-2">{p.content}</p>
-                <p className="text-xs text-gray-400 mt-2">
+                <p className="text-xs text-gray-500 mt-2">
                   {new Date(p.createdAt).toLocaleDateString('en-IN')} • by{' '}
                   {p.author?.name || 'Admin'}
                 </p>
@@ -118,14 +126,20 @@ export default function ManageAnnouncements() {
             </div>
           ))}
           {posts.length === 0 && (
-            <p className="text-center text-gray-400 py-10">No announcements yet.</p>
+            <p className="text-center text-gray-500 py-10">No announcements yet.</p>
           )}
         </div>
       )}
 
       {/* Modal */}
       {showModal && (
-        <div className="fixed inset-0 z-[90] bg-black/50 flex items-center justify-center p-4">
+        <div
+          ref={trapRef}
+          role="dialog"
+          aria-modal="true"
+          aria-label={editing ? 'Edit announcement' : 'New announcement'}
+          className="fixed inset-0 z-[90] bg-black/50 flex items-center justify-center p-4"
+        >
           <div className="bg-white rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto p-7">
             <h2 className="font-display text-xl font-bold text-gray-900">
               {editing ? 'Edit Announcement' : 'New Announcement'}
@@ -162,7 +176,7 @@ export default function ManageAnnouncements() {
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="px-6 py-3 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium"
+                  className="btn bg-gray-100 hover:bg-gray-200 text-gray-700"
                 >
                   Cancel
                 </button>

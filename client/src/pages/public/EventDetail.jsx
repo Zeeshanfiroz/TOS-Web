@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 import { fetchEventById, toggleRsvp } from '../../features/events/eventsSlice';
 import { selectUser } from '../../features/auth/authSlice';
 import Spinner from '../../components/ui/Spinner';
+import ErrorState from '../../components/ui/ErrorState';
 import SEO from '../../components/common/SEO';
 
 const formatDate = (d) =>
@@ -21,7 +22,7 @@ export default function EventDetail() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = useSelector(selectUser);
-  const { current: event, isLoading } = useSelector((s) => s.events);
+  const { current: event, isLoading, error } = useSelector((s) => s.events);
   const [rsvpBusy, setRsvpBusy] = useState(false);
 
   useEffect(() => {
@@ -47,6 +48,18 @@ export default function EventDetail() {
       toast.error(result.payload || 'RSVP failed');
     }
   };
+
+  // Error → friendly state with retry (was previously an infinite spinner!)
+  if (error && !event) {
+    return (
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <ErrorState
+          message={error}
+          onRetry={() => dispatch(fetchEventById(id))}
+        />
+      </div>
+    );
+  }
 
   if (isLoading || !event) return <Spinner fullPage />;
 

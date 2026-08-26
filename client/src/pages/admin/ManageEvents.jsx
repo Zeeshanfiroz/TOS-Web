@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import api from '../../api/axios';
 import { toast } from 'react-toastify';
+import useLockBodyScroll from '../../hooks/useLockBodyScroll';
+import useFocusTrap from '../../hooks/useFocusTrap';
 import Spinner from '../../components/ui/Spinner';
 
 const emptyForm = { title: '', description: '', date: '', location: '' };
@@ -13,6 +15,12 @@ export default function ManageEvents() {
   const [form, setForm] = useState(emptyForm);
   const [banner, setBanner] = useState(null);
   const [saving, setSaving] = useState(false);
+
+  // Freeze background scroll while the create/edit modal is open
+  useLockBodyScroll(showModal);
+
+  // Trap keyboard focus inside the modal; restore focus on close
+  const trapRef = useFocusTrap(showModal);
 
   const loadEvents = async () => {
     setLoading(true);
@@ -97,7 +105,7 @@ export default function ManageEvents() {
         <h1 className="font-display text-2xl font-bold text-gray-900">Manage Events</h1>
         <button
           onClick={openCreate}
-          className="px-5 py-2.5 rounded-xl bg-forest-600 hover:bg-forest-700 text-white text-sm font-semibold"
+          className="btn btn-primary px-5 py-2.5 text-sm"
         >
           ➕ New Event
         </button>
@@ -148,7 +156,7 @@ export default function ManageEvents() {
               ))}
               {events.length === 0 && (
                 <tr>
-                  <td colSpan={4} className="px-5 py-10 text-center text-gray-400">
+                  <td colSpan={4} className="px-5 py-10 text-center text-gray-500">
                     No events yet — create your first one!
                   </td>
                 </tr>
@@ -161,7 +169,13 @@ export default function ManageEvents() {
 
       {/* Create/Edit modal */}
       {showModal && (
-        <div className="fixed inset-0 z-[90] bg-black/50 flex items-center justify-center p-4">
+        <div
+          ref={trapRef}
+          role="dialog"
+          aria-modal="true"
+          aria-label={editing ? 'Edit event' : 'New event'}
+          className="fixed inset-0 z-[90] bg-black/50 flex items-center justify-center p-4"
+        >
           <div className="bg-white rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto p-7">
             <h2 className="font-display text-xl font-bold text-gray-900">
               {editing ? 'Edit Event' : 'New Event'}
@@ -232,7 +246,7 @@ export default function ManageEvents() {
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="px-6 py-3 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium"
+                  className="btn bg-gray-100 hover:bg-gray-200 text-gray-700"
                 >
                   Cancel
                 </button>
