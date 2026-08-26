@@ -1,7 +1,18 @@
 @import "tailwindcss";
 
 @theme {
-  /* Green / eco palette */
+  /* ── TOS redesign tokens (Stage 2) — laterite/neem/mahanadi/kraft/humus ── */
+  --color-laterite: #8a3b26;
+  --color-laterite-dark: #6f2f1e;
+  --color-neem: #2f5d3a;
+  --color-neem-bright: #3e7a4c;
+  --color-mahanadi: #31605f;
+  --color-kraft: #faf6f0;
+  --color-kraft-card: #fffdfa;
+  --color-humus: #26201a;
+  --color-terracotta: #c05b2e;
+
+  /* ── Legacy forest palette — kept until every page is migrated ── */
   --color-forest-50: #f0fdf4;
   --color-forest-100: #dcfce7;
   --color-forest-200: #bbf7d0;
@@ -13,8 +24,9 @@
   --color-forest-800: #166534;
   --color-forest-900: #14532d;
 
-  --font-display: "Poppins", ui-sans-serif, system-ui, sans-serif;
-  --font-body: "Inter", ui-sans-serif, system-ui, sans-serif;
+  /* Fraunces (display serif) + Schibsted Grotesk (body) — self-hosted */
+  --font-display: "Fraunces Variable", ui-serif, Georgia, serif;
+  --font-body: "Schibsted Grotesk Variable", ui-sans-serif, system-ui, sans-serif;
 }
 
 html {
@@ -95,6 +107,16 @@ body {
 }
 .Toastify__progress-bar--error {
   background: #dc2626;
+}
+
+/* ── Hero split-text mask (GSAP + SplitType) ──
+   SplitType wraps each line in .line — overflow hidden gives the
+   mask-reveal effect as words slide up from below. */
+.hero-title .line {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.08em;
+  margin-bottom: -0.08em;
 }
 
 /* ── Accessible keyboard focus (item 7) ──

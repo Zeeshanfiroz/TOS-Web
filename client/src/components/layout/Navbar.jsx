@@ -61,11 +61,15 @@ export default function Navbar() {
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2" onClick={() => setOpen(false)}>
             <motion.span
-              className="text-2xl"
+              className="text-laterite"
               animate={{ rotate: [0, -8, 8, 0] }}
               transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
             >
-              🌱
+              <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M12 21v-8" />
+                <path d="M12 13c0-4 2.5-7 6-7.5.3 3.8-2 7-6 7.5z" />
+                <path d="M12 15c0-3-2-5.5-5-6-.3 3 1.8 5.6 5 6z" />
+              </svg>
             </motion.span>
             <span className="font-display font-bold text-base sm:text-lg text-forest-800 leading-tight">
               Team of <span className="text-gradient">Sustainability</span>

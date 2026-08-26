@@ -1,407 +1,134 @@
-import { useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { motion, AnimatePresence, useInView, useReducedMotion } from 'framer-motion';
-import { fetchEvents } from '../../features/events/eventsSlice';
-import { fetchAnnouncements as fetchAnns } from '../../features/announcements/announcementsSlice';
-import { fetchGallery as fetchGal } from '../../features/gallery/gallerySlice';
-import EventCard from '../../components/events/EventCard';
-import Spinner from '../../components/ui/Spinner';
-import MagneticButton from '../../components/ui/MagneticButton';
-import Marquee from '../../components/ui/Marquee';
+import { useRef } from 'react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useGSAP } from '@gsap/react';
+import SplitType from 'split-type';
+
+import GrowthRings from '../../components/home/GrowthRings';
+import FieldLedger from '../../components/home/FieldLedger';
+import WorkGrid from '../../components/home/WorkGrid';
+import JoinCta from '../../components/home/JoinCta';
+import Button from '../../components/ui/Button';
 import SEO from '../../components/common/SEO';
 
-/* ---------- Animated counter (respects prefers-reduced-motion) ---------- */
-function Counter({ target, suffix = '' }) {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true });
-  const reduceMotion = useReducedMotion();
-  const [value, setValue] = useState(0);
+gsap.registerPlugin(ScrollTrigger, useGSAP);
 
-  useEffect(() => {
-    if (!inView) return;
-    // Reduced motion → show the final number instantly, no counting
-    if (reduceMotion) {
-      setValue(target);
-      return;
-    }
-    const duration = 1500;
-    const start = performance.now();
-    let raf;
-    const tick = (now) => {
-      const p = Math.min((now - start) / duration, 1);
-      setValue(Math.round(target * (1 - Math.pow(1 - p, 3)))); // ease-out cubic
-      if (p < 1) raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [inView, target, reduceMotion]);
-
-  return (
-    <span ref={ref}>
-      {value.toLocaleString()}
-      {suffix}
-    </span>
-  );
-}
-
-/* ---------- Floating leaf decoration (skipped for reduced motion) ---------- */
-function FloatingLeaves() {
-  const reduceMotion = useReducedMotion();
-  if (reduceMotion) return null;
-
-  const leaves = [
-    { left: '8%', delay: 0, size: 28 },
-    { left: '22%', delay: 1.5, size: 20 },
-    { left: '45%', delay: 0.7, size: 24 },
-    { left: '68%', delay: 2, size: 18 },
-    { left: '85%', delay: 1, size: 30 },
-  ];
-  return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {leaves.map((l, i) => (
-        <motion.span
-          key={i}
-          className="absolute text-forest-300/40"
-          style={{ left: l.left, fontSize: l.size }}
-          initial={{ y: -60, rotate: 0 }}
-          animate={{ y: ['0vh', '110vh'], rotate: 360 }}
-          transition={{
-            duration: 12 + i * 2,
-            repeat: Infinity,
-            delay: l.delay,
-            ease: 'linear',
-          }}
-        >
-          🍃
-        </motion.span>
-      ))}
-    </div>
-  );
-}
-
-const stats = [
-  { target: 500, suffix: '+', label: 'Active Members' },
-  { target: 1200, suffix: '+', label: 'Trees Planted' },
-  { target: 45, suffix: '+', label: 'Events Conducted' },
-  { target: 850, suffix: 'kg', label: 'Waste Recycled' },
+// Checkpoint 1: three rings = three real years of logged history.
+const RING_YEARS = [
+  { year: '2024', note: 'Founded. First nursery behind the workshops.' },
+  { year: '2025', note: '500 saplings across Plots A–D. Recycling begins.' },
+  { year: '2026', note: 'Every entry on record. December planting next.' },
 ];
 
 export default function Home() {
-  const dispatch = useDispatch();
-  const events = useSelector((s) => s.events.list);
-  const eventsLoading = useSelector((s) => s.events.isLoading);
-  const announcements = useSelector((s) => s.announcements.list);
-  const galleryImages = useSelector((s) => s.gallery.images);
-  const [showStickyCTA, setShowStickyCTA] = useState(false);
+  const sectionRef = useRef(null);
 
-  // Sticky mobile CTA appears after scrolling past the hero (item #10)
-  useEffect(() => {
-    const onScroll = () => setShowStickyCTA(window.scrollY > 500);
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
+  useGSAP(
+    () => {
+      const mm = gsap.matchMedia();
 
-  useEffect(() => {
-    dispatch(fetchEvents({ filter: 'upcoming', page: 1 }));
-    dispatch(fetchAnns({ page: 1 }));
-    dispatch(fetchGal({ page: 1 }));
-  }, [dispatch]);
+      // Full choreography — only when the user allows motion
+      mm.add('(prefers-reduced-motion: no-preference)', () => {
+        const split = new SplitType('.hero-title', { types: 'lines,words' });
+
+        const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+        tl.from('.hero-eyebrow', { opacity: 0, x: -16, duration: 0.5 })
+          .from('.hero-title .word', { yPercent: 110, duration: 0.9, stagger: 0.09 }, 0.15)
+          .from('.hero-sub', { opacity: 0, y: 12, duration: 0.5 }, '-=0.45')
+          .from('.hero-cta > *', { opacity: 0, y: 12, duration: 0.45, stagger: 0.08 }, '-=0.3')
+          // Rings draw themselves while the headline settles
+          .from('.hero-ring', { strokeDashoffset: 1, duration: 1.8, ease: 'power2.inOut', stagger: 0.3 }, 0.25)
+          .from('.ring-legend > *', { opacity: 0, y: 10, stagger: 0.1, duration: 0.4 }, '-=0.9');
+
+        // Scroll reveals — 'top 85%' keeps triggers below the sticky navbar
+        gsap.from('.ledger-row', {
+          x: 40, autoAlpha: 0, duration: 0.6, ease: 'power3.out', stagger: 0.06,
+          scrollTrigger: { trigger: '.ledger-strip', start: 'top 85%' },
+        });
+        gsap.from('.work-tile', {
+          clipPath: 'inset(0 100% 0 0)', duration: 0.8, ease: 'power3.out', stagger: 0.08,
+          scrollTrigger: { trigger: '.work-grid', start: 'top 85%' },
+        });
+
+        return () => split.revert();
+      });
+
+      // Reduced motion: jump straight to final state — rings fully drawn,
+      // no SplitType split, no reveals.
+      mm.add('(prefers-reduced-motion: reduce)', () => {
+        gsap.set('.hero-ring', { strokeDashoffset: 0 });
+      });
+    },
+    { scope: sectionRef }
+  );
 
   return (
-    <div>
+    <div ref={sectionRef} className="bg-kraft text-humus">
       <SEO
         title="Home"
-        description="Team of Sustainability — the official sustainability club of VSSUT, Burla. Join us for plantation drives, IoT projects, workshops and awareness drives for the UN SDGs."
-      />
-      {/* ================= HERO ================= */}
-      <section className="relative bg-gradient-to-b from-forest-50 via-white to-white overflow-hidden">
-        {/* Animated gradient blobs */}
-        <div className="absolute -top-32 -left-32 w-[28rem] h-[28rem] bg-forest-300/40 rounded-full blur-3xl animate-blob" />
-        <div
-          className="absolute top-32 -right-32 w-[26rem] h-[26rem] bg-emerald-300/40 rounded-full blur-3xl animate-blob"
-          style={{ animationDelay: '-7s' }}
-        />
-        <div
-          className="absolute bottom-0 left-1/3 w-80 h-80 bg-teal-200/30 rounded-full blur-3xl animate-blob"
-          style={{ animationDelay: '-3s' }}
-        />
-        <FloatingLeaves />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-32 relative">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="max-w-3xl mx-auto text-center"
-          >
-            {/* Badge */}
-            <motion.span
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.15, type: 'spring', stiffness: 200, damping: 15 }}
-              className="inline-block px-4 py-1.5 rounded-full glass border border-forest-200 text-forest-700 text-sm font-semibold mb-6 shadow-sm"
-            >
-              🌱 Official Sustainability Club of VSSUT, Burla
-            </motion.span>
-
-            {/* Word-stagger headline */}
-            <h1 className="font-display text-4xl md:text-6xl font-extrabold text-gray-900 leading-tight">
-              {['Small', 'Actions,'].map((w, i) => (
-                <motion.span
-                  key={w}
-                  className="inline-block mr-3"
-                  initial={{ opacity: 0, y: 40, rotate: 4 }}
-                  animate={{ opacity: 1, y: 0, rotate: 0 }}
-                  transition={{ delay: 0.25 + i * 0.12, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-                >
-                  {w}
-                </motion.span>
-              ))}
-              <br />
-              {['Big', 'Impact.'].map((w, i) => (
-                <motion.span
-                  key={w}
-                  className={`inline-block mr-3 ${i === 1 ? 'text-gradient' : ''}`}
-                  initial={{ opacity: 0, y: 40, rotate: -4 }}
-                  animate={{ opacity: 1, y: 0, rotate: 0 }}
-                  transition={{ delay: 0.55 + i * 0.12, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-                >
-                  {w}
-                </motion.span>
-              ))}
-            </h1>
-
-            <motion.p
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.85, duration: 0.6 }}
-              className="mt-6 text-lg text-gray-600 leading-relaxed"
-            >
-              We are <strong>Team of Sustainability</strong> — working towards the
-              UN Sustainable Development Goals through IoT projects, plantation
-              drives, workshops and awareness campaigns. Together, we learn,
-              create and drive change.
-            </motion.p>
-
-            {/* Magnetic CTA buttons */}
-            <motion.div
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1, duration: 0.6 }}
-              className="mt-10 flex flex-col sm:flex-row gap-4 justify-center items-center"
-            >
-              <MagneticButton>
-                <Link
-                  to="/signup"
-                  className="shine inline-block px-8 py-3.5 rounded-xl bg-forest-600 hover:bg-forest-700 text-white font-semibold shadow-lg shadow-forest-300/60 transition-all"
-                >
-                  Join the Club →
-                </Link>
-              </MagneticButton>
-              <MagneticButton>
-                <Link
-                  to="/events"
-                  className="inline-block px-8 py-3.5 rounded-xl glass border border-forest-200 text-forest-700 font-semibold hover:bg-forest-50 transition-colors"
-                >
-                  Explore Events
-                </Link>
-              </MagneticButton>
-            </motion.div>
-          </motion.div>
-
-          {/* Scroll cue */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1.6 }}
-            className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 text-forest-500"
-          >
-            <span className="text-xs font-medium tracking-widest uppercase">Scroll</span>
-            <span className="animate-bounce-soft text-xl">↓</span>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ================= MARQUEE ================= */}
-      <Marquee
-        items={[
-          { icon: '🌱', label: 'Plantation Drives' },
-          { icon: '🤖', label: 'IoT Projects' },
-          { icon: '♻️', label: 'Waste Management' },
-          { icon: '☀️', label: 'Solar Innovation' },
-          { icon: '🔬', label: 'Research' },
-          { icon: '🎨', label: 'Design & Content' },
-          { icon: '📢', label: 'Awareness Campaigns' },
-          { icon: '🏆', label: 'Competitions' },
-        ]}
+        description="500 saplings planted at VSSUT Burla. 412 still standing. Team of Sustainability — engineering students doing logged, verifiable campus work."
       />
 
-      {/* ================= STATS ================= */}
-      <section className="bg-forest-900 py-14">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-          {stats.map((s, i) => (
-            <motion.div
-              key={s.label}
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
-            >
-              <div className="font-display text-3xl md:text-4xl font-bold text-forest-400">
-                <Counter target={s.target} suffix={s.suffix} />
-              </div>
-              <p className="text-sm text-forest-100/80 mt-1">{s.label}</p>
-            </motion.div>
-          ))}
-        </div>
-      </section>
-
-      {/* ================= UPCOMING EVENTS ================= */}
-      <section className="py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-end justify-between mb-10">
-            <div>
-              <h2 className="section-title">Upcoming Events</h2>
-              <p className="text-gray-500 mt-2">Be part of something green 🌿</p>
-            </div>
-            <Link to="/events" className="text-forest-600 font-medium hover:underline whitespace-nowrap">
-              View all →
-            </Link>
+      {/* ── HERO ── */}
+      <section className="mx-auto max-w-6xl px-4 pb-6 pt-10 sm:px-6 md:pb-2 md:pt-20">
+        <div className="grid items-center gap-10 md:grid-cols-12">
+          {/* Rings — first on mobile, right column on desktop */}
+          <div className="order-first flex justify-center md:order-none md:col-span-5 md:justify-end">
+            <GrowthRings className="w-[240px] md:w-[420px]" />
           </div>
 
-          {eventsLoading ? (
-            <Spinner />
-          ) : (
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {events.slice(0, 3).map((e, i) => (
-                <EventCard key={e._id} event={e} index={i} />
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* ================= ANNOUNCEMENTS PREVIEW ================= */}
-      <section className="py-20 bg-forest-50/60">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-end justify-between mb-10">
-            <h2 className="section-title">Latest Announcements</h2>
-            <Link to="/announcements" className="text-forest-600 font-medium hover:underline whitespace-nowrap">
-              View all →
-            </Link>
-          </div>
-          <div className="grid md:grid-cols-3 gap-6">
-            {announcements.slice(0, 3).map((a, i) => (
-              <motion.div
-                key={a._id}
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="bg-white rounded-2xl p-6 border border-forest-100 shadow-sm hover:shadow-md transition-shadow"
-              >
-                <span className="text-xs font-semibold text-forest-600 uppercase tracking-wide">
-                  {new Date(a.createdAt).toLocaleDateString('en-IN', {
-                    day: 'numeric',
-                    month: 'long',
-                    year: 'numeric',
-                  })}
-                </span>
-                <h3 className="font-display font-semibold text-lg mt-2 line-clamp-2">{a.title}</h3>
-                <p className="text-sm text-gray-600 mt-2 line-clamp-3">{a.content}</p>
-                <Link
-                  to={`/announcements/${a._id}`}
-                  className="inline-block mt-4 text-sm font-medium text-forest-600 hover:underline"
-                >
-                  Read more →
-                </Link>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ================= GALLERY PREVIEW ================= */}
-      <section className="py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-end justify-between mb-10">
-            <h2 className="section-title">Moments That Matter</h2>
-            <Link to="/gallery" className="text-forest-600 font-medium hover:underline whitespace-nowrap">
-              Full gallery →
-            </Link>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {galleryImages.slice(0, 8).map((img, i) => (
-              <motion.div
-                key={img._id}
-                initial={{ opacity: 0, scale: 0.95 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: (i % 4) * 0.08 }}
-                className={`rounded-2xl overflow-hidden ${
-                  i === 0 || i === 5 ? 'row-span-2 h-full' : ''
-                }`}
-              >
-                <img
-                  src={img.imageUrl}
-                  alt={img.caption || 'Club moment'}
-                  loading="lazy"
-                  className="w-full h-full min-h-36 object-cover hover:scale-105 transition-transform duration-300"
-                />
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ================= CTA BANNER ================= */}
-      <section className="pb-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="relative rounded-3xl bg-gradient-to-r from-forest-700 to-forest-500 px-8 py-16 text-center overflow-hidden"
-          >
-            <div className="absolute inset-0 opacity-10 text-[10rem] select-none pointer-events-none">
-              🌍
-            </div>
-            <h2 className="font-display text-3xl md:text-4xl font-bold text-white relative">
-              Ready to make an impact?
-            </h2>
-            <p className="text-forest-100 mt-3 max-w-xl mx-auto relative">
-              Join Team of Sustainability and be part of a community working on
-              IoT projects, awareness drives and research for a greener future.
+          <div className="md:col-span-7">
+            <p className="hero-eyebrow text-xs font-semibold uppercase tracking-[0.08em] text-mahanadi">
+              Est. 2024 · VSSUT Burla · Mahanadi basin
             </p>
-            <Link
-              to="/signup"
-              className="inline-block mt-8 px-8 py-3.5 rounded-xl bg-white text-forest-800 font-semibold shadow-lg hover:-translate-y-0.5 transition-transform relative"
-            >
-              Join TOS Today 🌱
-            </Link>
-          </motion.div>
+            <h1 className="hero-title mt-4 font-display text-[clamp(2.4rem,6vw,4.25rem)] font-semibold leading-[1.06] tracking-[-0.02em] text-humus">
+              500 saplings planted. 412 still standing. The rest is in the ledger.
+            </h1>
+            <p className="hero-sub mt-6 max-w-lg text-[15px] leading-relaxed text-humus/70">
+              We are Team of Sustainability — engineering students at VSSUT Burla who
+              plant in the campus laterite, compost every kilo of waste, and log what
+              survives. No filters, just numbers.
+            </p>
+
+            <div className="hero-cta mt-8 flex flex-wrap gap-4">
+              <Button to="/gallery">See the work</Button>
+              <Button variant="text" to="/announcements">Field log →</Button>
+            </div>
+
+            {/* Mobile ring legend — vertical timeline (checkpoint 2) */}
+            <ol className="mt-12 space-y-4 border-l-2 border-neem/30 pl-5 md:hidden">
+              {RING_YEARS.map((r) => (
+                <li key={r.year} className="relative">
+                  <span className="absolute -left-[27px] top-1 h-3 w-3 rounded-full border-2 border-kraft bg-neem" aria-hidden="true" />
+                  <p className="font-display text-sm font-semibold text-laterite">{r.year}</p>
+                  <p className="text-sm leading-snug text-humus/70">{r.note}</p>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </div>
+
+        {/* Desktop ring legend — under the rings */}
+        <div className="mt-10 hidden justify-end md:flex">
+          <ol className="grid w-full max-w-[420px] grid-cols-3 gap-5 border-t border-humus/15 pt-4">
+            {RING_YEARS.map((r) => (
+              <li key={r.year}>
+                <p className="font-display text-sm font-semibold text-laterite">{r.year}</p>
+                <p className="mt-1 text-xs leading-snug text-humus/65">{r.note}</p>
+              </li>
+            ))}
+          </ol>
         </div>
       </section>
 
-      {/* Sticky mobile CTA (item #10) */}
-      <AnimatePresence>
-        {showStickyCTA && (
-          <motion.div
-            initial={{ y: 90 }}
-            animate={{ y: 0 }}
-            exit={{ y: 90 }}
-            transition={{ type: 'spring', stiffness: 260, damping: 25 }}
-            className="fixed bottom-0 inset-x-0 z-40 md:hidden p-3 glass border-t border-forest-200 shadow-[0_-8px_30px_-12px_rgba(21,128,61,0.35)]"
-          >
-            <Link
-              to="/signup"
-              className="block w-full text-center py-3.5 rounded-xl bg-forest-600 hover:bg-forest-700 text-white font-semibold shadow-lg transition-colors"
-            >
-              Join the Club — It's Free 🌱
-            </Link>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* ── FIELD LEDGER (signature) ── */}
+      <FieldLedger />
+
+      {/* ── RECENT WORK ── */}
+      <WorkGrid />
+
+      {/* ── JOIN ── */}
+      <JoinCta />
     </div>
   );
 }

@@ -7,6 +7,10 @@ import { MotionConfig } from 'framer-motion'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
+// Self-hosted variable fonts (item: never a blocking Google Fonts <link>)
+import '@fontsource-variable/fraunces'
+import '@fontsource-variable/schibsted-grotesk'
+
 import App from './App.jsx'
 import ErrorBoundary from './components/ErrorBoundary.jsx'
 import { store } from './app/store.js'
