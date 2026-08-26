@@ -23,7 +23,7 @@ export default function GrowthRings({ className = '' }) {
       viewBox="0 0 420 420"
       className={className}
       role="img"
-      aria-label="Three concentric growth rings — one for each year of the club's logged work, 2024 to 2026"
+      aria-label="Three concentric growth rings — one for each year of the club's logged work, 2023 to 2025"
     >
       {/* faint engineering-drawing crosshairs */}
       <g stroke="#26201A" strokeOpacity="0.12" strokeWidth="1">

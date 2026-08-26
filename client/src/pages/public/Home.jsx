@@ -6,18 +6,20 @@ import SplitType from 'split-type';
 
 import GrowthRings from '../../components/home/GrowthRings';
 import FieldLedger from '../../components/home/FieldLedger';
-import WorkGrid from '../../components/home/WorkGrid';
+import Projects from '../../components/home/Projects';
+import Domains from '../../components/home/Domains';
 import JoinCta from '../../components/home/JoinCta';
 import Button from '../../components/ui/Button';
 import SEO from '../../components/common/SEO';
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
-// Checkpoint 1: three rings = three real years of logged history.
+// Checkpoint 1: three rings = three real years, verified from the club's
+// achievement record (Makers Fest 2023 → VIRTOSWA/Robosumo 2024 → 2025).
 const RING_YEARS = [
-  { year: '2024', note: 'Founded. First nursery behind the workshops.' },
-  { year: '2025', note: '500 saplings across Plots A–D. Recycling begins.' },
-  { year: '2026', note: 'Every entry on record. December planting next.' },
+  { year: '2023', note: 'First public build — paper recycling at Makers Fest.' },
+  { year: '2024', note: 'VIRTOSWA on stage. Robosumo wins at NIT Rourkela.' },
+  { year: '2025', note: '72 women trained in Sambalpuri crafts. SAMAVESH. Research bootcamp.' },
 ];
 
 export default function Home() {
@@ -45,9 +47,13 @@ export default function Home() {
           x: 40, autoAlpha: 0, duration: 0.6, ease: 'power3.out', stagger: 0.06,
           scrollTrigger: { trigger: '.ledger-strip', start: 'top 85%' },
         });
-        gsap.from('.work-tile', {
+        gsap.from('.project-card', {
           clipPath: 'inset(0 100% 0 0)', duration: 0.8, ease: 'power3.out', stagger: 0.08,
-          scrollTrigger: { trigger: '.work-grid', start: 'top 85%' },
+          scrollTrigger: { trigger: '.projects-grid', start: 'top 85%' },
+        });
+        gsap.from('.domain-card', {
+          opacity: 0, y: 16, duration: 0.5, ease: 'power3.out', stagger: 0.08,
+          scrollTrigger: { trigger: '.domains-grid', start: 'top 85%' },
         });
 
         return () => split.revert();
@@ -79,22 +85,23 @@ export default function Home() {
 
           <div className="md:col-span-7">
             <p className="hero-eyebrow text-xs font-semibold uppercase tracking-[0.08em] text-mahanadi">
-              Est. 2024 · VSSUT Burla · Mahanadi basin
+              Official sustainability club · VSSUT Burla, Odisha
             </p>
             <h1 className="hero-title mt-4 font-display text-[clamp(2.4rem,6vw,4.25rem)] font-semibold leading-[1.06] tracking-[-0.02em] text-humus">
-              500 saplings planted.{' '}
-              <span className="text-neem">412 still standing.</span> The rest is
-              in the ledger.
+              People. Planet. Progress.
             </h1>
             <p className="hero-sub mt-6 max-w-lg text-[15px] font-medium leading-relaxed text-humus/85">
-              We are Team of Sustainability — engineering students at VSSUT Burla who
-              plant in the campus laterite, compost every kilo of waste, and log what
-              survives. No filters, just numbers.
+              We're Team of Sustainability — VSSUT Burla students running
+              plantation drives, building waste-sorting robots, and taking
+              sustainable skills to schools and communities. Small actions, big
+              impact, all on the record.
             </p>
 
             <div className="hero-cta mt-8 flex flex-wrap gap-4">
-              <Button to="/gallery">See the work</Button>
-              <Button variant="text" to="/announcements">Field log →</Button>
+              <Button to="/events">Upcoming drives</Button>
+              <Button variant="text" to="/gallery">
+                Proof of work →
+              </Button>
             </div>
 
             {/* Mobile ring legend — vertical timeline (checkpoint 2) */}
@@ -126,8 +133,11 @@ export default function Home() {
       {/* ── FIELD LEDGER (signature) ── */}
       <FieldLedger />
 
-      {/* ── RECENT WORK ── */}
-      <WorkGrid />
+      {/* ── PROJECTS ── */}
+      <Projects />
+
+      {/* ── FOUR DOMAINS ── */}
+      <Domains />
 
       {/* ── JOIN ── */}
       <JoinCta />
