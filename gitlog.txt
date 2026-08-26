@@ -1,0 +1,15 @@
+﻿66c76e1 | 26 Aug 11:41 | Home review Tiers 1-3: remove live placeholder + stock photo, ledger/projects photo slots, domain icons, navbar opacity, ledger fade masks
+6db4a3b | 26 Aug 11:22 | Home: tech-first hero copy, real member-learn outcomes, hero photo placeholder
+4b594e1 | 26 Aug 10:50 | add details
+9e3702c | 26 Aug 10:04 | sustainability theme
+0ff09dc | 26 Aug 09:24 | sustainability theme pass ΓÇö neem green primary
+c1a47b6 | 26 Aug 08:58 | landing page ui update
+64fdedf | 26 Aug 07:40 | frontend update
+2c384a0 | 26 Aug 01:31 | security
+13cb884 | 26 Aug 00:20 | auth fix
+bd23732 | 25 Aug 20:33 | Add safe create-admin bootstrap script (no data deletion, unlike seeder)
+ca198c0 | 25 Aug 19:59 | fix: same-origin API proxy on Vercel ΓÇö solves third-party cookie blocking
+8f4bc83 | 25 Aug 15:32 | fix: upgrade nodemailer to 9.x (HIGH severity fixes); document accepted uuid moderate risk
+cc6db39 | 25 Aug 15:22 | fix: refresh token rotation with replay detection + logout invalidation
+966e3a2 | 25 Aug 15:09 | fix: axios 401 auto-refresh with single-flight race handling
+2c46081 | 25 Aug 15:07 | fix: CSP img-src for ImageKit/OAuth avatars + GA4 script allowance
