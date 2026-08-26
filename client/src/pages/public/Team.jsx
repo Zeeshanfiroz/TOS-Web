@@ -10,12 +10,12 @@ const teams = [
       {
         name: 'Dr. Trupti Ranjan Mahapatra',
         position: 'Technical Society Vice President',
-        img: 'https://i.pravatar.cc/300?img=60',
+        img: '',
       },
       {
         name: 'Dr. Sasmita Behera',
         position: 'Faculty Advisor',
-        img: 'https://i.pravatar.cc/300?img=32',
+        img: '',
       },
     ],
   },
@@ -23,19 +23,34 @@ const teams = [
     role: 'Office Bearers',
     members: [
       {
-        name: 'Abhisek Bharadwaj',
-        position: 'Club Coordinator • EEE',
-        img: 'https://i.pravatar.cc/300?img=13',
+        name: 'SK shahnawaz ali ',
+        position: 'Club Coordinator • ME',
+        img: '',
       },
       {
-        name: 'Archana Maharana',
-        position: 'Assistant Coordinator • EEE',
-        img: 'https://i.pravatar.cc/300?img=47',
+        name: 'Dipali achariya ',
+        position: 'Club Coordinator • PE',
+        img: '',
       },
       {
-        name: 'Prabhu Kalyan Sethi',
+        name: 'Zeeshan Firoz ',
+        position: 'CS Lead • ME',
+        img: '',
+      },
+      {
+        name: 'MD Zeeshan Rashid ',
+        position: 'Electronics Lead • PE',
+        img: '',
+      },
+      {
+        name: 'sandeep ',
         position: 'Assistant Coordinator • ETC',
-        img: 'https://i.pravatar.cc/300?img=33',
+        img: '',
+      },
+      {
+        name: 'prajana ',
+        position: 'Assistant Coordinator • BME',
+        img: '',
       },
     ],
   },
