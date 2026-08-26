@@ -10,16 +10,16 @@ export default function LedgerRow({ entry }) {
   const { no, title, meta, date, status } = entry;
 
   return (
-    <article className="ledger-row w-[248px] shrink-0 snap-start rounded-md border border-humus/15 bg-kraft-card p-4">
-      <div className="flex items-baseline justify-between border-b border-humus/10 pb-2">
+    <article className="ledger-row w-[248px] shrink-0 snap-start rounded-md border border-humus/30 bg-kraft-card p-4">
+      <div className="flex items-baseline justify-between border-b border-humus/25 pb-2">
         <span className="font-display text-sm font-semibold text-neem">#{no}</span>
-        <time className="text-[11px] uppercase tracking-[0.06em] text-humus/55">{date}</time>
+        <time className="text-[11px] uppercase tracking-[0.06em] text-humus/60">{date}</time>
       </div>
 
       <h3 className="mt-3 font-display text-base font-semibold leading-snug text-humus">
         {title}
       </h3>
-      <p className="mt-1 text-[13px] leading-relaxed text-humus/65">{meta}</p>
+      <p className="mt-1 text-[13px] font-medium leading-relaxed text-humus/80">{meta}</p>
 
       {status && (
         <p className="mt-3 inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.06em] text-neem">

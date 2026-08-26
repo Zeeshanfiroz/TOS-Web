@@ -18,6 +18,9 @@ const variants = {
   outline:
     'bg-transparent text-humus border border-humus/25 hover:border-neem hover:text-neem',
   text: 'text-neem hover:text-laterite underline-offset-4 hover:underline',
+  kraft:
+    'bg-kraft text-humus hover:bg-white hover:-translate-y-px ' +
+    'shadow-[0_10px_24px_-12px_rgba(0,0,0,0.45)]',
 };
 
 export default function Button({

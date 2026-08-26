@@ -37,7 +37,7 @@ export default function WorkGrid() {
             <a
               key={w.title}
               href="/gallery"
-              className={`work-tile group relative block overflow-hidden rounded-md border border-humus/15 hover:border-neem/50 ${w.span}`}
+              className={`work-tile group relative block overflow-hidden rounded-md border border-humus/30 hover:border-neem/50 ${w.span}`}
             >
               <img
                 src={w.img}
@@ -48,16 +48,16 @@ export default function WorkGrid() {
               />
               {/* Neem duotone — unifies placeholders until real photos land */}
               <div className="absolute inset-0 bg-neem/25 mix-blend-multiply" aria-hidden="true" />
-              <div className="absolute inset-x-0 bottom-0 border-t border-humus/10 bg-kraft/95 px-4 py-3">
+              <div className="absolute inset-x-0 bottom-0 border-t border-humus/25 bg-kraft/95 px-4 py-3">
                 <p className="text-sm font-semibold text-humus">{w.title}</p>
-                <p className="text-xs text-humus/60">{w.meta}</p>
+                <p className="text-xs font-medium text-humus/70">{w.meta}</p>
               </div>
             </a>
           ))}
 
           <a
             href="/gallery"
-            className="work-tile group flex items-center justify-between gap-4 rounded-md border border-humus/15 bg-kraft-card px-6 py-5 transition-colors hover:border-neem sm:col-span-2 md:col-span-3"
+            className="work-tile group flex items-center justify-between gap-4 rounded-md border border-humus/30 bg-kraft-card px-6 py-5 transition-colors hover:border-neem sm:col-span-2 md:col-span-3"
           >
             <p className="font-display text-lg font-semibold text-humus">
               Everything else is in the gallery — unretouched.

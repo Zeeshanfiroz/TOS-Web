@@ -19,23 +19,26 @@ const ENTRIES = [
  */
 export default function FieldLedger() {
   return (
-    <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6 md:grid md:grid-cols-[180px_1fr] md:gap-12 md:py-16">
-      <SectionHeading eyebrow="The Log" title="Field ledger" />
-      <div>
-        <p className="max-w-md text-[15px] leading-relaxed text-humus/70">
-          Every sapling, every kilo, every drive — written down when it happens.
-          The numbers are the point, not the poster.
-        </p>
+    /* Tonal break #1 — kraft-deep full-bleed band (Stage: section rhythm) */
+    <section className="paper-texture bg-kraft-deep py-16">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 md:grid md:grid-cols-[180px_1fr] md:gap-12">
+        <SectionHeading eyebrow="The Log" title="Field ledger" />
+        <div>
+          <p className="max-w-md text-[15px] font-medium leading-relaxed text-humus/85">
+            Every sapling, every kilo, every drive — written down when it happens.
+            The numbers are the point, not the poster.
+          </p>
 
-        <div className="ledger-strip mt-8 flex snap-x gap-4 overflow-x-auto pb-3">
-          {ENTRIES.map((entry) => (
-            <LedgerRow key={entry.no} entry={entry} />
-          ))}
+          <div className="ledger-strip mt-8 flex snap-x gap-4 overflow-x-auto pb-3">
+            {ENTRIES.map((entry) => (
+              <LedgerRow key={entry.no} entry={entry} />
+            ))}
+          </div>
+
+          <p className="mt-3 text-xs text-humus/60">
+            Scroll → · Entries sync from the club ledger database.
+          </p>
         </div>
-
-        <p className="mt-3 text-xs text-humus/50">
-          Scroll → · Entries sync from the club ledger database.
-        </p>
       </div>
     </section>
   );

@@ -63,7 +63,7 @@ export default function Home() {
   );
 
   return (
-    <div ref={sectionRef} className="bg-kraft text-humus">
+    <div ref={sectionRef} className="paper-texture bg-kraft text-humus">
       <SEO
         title="Home"
         description="500 saplings planted at VSSUT Burla. 412 still standing. Team of Sustainability — engineering students doing logged, verifiable campus work."
@@ -86,7 +86,7 @@ export default function Home() {
               <span className="text-neem">412 still standing.</span> The rest is
               in the ledger.
             </h1>
-            <p className="hero-sub mt-6 max-w-lg text-[15px] leading-relaxed text-humus/70">
+            <p className="hero-sub mt-6 max-w-lg text-[15px] font-medium leading-relaxed text-humus/85">
               We are Team of Sustainability — engineering students at VSSUT Burla who
               plant in the campus laterite, compost every kilo of waste, and log what
               survives. No filters, just numbers.
@@ -103,7 +103,7 @@ export default function Home() {
                 <li key={r.year} className="relative">
                   <span className="absolute -left-[27px] top-1 h-3 w-3 rounded-full border-2 border-kraft bg-neem" aria-hidden="true" />
                   <p className="font-display text-sm font-semibold text-laterite">{r.year}</p>
-                  <p className="text-sm leading-snug text-humus/70">{r.note}</p>
+                  <p className="text-sm font-medium leading-snug text-humus/85">{r.note}</p>
                 </li>
               ))}
             </ol>
@@ -116,7 +116,7 @@ export default function Home() {
             {RING_YEARS.map((r) => (
               <li key={r.year}>
                 <p className="font-display text-sm font-semibold text-laterite">{r.year}</p>
-                <p className="mt-1 text-xs leading-snug text-humus/65">{r.note}</p>
+                <p className="mt-1 text-xs font-medium leading-snug text-humus/75">{r.note}</p>
               </li>
             ))}
           </ol>

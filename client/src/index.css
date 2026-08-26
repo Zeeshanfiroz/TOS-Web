@@ -9,6 +9,7 @@
   --color-neem-bright: #3e7a4c;
   --color-mahanadi: #31605f;
   --color-kraft: #faf6f0;
+  --color-kraft-deep: #f0e9dc;
   --color-kraft-card: #fffdfa;
   --color-humus: #26201a;
   --color-terracotta: #c05b2e;
@@ -60,6 +61,15 @@ body {
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #15803d;
+}
+
+/* ── Paper texture (Stage: material, not flat color) ──
+   Tiled SVG turbulence grain at ~3.5% opacity — barely perceptible,
+   reads as recycled paper instead of a flat CSS fill. Reusable: add the
+   class alongside any bg color (texture is a background-IMAGE, so it
+   layers over background-COLOR automatically). */
+.paper-texture {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/></svg>");
 }
 
 /* ── Shared button system (item 14) ──
