@@ -130,21 +130,49 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── HERO PROOF PHOTO — placeholder, swap with a real club photo ── */}
+      {/* ── FEATURED — VIRTOSWA 2K25 ──
+        Photo slot: when the club shares the full-resolution stage photo,
+        drop it in as an <img> over this panel (keep the neem duotone).
+        Until then the engineering-drawing motif carries the section. */}
       <figure className="mx-auto max-w-6xl px-4 sm:px-6">
-        <div className="relative overflow-hidden rounded-md border border-humus/30">
-          <img
-            src="https://picsum.photos/seed/tos-hero/1600/700?grayscale"
-            alt="Placeholder — replace with a real club photo from the archive"
-            loading="lazy"
-            decoding="async"
-            className="aspect-[21/9] w-full object-cover"
-          />
-          <div className="absolute inset-0 bg-neem/20 mix-blend-multiply" aria-hidden="true" />
-          <figcaption className="absolute bottom-0 left-0 border-t border-humus/15 bg-kraft/95 px-4 py-2 text-xs font-medium text-humus/70">
-            Placeholder frame — swap with a real club photo (VIRTOSWA, Robosumo or a drive).
-          </figcaption>
+        <div className="paper-texture relative overflow-hidden rounded-md border border-humus/30 bg-humus">
+          <svg viewBox="0 0 1200 480" className="block h-auto w-full" aria-hidden="true">
+            {/* circuit-trace motif — engineering drawing, not decoration:
+                the club's actual builds (waste sorter, solar tracker) look like this */}
+            <g stroke="#3E7A4C" strokeOpacity="0.55" strokeWidth="1.5" fill="none">
+              <polyline points="0,90 180,90 240,150 460,150" />
+              <polyline points="1200,140 1020,140 960,200 740,200" />
+              <polyline points="0,330 260,330 320,390 560,390" />
+              <polyline points="1200,300 940,300 880,360 660,360" />
+            </g>
+            <g stroke="#31605F" strokeOpacity="0.45" strokeWidth="1.5" fill="none">
+              <polyline points="0,210 300,210 360,270 600,270" />
+              <polyline points="1200,420 900,420 840,470 620,470" />
+            </g>
+            <g fill="#3E7A4C" fillOpacity="0.6">
+              <circle cx="240" cy="150" r="4" />
+              <circle cx="960" cy="200" r="4" />
+              <circle cx="320" cy="390" r="4" />
+              <circle cx="880" cy="360" r="4" />
+              <circle cx="360" cy="270" r="4" />
+            </g>
+          </svg>
+          <div className="absolute inset-0 flex flex-col items-start justify-center gap-3 p-8 md:p-14">
+            <p className="text-xs font-semibold uppercase tracking-[0.08em] text-kraft/60">
+              Featured · October 2025
+            </p>
+            <p className="font-display text-3xl font-semibold text-kraft md:text-5xl">
+              VIRTOSWA 2K25
+            </p>
+            <p className="max-w-md text-sm font-medium leading-relaxed text-kraft/75 md:text-base">
+              Club projects on stage — a year of builds and drives, presented to
+              the new batch.
+            </p>
+          </div>
         </div>
+        <figcaption className="mt-2 text-xs text-humus/60">
+          VIRTOSWA 2K25 · October 2025 · VSSUT Burla
+        </figcaption>
       </figure>
 
       {/* ── FIELD LEDGER (signature) ── */}

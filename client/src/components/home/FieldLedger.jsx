@@ -22,7 +22,7 @@ const ENTRIES = [
 export default function FieldLedger() {
   return (
     /* Tonal break #1 — kraft-deep full-bleed band (Stage: section rhythm) */
-    <section className="paper-texture bg-kraft-deep py-16">
+    <section className="paper-texture scroll-mt-24 bg-kraft-deep py-16">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 md:grid md:grid-cols-[180px_1fr] md:gap-12">
         <SectionHeading eyebrow="On the record" title="Field ledger" />
         <div>
@@ -31,10 +31,22 @@ export default function FieldLedger() {
             Fest 2023, written down when it happened.
           </p>
 
-          <div className="ledger-strip mt-8 flex snap-x gap-4 overflow-x-auto pb-3">
-            {ENTRIES.map((entry) => (
-              <LedgerRow key={entry.no} entry={entry} />
-            ))}
+          <div className="relative">
+            <div className="ledger-strip mt-8 flex snap-x gap-4 overflow-x-auto pb-3">
+              {ENTRIES.map((entry) => (
+                <LedgerRow key={entry.no} entry={entry} />
+              ))}
+            </div>
+            {/* Edge fades — the cut-off card reads as an intentional
+                "there's more →" cue, not a layout bug (review Tier 3.9) */}
+            <div
+              className="pointer-events-none absolute inset-y-0 left-0 w-6 bg-gradient-to-r from-kraft-deep to-transparent"
+              aria-hidden="true"
+            />
+            <div
+              className="pointer-events-none absolute inset-y-0 right-0 w-20 bg-gradient-to-l from-kraft-deep to-transparent"
+              aria-hidden="true"
+            />
           </div>
 
           <p className="mt-3 text-xs text-humus/60">
