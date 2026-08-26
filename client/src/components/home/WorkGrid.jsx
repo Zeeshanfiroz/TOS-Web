@@ -1,7 +1,7 @@
 import SectionHeading from './SectionHeading';
 
 // TODO: swap these placeholders for real club archive photos — the duotone
-// treatment (grayscale + laterite multiply) is designed FOR those photos.
+// treatment (grayscale + neem multiply) is designed FOR those photos.
 const WORK = [
   {
     title: 'Plantation drive — Plots A–D',
@@ -37,7 +37,7 @@ export default function WorkGrid() {
             <a
               key={w.title}
               href="/gallery"
-              className={`work-tile group relative block overflow-hidden rounded-md border border-humus/15 ${w.span}`}
+              className={`work-tile group relative block overflow-hidden rounded-md border border-humus/15 hover:border-neem/50 ${w.span}`}
             >
               <img
                 src={w.img}
@@ -46,8 +46,8 @@ export default function WorkGrid() {
                 decoding="async"
                 className="aspect-[4/3] h-full w-full object-cover grayscale transition-transform duration-200 group-hover:scale-[1.02]"
               />
-              {/* Laterite duotone — unifies placeholders until real photos land */}
-              <div className="absolute inset-0 bg-laterite/25 mix-blend-multiply" aria-hidden="true" />
+              {/* Neem duotone — unifies placeholders until real photos land */}
+              <div className="absolute inset-0 bg-neem/25 mix-blend-multiply" aria-hidden="true" />
               <div className="absolute inset-x-0 bottom-0 border-t border-humus/10 bg-kraft/95 px-4 py-3">
                 <p className="text-sm font-semibold text-humus">{w.title}</p>
                 <p className="text-xs text-humus/60">{w.meta}</p>
@@ -57,12 +57,12 @@ export default function WorkGrid() {
 
           <a
             href="/gallery"
-            className="work-tile group flex items-center justify-between gap-4 rounded-md border border-humus/15 bg-kraft-card px-6 py-5 transition-colors hover:border-laterite sm:col-span-2 md:col-span-3"
+            className="work-tile group flex items-center justify-between gap-4 rounded-md border border-humus/15 bg-kraft-card px-6 py-5 transition-colors hover:border-neem sm:col-span-2 md:col-span-3"
           >
             <p className="font-display text-lg font-semibold text-humus">
               Everything else is in the gallery — unretouched.
             </p>
-            <span className="text-laterite transition-transform duration-200 group-hover:translate-x-1" aria-hidden="true">
+            <span className="text-neem transition-transform duration-200 group-hover:translate-x-1" aria-hidden="true">
               →
             </span>
           </a>

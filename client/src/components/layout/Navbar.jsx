@@ -61,7 +61,7 @@ export default function Navbar() {
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2" onClick={() => setOpen(false)}>
             <motion.span
-              className="text-laterite"
+              className="text-neem"
               animate={{ rotate: [0, -8, 8, 0] }}
               transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
             >

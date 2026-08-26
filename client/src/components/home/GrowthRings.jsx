@@ -14,7 +14,7 @@
 const RINGS = [
   { r: 78, color: '#2F5D3A', width: 2.5 }, // 2024 — innermost
   { r: 132, color: '#2F5D3A', width: 2, opacity: 0.65 }, // 2025
-  { r: 188, color: '#8A3B26', width: 2.5 }, // 2026 — outermost, this year
+  { r: 188, color: '#3E7A4C', width: 2.5 }, // 2026 — outermost, this year
 ];
 
 export default function GrowthRings({ className = '' }) {

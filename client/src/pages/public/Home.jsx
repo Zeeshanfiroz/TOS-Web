@@ -82,7 +82,9 @@ export default function Home() {
               Est. 2024 · VSSUT Burla · Mahanadi basin
             </p>
             <h1 className="hero-title mt-4 font-display text-[clamp(2.4rem,6vw,4.25rem)] font-semibold leading-[1.06] tracking-[-0.02em] text-humus">
-              500 saplings planted. 412 still standing. The rest is in the ledger.
+              500 saplings planted.{' '}
+              <span className="text-neem">412 still standing.</span> The rest is
+              in the ledger.
             </h1>
             <p className="hero-sub mt-6 max-w-lg text-[15px] leading-relaxed text-humus/70">
               We are Team of Sustainability — engineering students at VSSUT Burla who

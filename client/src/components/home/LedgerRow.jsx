@@ -12,7 +12,7 @@ export default function LedgerRow({ entry }) {
   return (
     <article className="ledger-row w-[248px] shrink-0 snap-start rounded-md border border-humus/15 bg-kraft-card p-4">
       <div className="flex items-baseline justify-between border-b border-humus/10 pb-2">
-        <span className="font-display text-sm font-semibold text-laterite">#{no}</span>
+        <span className="font-display text-sm font-semibold text-neem">#{no}</span>
         <time className="text-[11px] uppercase tracking-[0.06em] text-humus/55">{date}</time>
       </div>
 
