@@ -72,7 +72,7 @@ export default function Home() {
     <div ref={sectionRef} className="paper-texture bg-kraft text-humus">
       <SEO
         title="Home"
-        description="500 saplings planted at VSSUT Burla. 412 still standing. Team of Sustainability — engineering students doing logged, verifiable campus work."
+        description="Team of Sustainability — the official sustainability club of VSSUT Burla. Members build waste-sorting robots and solar trackers, run drives and workshops, and take sustainability skills to schools."
       />
 
       {/* ── HERO ── */}
@@ -87,14 +87,14 @@ export default function Home() {
             <p className="hero-eyebrow text-xs font-semibold uppercase tracking-[0.08em] text-mahanadi">
               Official sustainability club · VSSUT Burla, Odisha
             </p>
-            <h1 className="hero-title mt-4 font-display text-[clamp(2.4rem,6vw,4.25rem)] font-semibold leading-[1.06] tracking-[-0.02em] text-humus">
-              People. Planet. Progress.
+            <h1 className="hero-title mt-4 font-display text-[clamp(2.6rem,6.5vw,4.5rem)] font-semibold leading-[1.04] tracking-[-0.02em] text-humus">
+              Sustainability, engineered.
             </h1>
             <p className="hero-sub mt-6 max-w-lg text-[15px] font-medium leading-relaxed text-humus/85">
-              We're Team of Sustainability — VSSUT Burla students running
-              plantation drives, building waste-sorting robots, and taking
-              sustainable skills to schools and communities. Small actions, big
-              impact, all on the record.
+              We are Team of Sustainability — the official club of VSSUT Burla.
+              Our members build waste-sorting robots and solar trackers, run
+              plantation and recycling drives, and take what they learn into
+              classrooms, fests and communities.
             </p>
 
             <div className="hero-cta mt-8 flex flex-wrap gap-4">
@@ -129,6 +129,23 @@ export default function Home() {
           </ol>
         </div>
       </section>
+
+      {/* ── HERO PROOF PHOTO — placeholder, swap with a real club photo ── */}
+      <figure className="mx-auto max-w-6xl px-4 sm:px-6">
+        <div className="relative overflow-hidden rounded-md border border-humus/30">
+          <img
+            src="https://picsum.photos/seed/tos-hero/1600/700?grayscale"
+            alt="Placeholder — replace with a real club photo from the archive"
+            loading="lazy"
+            decoding="async"
+            className="aspect-[21/9] w-full object-cover"
+          />
+          <div className="absolute inset-0 bg-neem/20 mix-blend-multiply" aria-hidden="true" />
+          <figcaption className="absolute bottom-0 left-0 border-t border-humus/15 bg-kraft/95 px-4 py-2 text-xs font-medium text-humus/70">
+            Placeholder frame — swap with a real club photo (VIRTOSWA, Robosumo or a drive).
+          </figcaption>
+        </div>
+      </figure>
 
       {/* ── FIELD LEDGER (signature) ── */}
       <FieldLedger />
