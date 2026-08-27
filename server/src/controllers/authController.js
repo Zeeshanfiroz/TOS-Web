@@ -260,21 +260,37 @@ export const login = async (req, res) => {
  * refresh hash, so the (still-unexpired) refresh token can't be replayed.
  */
 export const logout = async (req, res) => {
-  // Cookie OR body (header-auth clients keep the refresh token in localStorage)
+  // Cookie OR body (header-auth clients keep the refresh token in localStorage).
+  // Some clients also send the access token in Authorization header, so we use
+  // that as a fallback to invalidate a valid refresh hash even when the browser
+  // dropped the cookie and the client did not include a refreshToken body.
   const refreshToken = req.cookies?.[REFRESH_COOKIE_NAME] || req.body?.refreshToken;
+  const authHeader = req.headers.authorization;
+  let userId = null;
+
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    try {
+      const decoded = jwt.verify(authHeader.split(' ')[1], process.env.JWT_SECRET);
+      userId = decoded.id;
+    } catch {
+      // invalid/expired token — nothing to invalidate
+    }
+  }
+
   if (refreshToken) {
     try {
       const decoded = jwt.verify(
         refreshToken,
         process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET
       );
-      await User.updateOne(
-        { _id: decoded.id },
-        { $unset: { refreshTokenHash: 1 } }
-      );
+      userId = decoded.id;
     } catch {
       // invalid/expired token — nothing to invalidate
     }
+  }
+
+  if (userId) {
+    await User.updateOne({ _id: userId }, { $unset: { refreshTokenHash: 1 } });
   }
 
   const clearOpts = {
