@@ -5,7 +5,7 @@ import useLockBodyScroll from '../../hooks/useLockBodyScroll';
 import useFocusTrap from '../../hooks/useFocusTrap';
 import Spinner from '../../components/ui/Spinner';
 
-const emptyForm = { title: '', description: '', date: '', location: '' };
+const emptyForm = { title: '', description: '', date: '', location: '', eventType: 'organized' };
 
 export default function ManageEvents() {
   const [events, setEvents] = useState([]);
@@ -14,6 +14,7 @@ export default function ManageEvents() {
   const [editing, setEditing] = useState(null); // event being edited
   const [form, setForm] = useState(emptyForm);
   const [banner, setBanner] = useState(null);
+  const [galleryFiles, setGalleryFiles] = useState([]);
   const [saving, setSaving] = useState(false);
 
   // Freeze background scroll while the create/edit modal is open
@@ -42,6 +43,7 @@ export default function ManageEvents() {
     setEditing(null);
     setForm(emptyForm);
     setBanner(null);
+    setGalleryFiles([]);
     setShowModal(true);
   };
 
@@ -52,8 +54,10 @@ export default function ManageEvents() {
       description: event.description,
       date: new Date(event.date).toISOString().slice(0, 10),
       location: event.location,
+      eventType: event.eventType || 'organized',
     });
     setBanner(null);
+    setGalleryFiles([]);
     setShowModal(true);
   };
 
@@ -70,7 +74,11 @@ export default function ManageEvents() {
       fd.append('description', form.description);
       fd.append('date', form.date);
       fd.append('location', form.location);
+      fd.append('eventType', form.eventType || 'organized');
       if (banner) fd.append('image', banner);
+      if (galleryFiles.length) {
+        galleryFiles.forEach((file) => fd.append('images', file));
+      }
 
       if (editing) {
         await api.put(`/events/${editing._id}`, fd);
@@ -213,15 +221,26 @@ export default function ManageEvents() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Location *</label>
-                  <input
-                    type="text"
-                    value={form.location}
-                    onChange={(e) => setForm({ ...form, location: e.target.value })}
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Type *</label>
+                  <select
+                    value={form.eventType}
+                    onChange={(e) => setForm({ ...form, eventType: e.target.value })}
                     className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-forest-300"
-                    placeholder="Main Campus Lawn"
-                  />
+                  >
+                    <option value="organized">Organised</option>
+                    <option value="participated">Participated</option>
+                  </select>
                 </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Location *</label>
+                <input
+                  type="text"
+                  value={form.location}
+                  onChange={(e) => setForm({ ...form, location: e.target.value })}
+                  className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-forest-300"
+                  placeholder="Main Campus Lawn"
+                />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -233,6 +252,21 @@ export default function ManageEvents() {
                   onChange={(e) => setBanner(e.target.files[0])}
                   className="w-full text-sm text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-forest-50 file:text-forest-700 file:text-sm file:font-semibold cursor-pointer"
                 />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Extra Event Photos (optional)
+                </label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={(e) => setGalleryFiles(Array.from(e.target.files || []))}
+                  className="w-full text-sm text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-forest-50 file:text-forest-700 file:text-sm file:font-semibold cursor-pointer"
+                />
+                {galleryFiles.length > 0 && (
+                  <p className="mt-1 text-xs text-gray-500">{galleryFiles.length} image(s) selected</p>
+                )}
               </div>
 
               <div className="flex gap-3 pt-2">

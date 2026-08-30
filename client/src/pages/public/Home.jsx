@@ -4,7 +4,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { motion, AnimatePresence, useInView, useReducedMotion } from 'framer-motion';
 import { fetchEvents } from '../../features/events/eventsSlice';
 import { fetchAnnouncements as fetchAnns } from '../../features/announcements/announcementsSlice';
-import { fetchGallery as fetchGal } from '../../features/gallery/gallerySlice';
 import EventCard from '../../components/events/EventCard';
 import Spinner from '../../components/ui/Spinner';
 import MagneticButton from '../../components/ui/MagneticButton';
@@ -83,7 +82,7 @@ function FloatingLeaves() {
 const stats = [
   { target: 500, suffix: '+', label: 'Active Members' },
   { target: 1200, suffix: '+', label: 'Trees Planted' },
-  { target: 45, suffix: '+', label: 'Events Conducted' },
+  { target: 45, suffix: '+', label: 'Events Organised' },
   { target: 850, suffix: 'kg', label: 'Waste Recycled' },
 ];
 
@@ -92,7 +91,6 @@ export default function Home() {
   const events = useSelector((s) => s.events.list);
   const eventsLoading = useSelector((s) => s.events.isLoading);
   const announcements = useSelector((s) => s.announcements.list);
-  const galleryImages = useSelector((s) => s.gallery.images);
   const [showStickyCTA, setShowStickyCTA] = useState(false);
 
   // Sticky mobile CTA appears after scrolling past the hero (item #10)
@@ -105,7 +103,6 @@ export default function Home() {
   useEffect(() => {
     dispatch(fetchEvents({ filter: 'upcoming', page: 1 }));
     dispatch(fetchAnns({ page: 1 }));
-    dispatch(fetchGal({ page: 1 }));
   }, [dispatch]);
 
   return (
@@ -312,39 +309,6 @@ export default function Home() {
                 >
                   Read more →
                 </Link>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ================= GALLERY PREVIEW ================= */}
-      <section className="py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-end justify-between mb-10">
-            <h2 className="section-title">Moments from the field</h2>
-            <Link to="/gallery" className="text-forest-600 font-medium hover:underline whitespace-nowrap">
-              See the full gallery →
-            </Link>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {galleryImages.slice(0, 8).map((img, i) => (
-              <motion.div
-                key={img._id}
-                initial={{ opacity: 0, scale: 0.95 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: (i % 4) * 0.08 }}
-                className={`rounded-2xl overflow-hidden ${
-                  i === 0 || i === 5 ? 'row-span-2 h-full' : ''
-                }`}
-              >
-                <img
-                  src={img.imageUrl}
-                  alt={img.caption || 'Club moment'}
-                  loading="lazy"
-                  className="w-full h-full min-h-36 object-cover hover:scale-105 transition-transform duration-300"
-                />
               </motion.div>
             ))}
           </div>

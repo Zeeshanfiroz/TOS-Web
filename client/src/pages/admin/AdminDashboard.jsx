@@ -70,14 +70,14 @@ export default function AdminDashboard() {
       {/* Quick actions */}
       <div className="mt-10">
         <h2 className="font-display font-semibold text-lg text-gray-900 mb-4">Quick Actions</h2>
-        <div className="grid sm:grid-cols-3 gap-4">
+        <div className="grid sm:grid-cols-2 gap-4">
           <Link
             to="/admin/events"
             className="bg-white border border-forest-100 rounded-2xl p-5 hover:shadow-md transition-shadow"
           >
             <span className="text-xl">➕</span>
             <p className="font-medium mt-2">Create an Event</p>
-            <p className="text-xs text-gray-500 mt-1">Add a new club event with banner & RSVPs</p>
+            <p className="text-xs text-gray-500 mt-1">Add a new club event with banner & interested members</p>
           </Link>
           <Link
             to="/admin/announcements"
@@ -86,14 +86,6 @@ export default function AdminDashboard() {
             <span className="text-xl">📝</span>
             <p className="font-medium mt-2">Post Announcement</p>
             <p className="text-xs text-gray-500 mt-1">Share news with all members</p>
-          </Link>
-          <Link
-            to="/admin/gallery"
-            className="bg-white border border-forest-100 rounded-2xl p-5 hover:shadow-md transition-shadow"
-          >
-            <span className="text-xl">📤</span>
-            <p className="font-medium mt-2">Upload Photos</p>
-            <p className="text-xs text-gray-500 mt-1">Bulk upload event photos to the gallery</p>
           </Link>
         </div>
       </div>

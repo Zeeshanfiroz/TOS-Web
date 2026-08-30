@@ -10,8 +10,8 @@ const formatDate = (d) =>
   });
 
 export default function EventCard({ event, index = 0 }) {
-  const isPast = new Date(event.date) < new Date();
-  const statusLabel = isPast ? 'Participate' : 'Conduct';
+  const statusLabel = event.eventType === 'participated' ? 'Participated' : 'Organised';
+  const isUpcoming = new Date(event.date) > new Date();
 
   return (
     <motion.div
@@ -36,12 +36,11 @@ export default function EventCard({ event, index = 0 }) {
                   🌿
                 </div>
               )}
-              <span
-                className={`absolute top-3 left-3 text-xs font-semibold px-3 py-1 rounded-full backdrop-blur ${
-                  isPast ? 'bg-gray-800/70 text-white' : 'glass text-forest-800'
-                }`}
-              >
-                {isPast ? statusLabel : formatDate(event.date)}
+              <span className="absolute top-3 left-3 text-xs font-semibold px-3 py-1 rounded-full backdrop-blur bg-gray-800/70 text-white">
+                {statusLabel}
+              </span>
+              <span className="absolute top-3 right-3 text-xs font-semibold px-3 py-1 rounded-full bg-forest-100 text-forest-800 border border-forest-200">
+                {isUpcoming ? 'Upcoming' : 'Past'}
               </span>
             </div>
             <div className="p-5">

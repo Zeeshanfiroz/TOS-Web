@@ -22,7 +22,19 @@ const eventSchema = new mongoose.Schema(
       required: [true, 'Location is required'],
       trim: true,
     },
+    eventType: {
+      type: String,
+      enum: ['organized', 'participated'],
+      default: 'organized',
+      index: true,
+    },
     banner: { url: String, fileId: String },
+    gallery: [
+      {
+        url: { type: String, required: true },
+        fileId: { type: String, required: true },
+      },
+    ],
     rsvps: [
       {
         user: {

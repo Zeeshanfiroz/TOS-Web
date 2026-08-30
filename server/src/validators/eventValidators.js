@@ -14,4 +14,7 @@ export const eventValidator = [
   body('location')
     .trim()
     .notEmpty().withMessage('Location is required'),
+  body('eventType')
+    .optional()
+    .isIn(['organized', 'participated']).withMessage('Event type must be organized or participated'),
 ];

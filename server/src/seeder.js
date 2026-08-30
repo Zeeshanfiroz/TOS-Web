@@ -5,7 +5,6 @@ import connectDB from './config/db.js';
 import User from './models/User.js';
 import Event from './models/Event.js';
 import Announcement from './models/Announcement.js';
-import Gallery from './models/Gallery.js';
 
 const daysFromNow = (days) => new Date(Date.now() + days * 24 * 60 * 60 * 1000);
 
@@ -17,7 +16,6 @@ const seed = async () => {
     User.deleteMany(),
     Event.deleteMany(),
     Announcement.deleteMany(),
-    Gallery.deleteMany(),
   ]);
   console.log('🧹 Existing data cleared');
 
@@ -105,19 +103,9 @@ const seed = async () => {
   ];
   await Announcement.insertMany(announcementDocs);
 
-  // Gallery — placeholder images (replace with real uploads via admin panel)
-  const galleryDocs = Array.from({ length: 8 }, (_, i) => ({
-    imageUrl: `https://picsum.photos/seed/green${i}/800/600`,
-    fileId: `placeholder-${i}`,
-    caption: ['Plantation drive', 'Clean-up day', 'Workshop', 'Team photo'][i % 4],
-    eventRef: i < 4 ? events[0]._id : null,
-  }));
-  await Gallery.insertMany(galleryDocs);
-
   console.log('✅ Seed complete!');
   console.log('   Events:', events.length);
   console.log('   Announcements:', announcementDocs.length);
-  console.log('   Gallery images:', galleryDocs.length);
   console.log('🔑 Login credentials:');
   console.log('   Admin : admin@club.com / admin12345');
   console.log('   Member: member@club.com / member12345');

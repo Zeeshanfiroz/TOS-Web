@@ -9,7 +9,7 @@ import {
   myRsvps,
 } from '../controllers/eventController.js';
 import { protect, adminOnly } from '../middleware/auth.js';
-import { uploadSingle } from '../middleware/upload.js';
+import { uploadEventMedia } from '../middleware/upload.js';
 import { eventValidator } from '../validators/eventValidators.js';
 import { validate } from '../middleware/validate.js';
 
@@ -28,7 +28,7 @@ router.post(
   '/',
   protect,
   adminOnly,
-  uploadSingle,
+  uploadEventMedia,
   eventValidator,
   validate,
   createEvent
@@ -37,7 +37,7 @@ router.put(
   '/:id',
   protect,
   adminOnly,
-  uploadSingle,
+  uploadEventMedia,
   eventValidator,
   validate,
   updateEvent

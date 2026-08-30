@@ -17,6 +17,13 @@ const formatDate = (d) =>
     year: 'numeric',
   });
 
+const normalizeEventType = (value) => {
+  const raw = String(value || 'organized').toLowerCase();
+  if (raw === 'participated' || raw === 'participate') return 'participated';
+  if (raw === 'conducted' || raw === 'conduct' || raw === 'organized' || raw === 'organised') return 'organized';
+  return 'organized';
+};
+
 export default function EventDetail() {
   const { id } = useParams();
   const dispatch = useDispatch();
@@ -29,13 +36,37 @@ export default function EventDetail() {
     dispatch(fetchEventById(id));
   }, [dispatch, id]);
 
-  const isPast = event && new Date(event.date) < new Date();
-  const eventStatus = isPast ? 'Participate' : 'Conduct';
+  const [showGallery, setShowGallery] = useState(false);
+  const [photoIndex, setPhotoIndex] = useState(0);
+
+  const galleryImages = [
+    ...(event?.banner?.url ? [{ url: event.banner.url, caption: event.title }] : []),
+    ...(event?.gallery || []).map((photo) => ({ url: photo.url, caption: event?.title || 'Event photo' })),
+  ];
+
+  useEffect(() => {
+    if (!showGallery || galleryImages.length === 0) return;
+
+    const onKey = (e) => {
+      if (e.key === 'Escape') setShowGallery(false);
+      if (e.key === 'ArrowRight') setPhotoIndex((i) => (i + 1) % galleryImages.length);
+      if (e.key === 'ArrowLeft') setPhotoIndex((i) => (i - 1 + galleryImages.length) % galleryImages.length);
+    };
+
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [showGallery, galleryImages.length]);
+
+  const normalizedEventType = normalizeEventType(event?.eventType);
+  const eventStatus = normalizedEventType === 'participated' ? 'Participated' : 'Organised';
+  const isUpcoming = event?.date ? new Date(event.date) > new Date() : false;
+  const eventTimelineLabel = isUpcoming ? 'Upcoming' : 'Past Event';
+  const canRsvp = normalizedEventType === 'organized';
   const rsvped = event?.rsvps?.some((r) => r.user?._id === user?._id || r.user === user?._id);
 
   const handleRsvp = async () => {
     if (!user) {
-      toast.info('Please log in to RSVP for this event.');
+      toast.info('Please log in to mark your interest in this event.');
       navigate('/login', { state: { from: `/events/${id}` } });
       return;
     }
@@ -43,10 +74,10 @@ export default function EventDetail() {
     const result = await dispatch(toggleRsvp(id));
     setRsvpBusy(false);
     if (toggleRsvp.fulfilled.match(result)) {
-      toast.success(result.payload.rsvped ? 'RSVP confirmed! 🌱' : 'Your RSVP has been cancelled.');
-      dispatch(fetchEventById(id)); // refresh attendee list
+      toast.success(result.payload.rsvped ? 'Marked as interested! 🌱' : 'Your interest has been removed.');
+      dispatch(fetchEventById(id)); // refresh interested list
     } else {
-      toast.error(result.payload || 'RSVP could not be completed.');
+      toast.error(result.payload || 'Could not update your interest status.');
     }
   };
 
@@ -81,24 +112,23 @@ export default function EventDetail() {
       >
         {/* Banner */}
         <div className="h-64 md:h-80 bg-gradient-to-br from-forest-400 to-forest-700 relative">
-          {event.banner?.url ? (
-            <img src={event.banner.url} alt={event.title} className="w-full h-full object-cover" />
+          {galleryImages[0]?.url ? (
+            <img src={galleryImages[0].url} alt={event.title} className="w-full h-full object-cover" />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-7xl opacity-60">🌿</div>
           )}
+          <span className="absolute top-4 left-4 text-xs font-semibold px-3 py-1 rounded-full bg-white/85 text-forest-800 shadow-sm">
+            {eventTimelineLabel}
+          </span>
         </div>
 
         <div className="p-6 md:p-10">
           <div className="flex flex-wrap items-center gap-3">
-            <span
-              className={`text-xs font-semibold px-3 py-1 rounded-full ${
-                isPast ? 'bg-gray-100 text-gray-600' : 'bg-forest-100 text-forest-700'
-              }`}
-            >
+            <span className="text-xs font-semibold px-3 py-1 rounded-full bg-forest-100 text-forest-700">
               {eventStatus}
             </span>
-            <span className="text-sm text-gray-500">
-              {event.rsvps?.length || 0} going
+            <span className="text-xs font-semibold px-3 py-1 rounded-full bg-amber-100 text-amber-700">
+              {eventTimelineLabel}
             </span>
           </div>
 
@@ -119,17 +149,32 @@ export default function EventDetail() {
             {event.description}
           </p>
 
-          {/* RSVP */}
-          {!isPast && (
+          {galleryImages.length > 1 && (
+            <div className="mt-8">
+              <button
+                type="button"
+                onClick={() => {
+                  setPhotoIndex(0);
+                  setShowGallery(true);
+                }}
+                className="px-4 py-2 rounded-xl bg-forest-600 text-white font-semibold hover:bg-forest-700"
+              >
+                View more photos
+              </button>
+            </div>
+          )}
+
+          {/* Interested */}
+          {canRsvp && (
             <div className="mt-8 pt-6 border-t border-gray-100 flex flex-col sm:flex-row items-start sm:items-center gap-4 justify-between">
               <div>
                 <p className="font-semibold text-gray-900">
-                  {rsvped ? "You're going! 🎉" : 'Will you join us?'}
+                  {rsvped ? "You're interested! 🎉" : 'Will you join us?'}
                 </p>
                 <p className="text-sm text-gray-500">
                   {rsvped
-                    ? 'We will send you a reminder before the event.'
-                    : 'RSVP so we can plan resources accordingly.'}
+                    ? 'We will keep you updated about the event.'
+                    : 'Mark yourself interested so we know who wants to join.'}
                 </p>
               </div>
               <button
@@ -141,31 +186,57 @@ export default function EventDetail() {
                     : 'bg-forest-600 text-white hover:bg-forest-700 shadow-lg shadow-forest-200'
                 }`}
               >
-                {rsvpBusy ? 'Please wait...' : rsvped ? 'Cancel RSVP' : 'RSVP Now 🌱'}
+                {rsvpBusy ? 'Please wait...' : rsvped ? 'Cancel Interest' : 'Interested 🌱'}
               </button>
             </div>
           )}
 
-          {/* Attendees */}
-          {event.rsvps?.length > 0 && (
-            <div className="mt-8">
-              <h3 className="font-display font-semibold text-gray-900 mb-3">
-                Attendees ({event.rsvps.length})
-              </h3>
-              <div className="flex flex-wrap gap-2">
-                {event.rsvps.map((r) => (
-                  <span
-                    key={r.user?._id || r.user}
-                    className="text-sm bg-forest-50 text-forest-700 px-3 py-1.5 rounded-full"
-                  >
-                    {r.user?.name || 'Member'}
-                  </span>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
       </motion.div>
+
+      {showGallery && galleryImages.length > 0 && (
+        <div
+          className="fixed inset-0 z-[100] bg-black/85 flex items-center justify-center p-4"
+          onClick={() => setShowGallery(false)}
+        >
+          <button
+            className="absolute top-5 right-5 text-white text-3xl"
+            onClick={() => setShowGallery(false)}
+            aria-label="Close gallery"
+          >
+            ×
+          </button>
+          <button
+            className="absolute left-5 text-white text-4xl"
+            onClick={(e) => {
+              e.stopPropagation();
+              setPhotoIndex((i) => (i - 1 + galleryImages.length) % galleryImages.length);
+            }}
+            aria-label="Previous photo"
+          >
+            ‹
+          </button>
+          <img
+            src={galleryImages[photoIndex].url}
+            alt={galleryImages[photoIndex].caption}
+            className="max-h-[80vh] max-w-[90vw] object-contain rounded-2xl"
+            onClick={(e) => e.stopPropagation()}
+          />
+          <button
+            className="absolute right-5 text-white text-4xl"
+            onClick={(e) => {
+              e.stopPropagation();
+              setPhotoIndex((i) => (i + 1) % galleryImages.length);
+            }}
+            aria-label="Next photo"
+          >
+            ›
+          </button>
+          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-center text-sm text-white/90">
+            {photoIndex + 1} / {galleryImages.length}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

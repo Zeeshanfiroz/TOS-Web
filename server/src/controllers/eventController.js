@@ -6,13 +6,17 @@ import { uploadImage, deleteImage } from '../config/imagekit.js';
  * Public — list events with filter, search and pagination.
  */
 export const getEvents = async (req, res) => {
-  const { filter = 'conduct', search = '', page = 1, limit = 9 } = req.query;
+  const { filter = 'organized', search = '', page = 1, limit = 9 } = req.query;
 
   const query = {};
   const normalizedFilter = String(filter).toLowerCase();
 
-  if (normalizedFilter === 'conduct') query.date = { $gte: new Date() };
-  if (normalizedFilter === 'participate') query.date = { $lt: new Date() };
+  const legacyFilter = normalizedFilter === 'conduct' ? 'organized' : normalizedFilter === 'participate' ? 'participated' : normalizedFilter;
+
+  if (legacyFilter === 'organized' || legacyFilter === 'participated') {
+    query.eventType = legacyFilter;
+  }
+
   if (normalizedFilter === 'upcoming') query.date = { $gte: new Date() };
   if (normalizedFilter === 'past') query.date = { $lt: new Date() };
   if (search) {
@@ -26,10 +30,10 @@ export const getEvents = async (req, res) => {
 
   const [events, total] = await Promise.all([
     Event.find(query)
-      .sort(normalizedFilter === 'participate' || normalizedFilter === 'past' ? { date: -1 } : { date: 1 })
+      .sort(normalizedFilter === 'participated' || normalizedFilter === 'past' ? { date: -1 } : { date: 1 })
       .skip(skip)
       .limit(Number(limit))
-      .select('-rsvps'), // don't send the whole RSVP list in list view
+      .select('-rsvps'),
     Event.countDocuments(query),
   ]);
 
@@ -61,13 +65,30 @@ export const getEventById = async (req, res) => {
  * POST /api/events  (admin, multipart/form-data with optional image)
  */
 export const createEvent = async (req, res) => {
-  const { title, description, date, location } = req.body;
+  const { title, description, date, location, eventType = 'organized' } = req.body;
 
-  const eventData = { title, description, date, location };
+  const eventData = {
+    title,
+    description,
+    date,
+    location,
+    eventType: ['organized', 'participated'].includes(eventType) ? eventType : 'organized',
+  };
+
   const uploadedFile = req.file || req.files?.image?.[0] || req.files?.banner?.[0];
-
   if (uploadedFile) {
-    eventData.banner = await uploadImage(uploadedFile.buffer, uploadedFile.originalname, '/events');
+    const bannerResult = await uploadImage(uploadedFile.buffer, uploadedFile.originalname, '/events');
+    eventData.banner = { url: bannerResult.url, fileId: bannerResult.fileId };
+  }
+
+  const extraFiles = req.files?.images || [];
+  if (extraFiles.length) {
+    const uploadedGallery = [];
+    for (const file of extraFiles) {
+      const result = await uploadImage(file.buffer, file.originalname, '/events');
+      uploadedGallery.push({ url: result.url, fileId: result.fileId });
+    }
+    eventData.gallery = uploadedGallery;
   }
 
   const event = await Event.create(eventData);
@@ -83,17 +104,30 @@ export const updateEvent = async (req, res) => {
     return res.status(404).json({ success: false, message: 'Event not found' });
   }
 
-  const { title, description, date, location } = req.body;
+  const { title, description, date, location, eventType } = req.body;
   if (title) event.title = title;
   if (description) event.description = description;
   if (date) event.date = date;
   if (location) event.location = location;
+  if (eventType && ['organized', 'participated'].includes(eventType)) {
+    event.eventType = eventType;
+  }
 
-  // Replace banner if a new image was uploaded
   const uploadedFile = req.file || req.files?.image?.[0] || req.files?.banner?.[0];
   if (uploadedFile) {
     if (event.banner?.fileId) await deleteImage(event.banner.fileId);
-    event.banner = await uploadImage(uploadedFile.buffer, uploadedFile.originalname, '/events');
+    const bannerResult = await uploadImage(uploadedFile.buffer, uploadedFile.originalname, '/events');
+    event.banner = { url: bannerResult.url, fileId: bannerResult.fileId };
+  }
+
+  const extraFiles = req.files?.images || [];
+  if (extraFiles.length) {
+    const uploadedGallery = [];
+    for (const file of extraFiles) {
+      const result = await uploadImage(file.buffer, file.originalname, '/events');
+      uploadedGallery.push({ url: result.url, fileId: result.fileId });
+    }
+    event.gallery = [...(event.gallery || []), ...uploadedGallery];
   }
 
   await event.save();

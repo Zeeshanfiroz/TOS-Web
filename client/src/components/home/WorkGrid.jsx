@@ -137,17 +137,11 @@ export default function WorkGrid() {
           })}
         </div>
 
-        <a
-          href="/gallery"
-          className="group mt-8 inline-flex items-center gap-3 rounded-md border border-humus/15 bg-kraft-card px-6 py-5 transition-colors hover:border-laterite"
-        >
+        <div className="mt-8 rounded-md border border-humus/15 bg-kraft-card px-6 py-5 text-kraft/80">
           <p className="font-display text-lg font-semibold text-humus">
-            More stories, photos and moments are waiting in the gallery.
+            More stories and impacts from the club are shared through our event updates.
           </p>
-          <span className="text-laterite transition-transform duration-200 group-hover:translate-x-1" aria-hidden="true">
-            →
-          </span>
-        </a>
+        </div>
       </div>
 
       {/* Detail view — shared Lightbox (focus trap + scroll lock + keys) */}

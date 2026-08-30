@@ -25,7 +25,7 @@ export default function Footer() {
               {[
                 ['/', 'Home'],
                 ['/events', 'Events'],
-                ['/gallery', 'Gallery'],
+
                 ['/announcements', 'Announcements'],
                 ['/team', 'Our Team'],
                 ['/contact', 'Contact Us'],

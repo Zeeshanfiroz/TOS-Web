@@ -23,6 +23,16 @@ export const uploadSingle = multer({
   { name: 'banner', maxCount: 1 },
 ]);
 
+export const uploadEventMedia = multer({
+  storage,
+  fileFilter,
+  limits: { fileSize: MAX_SIZE, files: 11 },
+}).fields([
+  { name: 'image', maxCount: 1 },
+  { name: 'banner', maxCount: 1 },
+  { name: 'images', maxCount: 10 },
+]);
+
 // Multiple files — accepts both `images` and `image` for compatibility.
 export const uploadMultiple = multer({
   storage,
