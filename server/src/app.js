@@ -12,6 +12,7 @@ import announcementRoutes from './routes/announcementRoutes.js';
 import galleryRoutes from './routes/galleryRoutes.js';
 import contactRoutes from './routes/contactRoutes.js';
 import userRoutes from './routes/userRoutes.js';
+import teamRoutes from './routes/teamRoutes.js';
 import { notFound, errorHandler, sanitizeNoSql } from './middleware/error.js';
 import { verifyEmail } from './config/mailer.js';
 import { configurePassport } from './config/passport.js';
@@ -105,6 +106,7 @@ app.use('/api/announcements', announcementRoutes);
 app.use('/api/gallery', galleryRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/team', teamRoutes);
 
 // 404 + centralized error handler (must be LAST)
 app.use(notFound);

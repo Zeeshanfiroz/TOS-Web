@@ -25,10 +25,10 @@ export default function ManageEvents() {
   const loadEvents = async () => {
     setLoading(true);
     try {
-      const { data } = await api.get('/events?limit=100');
+      const { data } = await api.get('/events', { params: { filter: 'all', limit: 100 } });
       setEvents(data.data);
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Failed to load events');
+      toast.error(err.response?.data?.message || 'Unable to load events right now.');
     } finally {
       setLoading(false);
     }
@@ -60,7 +60,7 @@ export default function ManageEvents() {
   const handleSave = async (e) => {
     e.preventDefault();
     if (!form.title || !form.date || !form.location) {
-      toast.error('Title, date and location are required');
+      toast.error('Please enter the title, date, and location.');
       return;
     }
     setSaving(true);
@@ -70,19 +70,19 @@ export default function ManageEvents() {
       fd.append('description', form.description);
       fd.append('date', form.date);
       fd.append('location', form.location);
-      if (banner) fd.append('banner', banner);
+      if (banner) fd.append('image', banner);
 
       if (editing) {
         await api.put(`/events/${editing._id}`, fd);
-        toast.success('Event updated ✅');
+        toast.success('Event updated successfully ✅');
       } else {
         await api.post('/events', fd);
-        toast.success('Event created 🌱');
+        toast.success('Event created successfully 🌱');
       }
       setShowModal(false);
       loadEvents();
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Save failed');
+      toast.error(err.response?.data?.message || 'Something went wrong while saving.');
     } finally {
       setSaving(false);
     }
@@ -92,10 +92,10 @@ export default function ManageEvents() {
     if (!window.confirm(`Delete "${event.title}"? This cannot be undone.`)) return;
     try {
       await api.delete(`/events/${event._id}`);
-      toast.success('Event deleted');
+      toast.success('Event deleted successfully');
       loadEvents();
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Delete failed');
+      toast.error(err.response?.data?.message || 'Unable to delete this event.');
     }
   };
 

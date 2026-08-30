@@ -41,15 +41,18 @@ export default function Navbar() {
       isActive ? 'text-forest-700' : 'text-gray-600 hover:text-forest-700'
     }`;
 
+  const mobileLinkClass =
+    'block px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-forest-700 hover:bg-forest-50 transition-colors';
+
   return (
     <motion.header
       initial={{ y: -70, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-      className={`sticky top-0 z-50 border-b transition-all duration-300 ${
+      className={`sticky top-0 z-50 border-b transition-all duration-300 relative bg-white ${
         scrolled
-          ? 'bg-kraft border-humus/20 shadow-[0_8px_24px_-16px_rgba(38,32,26,0.45)]'
-          : 'bg-kraft/85 backdrop-blur-md border-transparent'
+          ? 'border-humus/20 shadow-[0_8px_24px_-16px_rgba(38,32,26,0.45)]'
+          : 'border-humus/15 shadow-sm'
       }`}
     >
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -60,17 +63,13 @@ export default function Navbar() {
         >
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2" onClick={() => setOpen(false)}>
-            <motion.span
-              className="text-neem"
+            <motion.img
+              src="/Logo.png"
+              alt="Team of Sustainability logo"
               animate={{ rotate: [0, -8, 8, 0] }}
               transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-            >
-              <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <path d="M12 21v-8" />
-                <path d="M12 13c0-4 2.5-7 6-7.5.3 3.8-2 7-6 7.5z" />
-                <path d="M12 15c0-3-2-5.5-5-6-.3 3 1.8 5.6 5 6z" />
-              </svg>
-            </motion.span>
+              className="h-8 w-8 object-contain"
+            />
             <span className="font-display font-bold text-base sm:text-lg text-forest-800 leading-tight">
               Team of <span className="text-gradient">Sustainability</span>
               <span className="block text-[10px] font-medium text-gray-500 -mt-0.5">
@@ -166,18 +165,19 @@ export default function Navbar() {
         {open && (
           <motion.div
             id="mobile-menu"
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            className="lg:hidden overflow-hidden border-t border-humus/15 bg-kraft"
+            initial={{ opacity: 0, y: -12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -12 }}
+            transition={{ duration: 0.2, ease: 'easeOut' }}
+            className="lg:hidden absolute inset-x-0 top-full z-40 overflow-hidden border-t border-humus/15 bg-white shadow-[0_18px_30px_-22px_rgba(38,32,26,0.45)]"
           >
             <div className="px-4 py-3 space-y-1">
               {links.map((l, i) => (
                 <motion.div
                   key={l.to}
-                  initial={{ opacity: 0, x: -20 }}
+                  initial={{ opacity: 0, x: -12 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.05, duration: 0.3 }}
+                  transition={{ delay: i * 0.04, duration: 0.2 }}
                 >
                   <NavLink
                     to={l.to}
@@ -190,18 +190,18 @@ export default function Navbar() {
                 </motion.div>
               ))}
               <motion.div
-                initial={{ opacity: 0, x: -20 }}
+                initial={{ opacity: 0, x: -12 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: links.length * 0.05, duration: 0.3 }}
+                transition={{ delay: links.length * 0.04, duration: 0.2 }}
                 className="pt-2 border-t border-forest-100 space-y-1"
               >
                 {user ? (
                   <>
-                    <Link to="/dashboard" className={linkClass} onClick={() => setOpen(false)}>
+                    <Link to="/dashboard" className={mobileLinkClass} onClick={() => setOpen(false)}>
                       My Dashboard
                     </Link>
                     {isAdmin && (
-                      <Link to="/admin" className={linkClass} onClick={() => setOpen(false)}>
+                      <Link to="/admin" className={mobileLinkClass} onClick={() => setOpen(false)}>
                         Admin Panel
                       </Link>
                     )}
@@ -214,7 +214,7 @@ export default function Navbar() {
                   </>
                 ) : (
                   <>
-                    <Link to="/login" className={linkClass} onClick={() => setOpen(false)}>
+                    <Link to="/login" className={mobileLinkClass} onClick={() => setOpen(false)}>
                       Login
                     </Link>
                     <Link

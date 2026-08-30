@@ -14,9 +14,7 @@ export default function Footer() {
               </span>
             </div>
             <p className="text-sm text-forest-200/80 leading-relaxed">
-              The official sustainability club of VSSUT, Burla — working towards
-              the UN Sustainable Development Goals through hands-on projects,
-              awareness drives and research. Small actions, big impact.
+              The official sustainability club of VSSUT, Burla — building practical solutions, awareness and community action for a more resilient future. Small steps, meaningful impact.
             </p>
           </div>
 
@@ -107,7 +105,7 @@ export default function Footer() {
 
         <div className="border-t border-forest-800 mt-10 pt-6 flex flex-col md:flex-row items-center justify-between gap-3 text-xs text-forest-300/60">
           <span>
-            © {new Date().getFullYear()} Team of Sustainability — VSSUT, Burla. Made with 💚 by students.
+            © {new Date().getFullYear()} Team of Sustainability — VSSUT, Burla. Built with care by students.
           </span>
           <div className="flex gap-4">
             <Link to="/privacy-policy" className="hover:text-white transition-colors">

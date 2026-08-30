@@ -177,10 +177,7 @@ export default function Home() {
               transition={{ delay: 0.85, duration: 0.6 }}
               className="mt-6 text-lg text-gray-600 leading-relaxed"
             >
-              We are <strong>Team of Sustainability</strong> — working towards the
-              UN Sustainable Development Goals through IoT projects, plantation
-              drives, workshops and awareness campaigns. Together, we learn,
-              create and drive change.
+              We are <strong>Team of Sustainability</strong> — a student-led community building a greener campus through research, technology, outreach and action. From IoT projects to plantation drives, we turn ideas into measurable impact.
             </motion.p>
 
             {/* Magnetic CTA buttons */}
@@ -195,7 +192,7 @@ export default function Home() {
                   to="/signup"
                   className="shine inline-block px-8 py-3.5 rounded-xl bg-forest-600 hover:bg-forest-700 text-white font-semibold shadow-lg shadow-forest-300/60 transition-all"
                 >
-                  Join the Club →
+                  Become a Member →
                 </Link>
               </MagneticButton>
               <MagneticButton>
@@ -262,10 +259,10 @@ export default function Home() {
           <div className="flex items-end justify-between mb-10">
             <div>
               <h2 className="section-title">Upcoming Events</h2>
-              <p className="text-gray-500 mt-2">Be part of something green 🌿</p>
+              <p className="text-gray-500 mt-2">Join the next step toward a greener campus 🌿</p>
             </div>
             <Link to="/events" className="text-forest-600 font-medium hover:underline whitespace-nowrap">
-              View all →
+              View all events →
             </Link>
           </div>
 
@@ -285,9 +282,9 @@ export default function Home() {
       <section className="py-20 bg-forest-50/60">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-end justify-between mb-10">
-            <h2 className="section-title">Latest Announcements</h2>
+            <h2 className="section-title">Latest Updates</h2>
             <Link to="/announcements" className="text-forest-600 font-medium hover:underline whitespace-nowrap">
-              View all →
+              Read all updates →
             </Link>
           </div>
           <div className="grid md:grid-cols-3 gap-6">
@@ -325,9 +322,9 @@ export default function Home() {
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-end justify-between mb-10">
-            <h2 className="section-title">Moments That Matter</h2>
+            <h2 className="section-title">Moments from the field</h2>
             <Link to="/gallery" className="text-forest-600 font-medium hover:underline whitespace-nowrap">
-              Full gallery →
+              See the full gallery →
             </Link>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -367,17 +364,16 @@ export default function Home() {
               🌍
             </div>
             <h2 className="font-display text-3xl md:text-4xl font-bold text-white relative">
-              Ready to make an impact?
+              Ready to build a greener future?
             </h2>
             <p className="text-forest-100 mt-3 max-w-xl mx-auto relative">
-              Join Team of Sustainability and be part of a community working on
-              IoT projects, awareness drives and research for a greener future.
+              Join Team of Sustainability and contribute to hands-on projects, community drives and research that create real environmental impact.
             </p>
             <Link
               to="/signup"
               className="inline-block mt-8 px-8 py-3.5 rounded-xl bg-white text-forest-800 font-semibold shadow-lg hover:-translate-y-0.5 transition-transform relative"
             >
-              Join TOS Today 🌱
+              Join the club today 🌱
             </Link>
           </motion.div>
         </div>
@@ -397,7 +393,7 @@ export default function Home() {
               to="/signup"
               className="block w-full text-center py-3.5 rounded-xl bg-forest-600 hover:bg-forest-700 text-white font-semibold shadow-lg transition-colors"
             >
-              Join the Club — It's Free 🌱
+              Join the club — it’s free 🌱
             </Link>
           </motion.div>
         )}

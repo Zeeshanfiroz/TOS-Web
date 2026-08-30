@@ -32,7 +32,7 @@ export default function Login() {
   // OAuth failure feedback (spec D4)
   useEffect(() => {
     if (params.get('error') === 'oauth_failed') {
-      toast.error('Social login failed. Please try again or use email/password.');
+      toast.error('Google/GitHub login failed. Please try again or use email and password.');
     }
   }, [params]);
 
@@ -50,7 +50,7 @@ export default function Login() {
         <div className="text-center mb-8">
           <span className="text-4xl">🌱</span>
           <h1 className="font-display text-3xl font-bold text-gray-900 mt-3">Welcome back</h1>
-          <p className="text-gray-500 mt-2">Login to your TOS account</p>
+          <p className="text-gray-500 mt-2">Sign in to your TOS account</p>
         </div>
 
         <div className="bg-white rounded-3xl border border-forest-100 p-8 shadow-sm">
@@ -60,7 +60,7 @@ export default function Login() {
             onSubmit={(values) => {
               dispatch(login(values))
                 .unwrap()
-                .then(() => toast.success('Logged in! 🌱'))
+                .then(() => toast.success('Login successful! 🌱'))
                 .catch((msg) => toast.error(msg));
             }}
           >
@@ -98,7 +98,7 @@ export default function Login() {
                   disabled={isLoading}
                   className="btn btn-primary w-full py-3.5"
                 >
-                  {isLoading ? 'Logging in...' : 'Login'}
+                  {isLoading ? 'Signing in...' : 'Login'}
                 </button>
 
                 <p className="text-center text-sm">

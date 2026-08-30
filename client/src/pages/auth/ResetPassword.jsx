@@ -35,7 +35,7 @@ export default function ResetPassword() {
             {done ? 'Password Reset!' : 'Set New Password'}
           </h1>
           <p className="text-gray-500 mt-2">
-            {done ? 'Login with your new password.' : 'Choose a strong new password.'}
+            {done ? 'You can now sign in with your new password.' : 'Choose a strong new password.'}
           </p>
         </div>
 
@@ -64,7 +64,7 @@ export default function ResetPassword() {
                 } catch (err) {
                   toast.error(
                     err.response?.data?.message ||
-                      'Reset failed — the link may have expired.'
+                      'Password reset failed. The link may have expired.'
                   );
                 } finally {
                   setSubmitting(false);

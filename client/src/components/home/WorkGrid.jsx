@@ -88,7 +88,7 @@ export default function WorkGrid() {
 
   return (
     <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6 md:grid md:grid-cols-[180px_1fr] md:gap-12">
-      <SectionHeading eyebrow="Recent Work" title="What that looks like" />
+      <SectionHeading eyebrow="Recent Work" title="What we’ve been doing" />
       <div>
         <div className="work-grid grid gap-6 sm:grid-cols-2 md:grid-cols-3">
           {WORK.map((w) => {
@@ -142,7 +142,7 @@ export default function WorkGrid() {
           className="group mt-8 inline-flex items-center gap-3 rounded-md border border-humus/15 bg-kraft-card px-6 py-5 transition-colors hover:border-laterite"
         >
           <p className="font-display text-lg font-semibold text-humus">
-            Everything else is in the gallery — unretouched.
+            More stories, photos and moments are waiting in the gallery.
           </p>
           <span className="text-laterite transition-transform duration-200 group-hover:translate-x-1" aria-hidden="true">
             →

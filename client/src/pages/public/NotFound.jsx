@@ -38,7 +38,7 @@ export default function NotFound() {
         transition={{ delay: 0.25 }}
         className="text-xl font-display font-semibold text-gray-800"
       >
-        Yeh path kisi jungle mein kho gaya 🍃
+        This page wandered off into the wild 🍃
       </motion.p>
       <motion.p
         initial={{ opacity: 0, y: 16 }}
@@ -46,8 +46,8 @@ export default function NotFound() {
         transition={{ delay: 0.4 }}
         className="text-gray-500 mt-2 max-w-md"
       >
-        The page you're looking for doesn't exist or was moved. Let's get you
-        back on the green trail.
+        The page you’re looking for doesn’t exist or may have been moved. Let’s
+        guide you back to the right path.
       </motion.p>
 
       <motion.div

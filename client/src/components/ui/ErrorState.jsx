@@ -15,7 +15,7 @@ export default function ErrorState({
       <span className="text-5xl">🥀</span>
       <p className="mt-4 text-gray-600 font-medium">{message}</p>
       <p className="mt-1 text-sm text-gray-500">
-        Check your connection — or the server may be taking a nap.
+        Please check your connection, or try again in a moment.
       </p>
       {onRetry && (
         <button

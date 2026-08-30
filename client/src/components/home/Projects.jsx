@@ -68,11 +68,11 @@ function BuildMotif({ variant }) {
 export default function Projects() {
   return (
     <section className="mx-auto max-w-6xl scroll-mt-24 px-4 py-16 sm:px-6 md:grid md:grid-cols-[180px_1fr] md:gap-12">
-      <SectionHeading eyebrow="What we build" title="Projects, not promises." />
+      <SectionHeading eyebrow="What we build" title="Ideas turned into action." />
       <div>
         <p className="max-w-md text-[15px] font-medium leading-relaxed text-humus/85">
-          Student-built hardware aimed at real sustainability problems —
-          designed, wired and demoed by members.
+          Student-built solutions for real sustainability challenges — designed,
+          tested and demonstrated by the people behind them.
         </p>
 
         <div className="projects-grid mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
@@ -113,7 +113,7 @@ export default function Projects() {
         </div>
 
         <p className="mt-4 text-xs text-humus/60">
-          Full build writeups coming from the project teams — ask us anything at a drive.
+          More build stories are on the way from our project teams — come talk to us at a campus drive.
         </p>
       </div>
     </section>

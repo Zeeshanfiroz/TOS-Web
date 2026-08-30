@@ -23,12 +23,12 @@ export default function JoinCta() {
         <SectionHeading eyebrow="Join" dark />
         <div className="join-copy mt-6 md:mt-0">
           <h2 className="max-w-xl font-display text-[clamp(1.75rem,3vw,2.25rem)] font-semibold leading-[1.15] tracking-[-0.015em] text-kraft">
-            You learn more here than in a classroom elective.
+            You learn by doing, not just by observing.
           </h2>
           <p className="mt-5 max-w-lg text-[15px] font-medium leading-relaxed text-kraft/85">
-            Pick a domain — technical, design, events or research — and learn by
-            building. Members leave with working hardware, planned events and the
-            confidence to present any of it on stage.
+            Choose a domain — technical, design, events or research — and build
+            real projects from the ground up. Members leave with hands-on skills,
+            practical experience and the confidence to lead.
           </p>
 
           <ul className="mt-7 grid max-w-lg gap-x-8 gap-y-2.5 sm:grid-cols-2">
@@ -43,7 +43,7 @@ export default function JoinCta() {
           </ul>
 
           <Button variant="kraft" to="/signup" className="mt-9">
-            Join the club →
+            Become a member →
           </Button>
         </div>
       </div>

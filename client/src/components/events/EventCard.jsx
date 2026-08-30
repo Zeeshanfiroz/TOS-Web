@@ -11,6 +11,7 @@ const formatDate = (d) =>
 
 export default function EventCard({ event, index = 0 }) {
   const isPast = new Date(event.date) < new Date();
+  const statusLabel = isPast ? 'Participate' : 'Conduct';
 
   return (
     <motion.div
@@ -40,7 +41,7 @@ export default function EventCard({ event, index = 0 }) {
                   isPast ? 'bg-gray-800/70 text-white' : 'glass text-forest-800'
                 }`}
               >
-                {isPast ? 'Past Event' : formatDate(event.date)}
+                {isPast ? statusLabel : formatDate(event.date)}
               </span>
             </div>
             <div className="p-5">

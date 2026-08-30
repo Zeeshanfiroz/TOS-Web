@@ -2,15 +2,19 @@ import Event from '../models/Event.js';
 import { uploadImage, deleteImage } from '../config/imagekit.js';
 
 /**
- * GET /api/events?filter=upcoming|past&search=...&page=1&limit=9
+ * GET /api/events?filter=conduct|participate|all&search=...&page=1&limit=9
  * Public — list events with filter, search and pagination.
  */
 export const getEvents = async (req, res) => {
-  const { filter = 'upcoming', search = '', page = 1, limit = 9 } = req.query;
+  const { filter = 'conduct', search = '', page = 1, limit = 9 } = req.query;
 
   const query = {};
-  if (filter === 'upcoming') query.date = { $gte: new Date() };
-  if (filter === 'past') query.date = { $lt: new Date() };
+  const normalizedFilter = String(filter).toLowerCase();
+
+  if (normalizedFilter === 'conduct') query.date = { $gte: new Date() };
+  if (normalizedFilter === 'participate') query.date = { $lt: new Date() };
+  if (normalizedFilter === 'upcoming') query.date = { $gte: new Date() };
+  if (normalizedFilter === 'past') query.date = { $lt: new Date() };
   if (search) {
     query.$or = [
       { title: { $regex: search, $options: 'i' } },
@@ -22,7 +26,7 @@ export const getEvents = async (req, res) => {
 
   const [events, total] = await Promise.all([
     Event.find(query)
-      .sort(filter === 'past' ? { date: -1 } : { date: 1 })
+      .sort(normalizedFilter === 'participate' || normalizedFilter === 'past' ? { date: -1 } : { date: 1 })
       .skip(skip)
       .limit(Number(limit))
       .select('-rsvps'), // don't send the whole RSVP list in list view
@@ -60,9 +64,10 @@ export const createEvent = async (req, res) => {
   const { title, description, date, location } = req.body;
 
   const eventData = { title, description, date, location };
+  const uploadedFile = req.file || req.files?.image?.[0] || req.files?.banner?.[0];
 
-  if (req.file) {
-    eventData.banner = await uploadImage(req.file.buffer, req.file.originalname, '/events');
+  if (uploadedFile) {
+    eventData.banner = await uploadImage(uploadedFile.buffer, uploadedFile.originalname, '/events');
   }
 
   const event = await Event.create(eventData);
@@ -85,9 +90,10 @@ export const updateEvent = async (req, res) => {
   if (location) event.location = location;
 
   // Replace banner if a new image was uploaded
-  if (req.file) {
+  const uploadedFile = req.file || req.files?.image?.[0] || req.files?.banner?.[0];
+  if (uploadedFile) {
     if (event.banner?.fileId) await deleteImage(event.banner.fileId);
-    event.banner = await uploadImage(req.file.buffer, req.file.originalname, '/events');
+    event.banner = await uploadImage(uploadedFile.buffer, uploadedFile.originalname, '/events');
   }
 
   await event.save();

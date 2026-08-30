@@ -27,7 +27,7 @@ export default function ManageAnnouncements() {
       const { data } = await api.get('/announcements?limit=100');
       setPosts(data.data);
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Failed to load announcements');
+      toast.error(err.response?.data?.message || 'Unable to load announcements right now.');
     } finally {
       setLoading(false);
     }
@@ -40,22 +40,22 @@ export default function ManageAnnouncements() {
   const handleSave = async (e) => {
     e.preventDefault();
     if (!form.title.trim() || !form.content.trim()) {
-      toast.error('Title and content are required');
+      toast.error('Please enter both the title and content.');
       return;
     }
     setSaving(true);
     try {
       if (editing) {
         await api.put(`/announcements/${editing._id}`, form);
-        toast.success('Announcement updated ✅');
+        toast.success('Announcement updated successfully ✅');
       } else {
         await api.post('/announcements', form);
-        toast.success('Announcement published 📢');
+        toast.success('Announcement published successfully 📢');
       }
       setShowModal(false);
       load();
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Save failed');
+      toast.error(err.response?.data?.message || 'Something went wrong while saving.');
     } finally {
       setSaving(false);
     }
@@ -65,10 +65,10 @@ export default function ManageAnnouncements() {
     if (!window.confirm(`Delete "${post.title}"?`)) return;
     try {
       await api.delete(`/announcements/${post._id}`);
-      toast.success('Deleted');
+      toast.success('Announcement deleted successfully');
       load();
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Delete failed');
+      toast.error(err.response?.data?.message || 'Unable to delete this announcement.');
     }
   };
 

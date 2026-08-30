@@ -62,7 +62,7 @@ const DOMAINS = [
 export default function Domains() {
   return (
     <section className="mx-auto max-w-6xl scroll-mt-24 px-4 py-16 sm:px-6 md:grid md:grid-cols-[180px_1fr] md:gap-12">
-      <SectionHeading eyebrow="Four domains" title="Pick your way in." />
+      <SectionHeading eyebrow="Four domains" title="Choose your path." />
       <div>
         <div className="domains-grid grid gap-5 sm:grid-cols-2">
           {DOMAINS.map((d) => (

@@ -13,16 +13,22 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
-// Single file upload — req.file
+// Single file upload — accepts both current `image` and legacy `banner` names.
 export const uploadSingle = multer({
   storage,
   fileFilter,
   limits: { fileSize: MAX_SIZE },
-}).single('image');
+}).fields([
+  { name: 'image', maxCount: 1 },
+  { name: 'banner', maxCount: 1 },
+]);
 
-// Multiple files — req.files (max 10 for gallery bulk upload)
+// Multiple files — accepts both `images` and `image` for compatibility.
 export const uploadMultiple = multer({
   storage,
   fileFilter,
   limits: { fileSize: MAX_SIZE, files: 10 },
-}).array('images', 10);
+}).fields([
+  { name: 'images', maxCount: 10 },
+  { name: 'image', maxCount: 10 },
+]);

@@ -45,8 +45,8 @@ export default function Contact() {
         <motion.div initial={{ opacity: 0, x: -24 }} animate={{ opacity: 1, x: 0 }}>
           <h1 className="section-title">Get in Touch</h1>
           <p className="text-gray-600 mt-4 leading-relaxed">
-            Have an idea for a green initiative? Want to collaborate on an event?
-            Or just want to say hi? Drop us a message — we usually reply within
+            Have an idea for a sustainability initiative? Want to collaborate on an event?
+            Or simply want to say hello? Send us a message and we will get back to you within
             48 hours.
           </p>
 

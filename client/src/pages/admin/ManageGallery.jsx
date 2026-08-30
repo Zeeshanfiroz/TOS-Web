@@ -22,7 +22,7 @@ export default function ManageGallery() {
       setImages(gal.data.data);
       setEvents(evs.data.data);
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Failed to load gallery');
+      toast.error(err.response?.data?.message || 'Unable to load gallery items right now.');
     } finally {
       setLoading(false);
     }
@@ -35,7 +35,7 @@ export default function ManageGallery() {
   const handleUpload = async (e) => {
     e.preventDefault();
     if (files.length === 0) {
-      toast.error('Select at least one image');
+      toast.error('Please select at least one image.');
       return;
     }
     setUploading(true);
@@ -54,7 +54,7 @@ export default function ManageGallery() {
       setEventRef('');
       load();
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Upload failed');
+      toast.error(err.response?.data?.message || 'Image upload failed. Please try again.');
     } finally {
       setUploading(false);
     }
@@ -64,10 +64,10 @@ export default function ManageGallery() {
     if (!window.confirm('Delete this image?')) return;
     try {
       await api.delete(`/gallery/${img._id}`);
-      toast.success('Image deleted');
+      toast.success('Image deleted successfully');
       setImages((prev) => prev.filter((i) => i._id !== img._id));
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Delete failed');
+      toast.error(err.response?.data?.message || 'Unable to delete this image.');
     }
   };
 

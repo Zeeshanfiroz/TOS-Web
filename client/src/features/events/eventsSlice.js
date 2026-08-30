@@ -3,7 +3,7 @@ import api from '../../api/axios';
 
 export const fetchEvents = createAsyncThunk(
   'events/fetchEvents',
-  async ({ filter = 'upcoming', search = '', page = 1 } = {}, { rejectWithValue }) => {
+  async ({ filter = 'conduct', search = '', page = 1 } = {}, { rejectWithValue }) => {
     try {
       const { data } = await api.get('/events', {
         params: { filter, search, page, limit: 9 },

@@ -30,11 +30,12 @@ export default function EventDetail() {
   }, [dispatch, id]);
 
   const isPast = event && new Date(event.date) < new Date();
+  const eventStatus = isPast ? 'Participate' : 'Conduct';
   const rsvped = event?.rsvps?.some((r) => r.user?._id === user?._id || r.user === user?._id);
 
   const handleRsvp = async () => {
     if (!user) {
-      toast.info('Please login to RSVP');
+      toast.info('Please log in to RSVP for this event.');
       navigate('/login', { state: { from: `/events/${id}` } });
       return;
     }
@@ -42,10 +43,10 @@ export default function EventDetail() {
     const result = await dispatch(toggleRsvp(id));
     setRsvpBusy(false);
     if (toggleRsvp.fulfilled.match(result)) {
-      toast.success(result.payload.rsvped ? 'RSVP confirmed! 🌱' : 'RSVP cancelled');
+      toast.success(result.payload.rsvped ? 'RSVP confirmed! 🌱' : 'Your RSVP has been cancelled.');
       dispatch(fetchEventById(id)); // refresh attendee list
     } else {
-      toast.error(result.payload || 'RSVP failed');
+      toast.error(result.payload || 'RSVP could not be completed.');
     }
   };
 
@@ -94,7 +95,7 @@ export default function EventDetail() {
                 isPast ? 'bg-gray-100 text-gray-600' : 'bg-forest-100 text-forest-700'
               }`}
             >
-              {isPast ? 'Past Event' : 'Upcoming'}
+              {eventStatus}
             </span>
             <span className="text-sm text-gray-500">
               {event.rsvps?.length || 0} going

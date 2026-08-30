@@ -51,7 +51,7 @@ export default function Signup() {
       setEmail(payload.email);
       setStep(2);
       setResendIn(30);
-      toast.info('Verification code sent to your email 📧');
+      toast.info('A verification code has been sent to your email 📧');
     } catch (msg) {
       toast.error(msg);
     }
@@ -60,7 +60,7 @@ export default function Signup() {
   const handleVerify = async (e) => {
     e.preventDefault();
     if (!/^\d{6}$/.test(otp)) {
-      toast.error('Enter the 6-digit code');
+      toast.error('Please enter the 6-digit verification code');
       return;
     }
     try {
@@ -75,7 +75,7 @@ export default function Signup() {
     if (resendIn > 0) return;
     try {
       const msg = await dispatch(resendOtp(email)).unwrap();
-      toast.success(msg || 'New code sent!');
+      toast.success(msg || 'A fresh code has been sent!');
       setResendIn(30);
     } catch (msg) {
       toast.error(msg);
@@ -101,7 +101,7 @@ export default function Signup() {
           <p className="text-gray-500 mt-2">
             {step === 1
               ? 'Become part of the campus sustainability movement'
-              : `We sent a 6-digit code to ${email}`}
+              : `We sent a 6-digit verification code to ${email}`}
           </p>
         </div>
 
@@ -119,7 +119,7 @@ export default function Signup() {
                     label="Full Name"
                     name="name"
                     type="text"
-                    placeholder="Jane Doe"
+                    placeholder="Kumar Anil"
                     errors={errors}
                   />
 
@@ -183,7 +183,7 @@ export default function Signup() {
                     disabled={isLoading}
                     className="btn btn-primary w-full py-3.5"
                   >
-                    {isLoading ? 'Creating account...' : 'Create Account →'}
+                    {isLoading ? 'Creating your account...' : 'Create Account →'}
                   </button>
                 </Form>
               )}

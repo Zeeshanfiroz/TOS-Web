@@ -8,15 +8,15 @@ import ErrorState from '../../components/ui/ErrorState';
 import SEO from '../../components/common/SEO';
 
 const filters = [
-  { key: 'upcoming', label: 'Upcoming' },
-  { key: 'past', label: 'Past' },
+  { key: 'conduct', label: 'Conduct' },
+  { key: 'participate', label: 'Participate' },
 ];
 
 export default function Events() {
   const dispatch = useDispatch();
   const { list, pagination, isLoading, error } = useSelector((s) => s.events);
 
-  const [filter, setFilter] = useState('upcoming');
+  const [filter, setFilter] = useState('conduct');
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
 

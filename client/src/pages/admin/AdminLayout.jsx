@@ -5,7 +5,8 @@ const navItems = [
   { to: '/admin/events', label: 'Events', icon: '📅' },
   { to: '/admin/announcements', label: 'Announcements', icon: '📢' },
   { to: '/admin/gallery', label: 'Gallery', icon: '🖼️' },
-  { to: '/admin/members', label: 'Members', icon: '👥' },
+  { to: '/admin/team', label: 'Team', icon: '👥' },
+  { to: '/admin/members', label: 'Members', icon: '🧑‍💼' },
   { to: '/admin/messages', label: 'Messages', icon: '✉️' },
 ];
 

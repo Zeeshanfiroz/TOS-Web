@@ -39,7 +39,9 @@ export const getGallery = async (req, res) => {
  * multipart/form-data: images[] + optional caption + optional eventRef
  */
 export const uploadGalleryImages = async (req, res) => {
-  if (!req.files || req.files.length === 0) {
+  const files = req.files?.images || req.files?.image || req.files || [];
+
+  if (!files || files.length === 0) {
     return res.status(400).json({ success: false, message: 'No images provided' });
   }
 
@@ -48,7 +50,7 @@ export const uploadGalleryImages = async (req, res) => {
   const failed = [];
 
   // Upload each image; one failure doesn't abort the rest
-  for (const file of req.files) {
+  for (const file of files) {
     try {
       const result = await uploadImage(file.buffer, file.originalname, '/gallery');
       const doc = await Gallery.create({

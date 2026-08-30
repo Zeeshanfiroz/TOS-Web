@@ -41,6 +41,7 @@ const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard'));
 const ManageEvents = lazy(() => import('./pages/admin/ManageEvents'));
 const ManageAnnouncements = lazy(() => import('./pages/admin/ManageAnnouncements'));
 const ManageGallery = lazy(() => import('./pages/admin/ManageGallery'));
+const ManageTeam = lazy(() => import('./pages/admin/ManageTeam'));
 const ManageMembers = lazy(() => import('./pages/admin/ManageMembers'));
 const ContactMessages = lazy(() => import('./pages/admin/ContactMessages'));
 
@@ -100,6 +101,7 @@ export default function App() {
               <Route path="events" element={<ManageEvents />} />
               <Route path="announcements" element={<ManageAnnouncements />} />
               <Route path="gallery" element={<ManageGallery />} />
+              <Route path="team" element={<ManageTeam />} />
               <Route path="members" element={<ManageMembers />} />
               <Route path="messages" element={<ContactMessages />} />
             </Route>

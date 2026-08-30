@@ -33,8 +33,8 @@ export default function ForgotPassword() {
           </h1>
           <p className="text-gray-500 mt-2">
             {sent
-              ? 'Check your inbox — a reset link is on its way!'
-              : 'Enter your email and we\u2019ll send you a reset link.'}
+              ? 'Check your inbox — a reset link is on its way.'
+              : 'Enter your email address and we will send you a reset link.'}
           </p>
         </div>
 
@@ -43,9 +43,8 @@ export default function ForgotPassword() {
             <div className="text-center space-y-4">
               <span className="text-5xl">📬</span>
               <p className="text-gray-600 text-sm leading-relaxed">
-                If that email is registered, you\u2019ll receive a password reset
-                link valid for <strong>30 minutes</strong>. Don\u2019t forget to
-                check your spam folder.
+                If that email is registered, you will receive a password reset link
+                valid for <strong>30 minutes</strong>. Please also check your spam folder.
               </p>
               <Link
                 to="/login"

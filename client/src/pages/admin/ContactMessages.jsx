@@ -16,7 +16,7 @@ export default function ContactMessages() {
       });
       setMessages(data.data);
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Failed to load messages');
+      toast.error(err.response?.data?.message || 'Unable to load messages right now.');
     } finally {
       setLoading(false);
     }
@@ -30,10 +30,10 @@ export default function ContactMessages() {
   const markResolved = async (msg) => {
     try {
       await api.put(`/contact/${msg._id}/status`, { status: 'resolved' });
-      toast.success('Marked as resolved ✅');
+      toast.success('Message marked as resolved ✅');
       setMessages((prev) => prev.filter((m) => m._id !== msg._id));
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Update failed');
+      toast.error(err.response?.data?.message || 'Unable to update this message.');
     }
   };
 
