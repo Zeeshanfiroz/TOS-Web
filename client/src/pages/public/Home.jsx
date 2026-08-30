@@ -2,13 +2,13 @@ import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { motion, AnimatePresence, useInView, useReducedMotion } from 'framer-motion';
+import api from '../../api/axios';
 import { fetchEvents } from '../../features/events/eventsSlice';
-import { fetchAnnouncements as fetchAnns } from '../../features/announcements/announcementsSlice';
 import EventCard from '../../components/events/EventCard';
 import Spinner from '../../components/ui/Spinner';
 import MagneticButton from '../../components/ui/MagneticButton';
 import Marquee from '../../components/ui/Marquee';
-import SEO from '../../components/common/SEO';
+import SEO from '../../components/events/common/SEO';
 
 /* ---------- Animated counter (respects prefers-reduced-motion) ---------- */
 function Counter({ target, suffix = '' }) {
@@ -79,19 +79,48 @@ function FloatingLeaves() {
   );
 }
 
-const stats = [
-  { target: 500, suffix: '+', label: 'Active Members' },
-  { target: 1200, suffix: '+', label: 'Trees Planted' },
-  { target: 45, suffix: '+', label: 'Events Organised' },
-  { target: 850, suffix: 'kg', label: 'Waste Recycled' },
+const fallbackStats = [
+  { target: 0, suffix: '+', label: 'Active Members' },
+  { target: 10, suffix: '+', label: 'Events Organised' },
+  { target: 10, suffix: '+', label: 'Projects Completed' },
+  { target: 15, suffix: '+', label: 'Workshops & Seminars' },
+];
+
+
+
+const highlights = [
+  {
+    icon: '☀️',
+    title: 'Solar Tracker',
+    text: 'Smart solar systems that follow sunlight to improve energy capture and showcase sustainable engineering.',
+  },
+  {
+    icon: '♻️',
+    title: 'Waste Sorting',
+    text: 'Sensor-driven solutions that make responsible disposal simpler, smarter and relatable for campus life.',
+  },
+  {
+    icon: '🎨',
+    title: 'Awareness & Design',
+    text: 'Creative campaigns and storytelling that turn sustainability into a movement people care about.',
+  },
+];
+
+
+
+const process = [
+  'Explore your interests in technology, design, research or outreach',
+  'Join hands-on sessions, team projects and live campus initiatives',
+  'Build, present and contribute to meaningful sustainability work',
+  'Create lasting impact through action and community engagement',
 ];
 
 export default function Home() {
   const dispatch = useDispatch();
   const events = useSelector((s) => s.events.list);
   const eventsLoading = useSelector((s) => s.events.isLoading);
-  const announcements = useSelector((s) => s.announcements.list);
   const [showStickyCTA, setShowStickyCTA] = useState(false);
+  const [stats, setStats] = useState(fallbackStats);
 
   // Sticky mobile CTA appears after scrolling past the hero (item #10)
   useEffect(() => {
@@ -101,8 +130,37 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
+    let isMounted = true;
+
+    const loadStats = async () => {
+      try {
+        const [usersRes, eventsRes] = await Promise.all([
+          api.get('/users?limit=1'),
+          api.get('/events?filter=organized&limit=1'),
+        ]);
+
+        const activeMembers = Number(usersRes.data?.pagination?.total || 0);
+        const eventsOrganised = Number(eventsRes.data?.pagination?.total || 10);
+
+        if (!isMounted) return;
+
+        setStats([
+          { target: activeMembers, suffix: '+', label: 'Active Members' },
+          { target: Math.max(eventsOrganised, 10), suffix: '+', label: 'Events Organised' },
+          { target: 10, suffix: '+', label: 'Projects Completed' },
+          { target: 15, suffix: '+', label: 'Workshops & Seminars' },
+        ]);
+      } catch {
+        if (isMounted) setStats(fallbackStats);
+      }
+    };
+
+    loadStats();
     dispatch(fetchEvents({ filter: 'upcoming', page: 1 }));
-    dispatch(fetchAnns({ page: 1 }));
+
+    return () => {
+      isMounted = false;
+    };
   }, [dispatch]);
 
   return (
@@ -250,8 +308,70 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ================= UPCOMING EVENTS ================= */}
+      {/* ================= FEATURED PROJECTS ================= */}
       <section className="py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-5 mb-10">
+            <div>
+              <span className="text-sm font-semibold uppercase tracking-[0.2em] text-forest-700">What we build</span>
+              <h2 className="section-title mt-2">Ideas that solve real problems.</h2>
+            </div>
+            <Link to="/projects" className="text-forest-600 font-medium hover:underline">
+              Explore all projects →
+            </Link>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-6">
+            {highlights.map((item, index) => (
+              <motion.div
+                key={item.title}
+                initial={{ opacity: 0, y: 28 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.12 }}
+                className="rounded-3xl border border-gray-100 bg-white p-6 shadow-sm hover:-translate-y-1 hover:shadow-xl transition-all"
+              >
+                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-forest-100 to-emerald-50 text-3xl">
+                  {item.icon}
+                </div>
+                <h3 className="mt-5 font-display text-2xl font-semibold text-gray-900">{item.title}</h3>
+                <p className="mt-3 text-sm leading-relaxed text-gray-600">{item.text}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ================= HOW IT WORKS ================= */}
+      <section className="py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-2xl mx-auto">
+            <span className="text-sm font-semibold uppercase tracking-[0.22em] text-forest-700">How it works</span>
+            <h2 className="section-title mt-3">Join and grow with the club.</h2>
+          </div>
+
+          <div className="mt-12 grid md:grid-cols-2 xl:grid-cols-4 gap-6">
+            {process.map((step, index) => (
+              <motion.div
+                key={step}
+                initial={{ opacity: 0, y: 22 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.12 }}
+                className="relative rounded-3xl border border-gray-100 bg-white p-6 shadow-sm"
+              >
+                <div className="absolute -top-3 left-5 flex h-8 w-8 items-center justify-center rounded-full bg-forest-600 text-sm font-bold text-white shadow-md">
+                  {index + 1}
+                </div>
+                <p className="mt-6 text-base leading-relaxed text-gray-700">{step}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ================= UPCOMING EVENTS ================= */}
+      <section className="py-20 bg-forest-50/60">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-end justify-between mb-10">
             <div>
@@ -275,48 +395,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ================= ANNOUNCEMENTS PREVIEW ================= */}
-      <section className="py-20 bg-forest-50/60">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-end justify-between mb-10">
-            <h2 className="section-title">Latest Updates</h2>
-            <Link to="/announcements" className="text-forest-600 font-medium hover:underline whitespace-nowrap">
-              Read all updates →
-            </Link>
-          </div>
-          <div className="grid md:grid-cols-3 gap-6">
-            {announcements.slice(0, 3).map((a, i) => (
-              <motion.div
-                key={a._id}
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="bg-white rounded-2xl p-6 border border-forest-100 shadow-sm hover:shadow-md transition-shadow"
-              >
-                <span className="text-xs font-semibold text-forest-600 uppercase tracking-wide">
-                  {new Date(a.createdAt).toLocaleDateString('en-IN', {
-                    day: 'numeric',
-                    month: 'long',
-                    year: 'numeric',
-                  })}
-                </span>
-                <h3 className="font-display font-semibold text-lg mt-2 line-clamp-2">{a.title}</h3>
-                <p className="text-sm text-gray-600 mt-2 line-clamp-3">{a.content}</p>
-                <Link
-                  to={`/announcements/${a._id}`}
-                  className="inline-block mt-4 text-sm font-medium text-forest-600 hover:underline"
-                >
-                  Read more →
-                </Link>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* ================= CTA BANNER ================= */}
-      <section className="pb-20">
+      <section className="pb-20 pt-2">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -333,12 +413,20 @@ export default function Home() {
             <p className="text-forest-100 mt-3 max-w-xl mx-auto relative">
               Join Team of Sustainability and contribute to hands-on projects, community drives and research that create real environmental impact.
             </p>
-            <Link
-              to="/signup"
-              className="inline-block mt-8 px-8 py-3.5 rounded-xl bg-white text-forest-800 font-semibold shadow-lg hover:-translate-y-0.5 transition-transform relative"
-            >
-              Join the club today 🌱
-            </Link>
+            <div className="mt-8 flex flex-col sm:flex-row justify-center gap-4 relative">
+              <Link
+                to="/signup"
+                className="inline-block px-8 py-3.5 rounded-xl bg-white text-forest-800 font-semibold shadow-lg hover:-translate-y-0.5 transition-transform"
+              >
+                Join the club today 🌱
+              </Link>
+              <Link
+                to="/about"
+                className="inline-block px-8 py-3.5 rounded-xl border border-white/30 bg-white/5 text-white font-semibold hover:bg-white/10 transition-colors"
+              >
+                Learn more
+              </Link>
+            </div>
           </motion.div>
         </div>
       </section>

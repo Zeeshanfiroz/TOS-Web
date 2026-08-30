@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import SEO from '../../components/common/SEO';
+import SEO from '../../components/events/common/SEO';
 
 /**
  * 404 — animated not-found page.

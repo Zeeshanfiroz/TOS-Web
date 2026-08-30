@@ -8,6 +8,7 @@ import rateLimit from 'express-rate-limit';
 
 import authRoutes from './routes/authRoutes.js';
 import eventRoutes from './routes/eventRoutes.js';
+import projectRoutes from './routes/projectRoutes.js';
 import announcementRoutes from './routes/announcementRoutes.js';
 import contactRoutes from './routes/contactRoutes.js';
 import userRoutes from './routes/userRoutes.js';
@@ -101,6 +102,7 @@ app.get('/api/health/email', async (req, res) => {
 // API routes
 app.use('/api/auth', authRoutes);
 app.use('/api/events', eventRoutes);
+app.use('/api/projects', projectRoutes);
 app.use('/api/announcements', announcementRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api/users', userRoutes);

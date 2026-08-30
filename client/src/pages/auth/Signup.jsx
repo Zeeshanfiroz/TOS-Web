@@ -8,7 +8,7 @@ import { toast } from 'react-toastify';
 import { signup, verifyOtp, resendOtp } from '../../features/auth/authSlice';
 import PasswordInput from '../../components/ui/PasswordInput';
 import TextField from '../../components/ui/FormFields';
-import SEO from '../../components/common/SEO';
+import SEO from '../../components/events/common/SEO';
 
 const signupSchema = Yup.object({
   name: Yup.string().trim().required('Name is required').max(80),

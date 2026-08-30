@@ -9,7 +9,7 @@ import { login } from '../../features/auth/authSlice';
 import { API_BASE } from '../../api/axios';
 import PasswordInput from '../../components/ui/PasswordInput';
 import TextField from '../../components/ui/FormFields';
-import SEO from '../../components/common/SEO';
+import SEO from '../../components/events/common/SEO';
 
 const loginSchema = Yup.object({
   email: Yup.string().email('Invalid email address').required('Email is required'),

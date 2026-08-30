@@ -1,58 +1,58 @@
+import { motion } from 'framer-motion';
+import TiltCard from '../ui/TiltCard';
 import SectionHeading from './SectionHeading';
 
-// Real club projects — sourced from the club's project decks.
-// buildPhoto: add the circuit/build photo URL from the decks when the
-// club shares originals — the card header slot renders it automatically.
 const PROJECTS = [
   {
     no: '01',
-    title: 'Waste-sorting machine',
-    body: 'A bin that sorts itself. An inductive sensor catches metal, a moisture sensor flags wet waste, an IR sensor detects the drop — the Arduino Uno processes all three and a motor driver slides the right bin into position.',
-    tags: ['Arduino Uno', 'IR · moisture · metal sensors', 'Motor driver'],
+    title: 'Waste-Sorting Machine',
+    category: 'Electronics + Automation',
+    summary: 'A smart bin system that sorts waste with sensors and motor control.',
+    body: 'An Arduino-based solution that identifies metal, moisture and object movement to direct each type of waste into the right disposal channel. It reduces manual sorting effort and demonstrates practical smart-campus innovation.',
+    tags: ['Arduino Uno', 'IR Sensor', 'Moisture Sensor', 'Motor Driver'],
     buildPhoto: null,
   },
   {
     no: '02',
-    title: 'Solar tracker',
-    body: 'A panel that follows the sun. LDRs read the light direction and feed the Arduino, which commands servo motors to reposition the panel for maximum capture through the day. GSM module reports the data.',
-    tags: ['LDR sensors', 'Servo motors', 'GSM module'],
+    title: 'Solar Tracker',
+    category: 'Renewable Energy',
+    summary: 'A solar panel setup that follows sunlight for higher energy capture.',
+    body: 'This project uses LDR sensors and servo motors to align the panel with the sun throughout the day. The system is designed to improve energy efficiency and showcase renewable-energy systems in everyday campus applications.',
+    tags: ['LDR', 'Servo Motor', 'GSM Module', 'Solar Panel'],
     buildPhoto: null,
   },
   {
     no: '03',
-    title: 'Paper recycling',
-    body: "The club's first public build, exhibited at Makers Fest 2023 — recycled paper made and demonstrated end to end on the fest floor.",
-    tags: ['Makers Fest 2023'],
+    title: 'Paper Recycling Initiative',
+    category: 'Sustainable Practice',
+    summary: 'A community-focused recycling prototype demonstrated at public events.',
+    body: 'The club created a reusable paper recycling system and showcased it during Makers Fest 2023. The model highlighted how low-cost intervention can turn everyday waste into a practical sustainability lesson.',
+    tags: ['Makers Fest', 'Recycling', 'Awareness', 'Prototype'],
     buildPhoto: null,
   },
 ];
 
-/* Engineering-drawing header motif per card — the club's builds ARE
-   circuit diagrams, so the placeholder speaks the project's language.
-   Replace with the real build photo (buildPhoto) when available. */
 function BuildMotif({ variant }) {
   const flips = ['scale-x-100', '-scale-x-100', 'scale-x-100 -translate-y-1'];
   return (
-    <div className="mb-4 overflow-hidden rounded-sm border border-humus/20 bg-humus">
+    <div className="h-44 w-full overflow-hidden rounded-t-2xl border-b border-white/20 bg-gradient-to-br from-forest-500 via-emerald-600 to-teal-700">
       <svg
         viewBox="0 0 300 100"
-        className={`h-20 w-full ${flips[variant % flips.length]}`}
+        className={`h-full w-full ${flips[variant % flips.length]} opacity-90`}
         aria-hidden="true"
       >
-        <g stroke="#3E7A4C" strokeOpacity="0.7" strokeWidth="1.5" fill="none">
-          <polyline points="0,30 70,30 90,50 180,50" />
+        <g stroke="#dff7e6" strokeOpacity="0.88" strokeWidth="1.6" fill="none">
+          <polyline points="0,32 70,32 90,50 180,50" />
           <polyline points="300,70 230,70 210,50 150,50" />
-          <polyline points="0,80 50,80 70,60 130,60" />
+          <polyline points="0,82 52,82 70,60 130,60" />
         </g>
-        <g stroke="#31605F" strokeOpacity="0.6" strokeWidth="1.5" fill="none">
+        <g stroke="#bfead0" strokeOpacity="0.8" strokeWidth="1.2" fill="none">
           <polyline points="300,25 240,25 220,45 160,45" />
         </g>
-        <g fill="#3E7A4C" fillOpacity="0.8">
+        <g fill="#f8fff8" fillOpacity="0.95">
           <circle cx="90" cy="50" r="3.5" />
           <circle cx="210" cy="50" r="3.5" />
           <circle cx="70" cy="60" r="3" />
-        </g>
-        <g fill="#C05B2E">
           <circle cx="180" cy="50" r="3" />
         </g>
       </svg>
@@ -60,59 +60,83 @@ function BuildMotif({ variant }) {
   );
 }
 
-/**
- * Projects — the club's real builds, spec-card style: build-motif header,
- * number, title, how-it-works, component tags. No stock photos; the
- * hardware IS the visual.
- */
+function ProjectCard({ project, index }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 24 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.4, delay: (index % 3) * 0.1 }}
+    >
+      <TiltCard>
+        <article className="group h-full overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm transition-shadow hover:shadow-xl">
+          <div className="relative">
+            {project.buildPhoto ? (
+              <img
+                src={project.buildPhoto}
+                alt={`${project.title} project preview`}
+                loading="lazy"
+                className="h-44 w-full object-cover transition-transform duration-500 group-hover:scale-110"
+              />
+            ) : (
+              <BuildMotif variant={index} />
+            )}
+            <span className="absolute left-3 top-3 rounded-full bg-slate-900/70 px-3 py-1 text-[11px] font-semibold text-white backdrop-blur-sm">
+              Project #{project.no}
+            </span>
+            <span className="absolute right-3 top-3 rounded-full border border-forest-200 bg-forest-100 px-3 py-1 text-[11px] font-semibold text-forest-800">
+              {project.category}
+            </span>
+          </div>
+
+          <div className="p-5">
+            <div className="flex items-center justify-between gap-3 text-xs text-gray-500">
+              <span className="inline-flex items-center gap-1 rounded-full bg-forest-50 px-2.5 py-1 font-medium text-forest-700">
+                ⚙️ Build
+              </span>
+              <span className="font-medium">Prototype</span>
+            </div>
+
+            <h3 className="mt-4 font-display text-xl font-semibold text-gray-900 transition-colors group-hover:text-forest-700">
+              {project.title}
+            </h3>
+
+            <p className="mt-2 text-sm font-medium text-forest-700">{project.summary}</p>
+            <p className="mt-3 text-sm leading-relaxed text-gray-600">{project.body}</p>
+
+            <div className="mt-4 flex flex-wrap gap-2">
+              {project.tags.map((tag) => (
+                <span
+                  key={tag}
+                  className="rounded-full border border-gray-200 bg-gray-50 px-2.5 py-1 text-[11px] font-medium text-gray-700"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+          </div>
+        </article>
+      </TiltCard>
+    </motion.div>
+  );
+}
+
 export default function Projects() {
   return (
     <section className="mx-auto max-w-6xl scroll-mt-24 px-4 py-16 sm:px-6 md:grid md:grid-cols-[180px_1fr] md:gap-12">
       <SectionHeading eyebrow="What we build" title="Ideas turned into action." />
       <div>
         <p className="max-w-md text-[15px] font-medium leading-relaxed text-humus/85">
-          Student-built solutions for real sustainability challenges — designed,
-          tested and demonstrated by the people behind them.
+          Student-built solutions for real sustainability challenges — designed, tested and demonstrated by the people behind them.
         </p>
 
-        <div className="projects-grid mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {PROJECTS.map((p, i) => (
-            <article
-              key={p.no}
-              className="project-card flex flex-col rounded-md border border-humus/30 bg-kraft-card p-5 shadow-[0_1px_2px_rgba(38,32,26,0.05),0_10px_22px_-18px_rgba(38,32,26,0.4)]"
-            >
-              {p.buildPhoto ? (
-                <img
-                  src={p.buildPhoto}
-                  alt={`${p.title} — build photo`}
-                  loading="lazy"
-                  className="mb-4 h-20 w-full rounded-sm object-cover"
-                />
-              ) : (
-                <BuildMotif variant={i} />
-              )}
-              <span className="font-display text-sm font-semibold text-neem">#{p.no}</span>
-              <h3 className="mt-2 font-display text-lg font-semibold leading-snug text-humus">
-                {p.title}
-              </h3>
-              <p className="mt-2 flex-1 text-sm font-medium leading-relaxed text-humus/80">
-                {p.body}
-              </p>
-              <ul className="mt-4 flex flex-wrap gap-1.5" aria-label="Components">
-                {p.tags.map((t) => (
-                  <li
-                    key={t}
-                    className="rounded border border-humus/20 px-2 py-0.5 text-[11px] font-medium text-humus/70"
-                  >
-                    {t}
-                  </li>
-                ))}
-              </ul>
-            </article>
+        <div className="mt-8 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+          {PROJECTS.map((project, index) => (
+            <ProjectCard key={project.no} project={project} index={index} />
           ))}
         </div>
 
-        <p className="mt-4 text-xs text-humus/60">
+        <p className="mt-6 text-xs text-humus/60">
           More build stories are on the way from our project teams — come talk to us at a campus drive.
         </p>
       </div>

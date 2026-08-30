@@ -9,8 +9,8 @@ const links = [
   { to: '/about', label: 'About' },
   { to: '/events', label: 'Events' },
   { to: '/announcements', label: 'Announcements' },
+  { to: '/projects', label: 'Projects' },
   { to: '/team', label: 'Team' },
-  { to: '/contact', label: 'Contact' },
 ];
 
 export default function Navbar() {
@@ -61,13 +61,16 @@ export default function Navbar() {
           }`}
         >
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2" onClick={() => setOpen(false)}>
-            <motion.img
+          <Link to="/" className="flex items-center gap-2.5 sm:gap-3" onClick={() => setOpen(false)}>
+            <img
+              src="/VssutLogo.jpeg"
+              alt="VSSUT Burla logo"
+              className="h-9 w-9 sm:h-11 sm:w-11 object-contain rounded-md border border-forest-100 bg-white shadow-sm shrink-0"
+            />
+            <img
               src="/Logo.png"
               alt="Team of Sustainability logo"
-              animate={{ rotate: [0, -8, 8, 0] }}
-              transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-              className="h-8 w-8 object-contain"
+              className="h-10 w-10 sm:h-12 sm:w-12 object-contain shrink-0"
             />
             <span className="font-display font-bold text-base sm:text-lg text-forest-800 leading-tight">
               Team of <span className="text-gradient">Sustainability</span>

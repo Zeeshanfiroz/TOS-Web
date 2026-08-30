@@ -19,8 +19,8 @@ const Events = lazy(() => import('./pages/public/Events'));
 const EventDetail = lazy(() => import('./pages/public/EventDetail'));
 const Announcements = lazy(() => import('./pages/public/Announcements'));
 const AnnouncementDetail = lazy(() => import('./pages/public/AnnouncementDetail'));
+const Projects = lazy(() => import('./pages/public/Projects'));
 const Team = lazy(() => import('./pages/public/Team'));
-const Contact = lazy(() => import('./pages/public/Contact'));
 
 const Login = lazy(() => import('./pages/auth/Login'));
 const Signup = lazy(() => import('./pages/auth/Signup'));
@@ -38,6 +38,7 @@ const Dashboard = lazy(() => import('./pages/member/Dashboard'));
 const AdminLayout = lazy(() => import('./pages/admin/AdminLayout'));
 const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard'));
 const ManageEvents = lazy(() => import('./pages/admin/ManageEvents'));
+const ManageProjects = lazy(() => import('./pages/admin/ManageProjects'));
 const ManageAnnouncements = lazy(() => import('./pages/admin/ManageAnnouncements'));
 const ManageTeam = lazy(() => import('./pages/admin/ManageTeam'));
 const ManageMembers = lazy(() => import('./pages/admin/ManageMembers'));
@@ -57,6 +58,7 @@ export default function App() {
   // SPA pageview tracking on every route change
   useEffect(() => {
     trackPageview(location.pathname);
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
   }, [location.pathname]);
 
   return (
@@ -71,8 +73,8 @@ export default function App() {
           <Route path="/events/:id" element={<EventDetail />} />
           <Route path="/announcements" element={<Announcements />} />
           <Route path="/announcements/:id" element={<AnnouncementDetail />} />
+          <Route path="/projects" element={<Projects />} />
           <Route path="/team" element={<Team />} />
-          <Route path="/contact" element={<Contact />} />
 
           {/* Auth */}
           <Route path="/login" element={<Login />} />
@@ -96,6 +98,7 @@ export default function App() {
             <Route path="/admin" element={<AdminLayout />}>
               <Route index element={<AdminDashboard />} />
               <Route path="events" element={<ManageEvents />} />
+              <Route path="projects" element={<ManageProjects />} />
               <Route path="announcements" element={<ManageAnnouncements />} />
               <Route path="team" element={<ManageTeam />} />
               <Route path="members" element={<ManageMembers />} />

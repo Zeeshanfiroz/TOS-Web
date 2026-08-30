@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { fetchAnnouncements } from '../../features/announcements/announcementsSlice';
 import { SkeletonCard } from '../../components/ui/SkeletonCard';
 import ErrorState from '../../components/ui/ErrorState';
-import SEO from '../../components/common/SEO';
+import SEO from '../../components/events/common/SEO';
 
 export default function Announcements() {
   const dispatch = useDispatch();

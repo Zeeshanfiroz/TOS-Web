@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
 import api from '../../api/axios';
 import PasswordInput from '../../components/ui/PasswordInput';
-import SEO from '../../components/common/SEO';
+import SEO from '../../components/events/common/SEO';
 
 const resetSchema = Yup.object({
   password: Yup.string()

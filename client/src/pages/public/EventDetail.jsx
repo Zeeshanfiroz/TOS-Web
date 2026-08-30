@@ -7,7 +7,7 @@ import { fetchEventById, toggleRsvp } from '../../features/events/eventsSlice';
 import { selectUser } from '../../features/auth/authSlice';
 import Spinner from '../../components/ui/Spinner';
 import ErrorState from '../../components/ui/ErrorState';
-import SEO from '../../components/common/SEO';
+import SEO from '../../components/events/common/SEO';
 
 const formatDate = (d) =>
   new Date(d).toLocaleDateString('en-IN', {

@@ -5,7 +5,7 @@ import { fetchEvents } from '../../features/events/eventsSlice';
 import EventCard from '../../components/events/EventCard';
 import { SkeletonGrid } from '../../components/ui/SkeletonCard';
 import ErrorState from '../../components/ui/ErrorState';
-import SEO from '../../components/common/SEO';
+import SEO from '../../components/events/common/SEO';
 
 const filters = [
   { key: 'organized', label: 'Organised' },

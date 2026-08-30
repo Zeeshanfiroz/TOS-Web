@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
 import api from '../../api/axios';
 import TextField from '../../components/ui/FormFields';
-import SEO from '../../components/common/SEO';
+import SEO from '../../components/events/common/SEO';
 
 const forgotSchema = Yup.object({
   email: Yup.string().email('Invalid email address').required('Email is required'),

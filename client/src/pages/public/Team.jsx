@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
-import SEO from '../../components/common/SEO';
+import SEO from '../../components/events/common/SEO';
 import api from '../../api/axios';
 import Spinner from '../../components/ui/Spinner';
 

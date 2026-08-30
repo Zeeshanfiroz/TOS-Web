@@ -7,7 +7,7 @@ import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
 import { submitContact, clearContactState } from '../../features/contact/contactSlice';
 import TextField, { TextArea } from '../../components/ui/FormFields';
-import SEO from '../../components/common/SEO';
+import SEO from '../../components/events/common/SEO';
 
 const contactSchema = Yup.object({
   name: Yup.string().trim().required('Name is required').max(100),

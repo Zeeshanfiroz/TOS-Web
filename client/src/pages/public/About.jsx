@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import SEO from '../../components/common/SEO';
+import SEO from '../../components/events/common/SEO';
 
 const milestones = [
   { year: '2023', text: 'Exhibited our paper recycling project at Makers Fest 2023' },
@@ -15,24 +15,21 @@ const milestones = [
 
 const domains = [
   {
-    icon: '🤖',
-    title: 'Technical',
-    text: 'IoT-based embedded systems, sensors and robotics to monitor, collect data and solve real-life sustainability problems.',
+    title: 'Technical Domains',
+    items: [
+      { icon: '⚡', title: 'Electronics', text: 'Embedded systems, electronics design, sensors and hardware-based sustainability solutions.' },
+      { icon: '🛠️', title: 'Mechanical', text: 'Prototyping, fabrication, product design and mechanical systems for practical innovation.' },
+      { icon: '💻', title: 'Software', text: 'Web development, automation, data handling and digital solutions that support sustainable impact.' },
+      { icon: '🧪', title: 'Chemical', text: 'Sustainable chemistry, material exploration and eco-friendly process thinking.' },
+    ],
   },
   {
-    icon: '🎨',
-    title: 'Design & Content',
-    text: 'Posters, infographics, videos and social media — plus compelling narratives around sustainability goals and impact.',
-  },
-  {
-    icon: '📋',
-    title: 'Event Management',
-    text: 'Eco-conscious events with minimal waste, awareness campaigns, workshops and clean-up drives.',
-  },
-  {
-    icon: '🔬',
-    title: 'Research & Development',
-    text: 'Researching and developing new sustainable methods, plus bootcamps and research programmes.',
+    title: 'Non-Technical Domains',
+    items: [
+      { icon: '🔬', title: 'Research and Development', text: 'Innovation, experimentation and research-led problem solving for sustainable growth.' },
+      { icon: '📅', title: 'Event Management', text: 'Planning, organizing and executing impactful sustainability events and campaigns.' },
+      { icon: '📢', title: 'Content Writing or PR', text: 'Storytelling, outreach, communication and public relations to amplify the club’s mission.' },
+    ],
   },
 ];
 
@@ -54,7 +51,7 @@ export default function About() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
       <SEO
         title="About Us"
-        description="Learn about Team of Sustainability — our vision, four domains (Technical, Design, Events, R&D), technical projects and achievements at VSSUT, Burla."
+        description="Learn about Team of Sustainability — our vision, technical and non-technical domains, technical projects and achievements at VSSUT, Burla."
       />
       {/* Mission / Vision */}
       <div className="grid md:grid-cols-2 gap-8">
@@ -96,22 +93,30 @@ export default function About() {
         <p className="text-center text-gray-500 mt-2">
           Whatever your skill, there&rsquo;s a place for you here.
         </p>
-        <div className="mt-10 grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {domains.map((v, i) => (
-            <motion.div
-              key={v.title}
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.12 }}
-              className="bg-white rounded-2xl border border-gray-100 p-8 text-center shadow-sm hover:shadow-lg transition-shadow"
-            >
-              <span className="text-4xl">{v.icon}</span>
-              <h3 className="font-display font-semibold text-lg mt-4">{v.title}</h3>
-              <p className="text-sm text-gray-600 mt-2 leading-relaxed">{v.text}</p>
-            </motion.div>
-          ))}
-        </div>
+
+        {domains.map((group, groupIndex) => (
+          <div key={group.title} className={groupIndex > 0 ? 'mt-12' : 'mt-10'}>
+            <h3 className="font-display text-2xl font-semibold text-forest-800 text-center">
+              {group.title}
+            </h3>
+            <div className="mt-6 grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {group.items.map((v, i) => (
+                <motion.div
+                  key={v.title}
+                  initial={{ opacity: 0, y: 24 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.12 }}
+                  className="bg-white rounded-2xl border border-gray-100 p-8 text-center shadow-sm hover:shadow-lg transition-shadow"
+                >
+                  <span className="text-4xl">{v.icon}</span>
+                  <h4 className="font-display font-semibold text-lg mt-4">{v.title}</h4>
+                  <p className="text-sm text-gray-600 mt-2 leading-relaxed">{v.text}</p>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        ))}
       </div>
 
       {/* Technical Projects */}
