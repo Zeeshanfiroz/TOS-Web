@@ -17,7 +17,7 @@ export default function ManageGallery() {
     try {
       const [gal, evs] = await Promise.all([
         api.get('/gallery?limit=100'),
-        api.get('/events?limit=100'),
+        api.get('/events', { params: { filter: 'all', limit: 100 } }),
       ]);
       setImages(gal.data.data);
       setEvents(evs.data.data);
