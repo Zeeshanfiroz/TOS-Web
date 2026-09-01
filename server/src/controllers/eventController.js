@@ -30,7 +30,7 @@ export const getEvents = async (req, res) => {
   const includeRsvpList = String(includeRsvps).toLowerCase() === 'true';
 
   const eventQuery = Event.find(query)
-    .sort(normalizedFilter === 'participated' || normalizedFilter === 'past' ? { date: -1 } : { date: 1 })
+    .sort({ date: -1 })
     .skip(skip)
     .limit(Number(limit));
 
