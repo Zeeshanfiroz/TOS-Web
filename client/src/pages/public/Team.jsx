@@ -54,7 +54,7 @@ export default function Team() {
             }))
             .sort((a, b) => a.role.localeCompare(b.role))
         );
-      } catch (error) {
+      } catch {
         setTeamGroups([]);
       } finally {
         setLoading(false);

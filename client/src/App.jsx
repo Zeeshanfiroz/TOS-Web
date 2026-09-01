@@ -15,6 +15,7 @@ import { initAnalytics, trackPageview } from './analytics';
    JS (and vice versa). The initial bundle shrinks to layout + Home. */
 const Home = lazy(() => import('./pages/public/Home'));
 const About = lazy(() => import('./pages/public/About'));
+const Contact = lazy(() => import('./pages/public/Contact'));
 const Events = lazy(() => import('./pages/public/Events'));
 const EventDetail = lazy(() => import('./pages/public/EventDetail'));
 const Announcements = lazy(() => import('./pages/public/Announcements'));
@@ -69,6 +70,7 @@ export default function App() {
         <Route element={<Layout />}>
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<Contact />} />
           <Route path="/events" element={<Events />} />
           <Route path="/events/:id" element={<EventDetail />} />
           <Route path="/announcements" element={<Announcements />} />

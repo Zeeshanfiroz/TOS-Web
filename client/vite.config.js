@@ -14,4 +14,15 @@ export default defineConfig({
       },
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules/framer-motion')) return 'framer-motion';
+          if (id.includes('node_modules/react-redux') || id.includes('node_modules/@reduxjs/toolkit')) return 'redux';
+          if (id.includes('node_modules/react-router-dom')) return 'router';
+        },
+      },
+    },
+  },
 })
