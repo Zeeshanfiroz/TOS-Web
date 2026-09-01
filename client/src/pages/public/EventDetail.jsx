@@ -118,7 +118,7 @@ export default function EventDetail() {
         className="mt-6 bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-sm"
       >
         {/* Banner */}
-        <div className="relative flex min-h-64 w-full items-center justify-center overflow-hidden bg-gradient-to-br from-forest-50 via-white to-emerald-50 md:min-h-[32rem]">
+        <div className="relative h-[clamp(18rem,65vh,42rem)] w-full overflow-hidden bg-forest-50">
           {galleryImages[0]?.url ? (
             <>
               <motion.img
@@ -128,7 +128,7 @@ export default function EventDetail() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.7 }}
-                className="relative z-10 max-h-[70vh] min-h-64 w-full object-contain p-2 drop-shadow-xl md:min-h-[32rem] md:p-4"
+                className="relative z-10 h-full w-full object-cover"
               />
             </>
           ) : (
