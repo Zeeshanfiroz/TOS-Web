@@ -139,7 +139,9 @@ export default function EventDetail() {
               />
             </>
           ) : (
-            <div className="w-full h-full flex items-center justify-center text-7xl opacity-60">🌿</div>
+            <div className="flex h-full min-h-64 w-full items-center justify-center bg-forest-50 md:min-h-96">
+              <img src="/Logo.png" alt="Team of Sustainability" className="h-40 w-40 object-contain opacity-80 md:h-52 md:w-52" />
+            </div>
           )}
           <span className="absolute left-4 top-4 z-20 rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-forest-800 shadow-sm backdrop-blur-sm">
             {eventTimelineLabel}

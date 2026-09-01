@@ -32,7 +32,9 @@ export default function EventCard({ event, index = 0 }) {
                   className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                 />
               ) : (
-                <div className="flex h-full w-full items-center justify-center text-5xl opacity-80">🌿</div>
+                <div className="flex h-full w-full items-center justify-center bg-forest-50">
+                  <img src="/Logo.png" alt="Team of Sustainability" className="h-24 w-24 object-contain opacity-80" />
+                </div>
               )}
               <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent" />
               <span className="absolute left-3 top-3 rounded-full border border-white/30 bg-slate-900/70 px-3 py-1 text-[11px] font-semibold text-white backdrop-blur-sm">
