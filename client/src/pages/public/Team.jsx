@@ -33,6 +33,17 @@ function MemberCard({ member, index }) {
 export default function Team() {
   const [teamGroups, setTeamGroups] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isSlowLoading, setIsSlowLoading] = useState(false);
+
+  useEffect(() => {
+    if (!loading) {
+      setIsSlowLoading(false);
+      return undefined;
+    }
+
+    const timer = setTimeout(() => setIsSlowLoading(true), 4000);
+    return () => clearTimeout(timer);
+  }, [loading]);
 
   useEffect(() => {
     const fetchTeam = async () => {
@@ -80,7 +91,14 @@ export default function Team() {
       </motion.div>
 
       {loading ? (
-        <div className="mt-12"><Spinner /></div>
+        <div className="mt-12">
+          <Spinner />
+          {isSlowLoading && (
+            <p className="mt-6 text-center text-sm text-gray-500">
+              Waking up the server — this can take up to a minute on first load.
+            </p>
+          )}
+        </div>
       ) : hasMembers ? (
         teamGroups.map((group) => (
           <section key={group.role} className="mt-14">

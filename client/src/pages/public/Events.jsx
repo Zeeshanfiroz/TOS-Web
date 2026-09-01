@@ -19,6 +19,17 @@ export default function Events() {
   const [filter, setFilter] = useState('organized');
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
+  const [isSlowLoading, setIsSlowLoading] = useState(false);
+
+  useEffect(() => {
+    if (!isLoading) {
+      setIsSlowLoading(false);
+      return undefined;
+    }
+
+    const timer = setTimeout(() => setIsSlowLoading(true), 4000);
+    return () => clearTimeout(timer);
+  }, [isLoading]);
 
   // Debounced search — avoids hammering the API on every keystroke
   useEffect(() => {
@@ -81,6 +92,11 @@ export default function Events() {
       {isLoading ? (
         <div className="mt-10">
           <SkeletonGrid count={6} />
+          {isSlowLoading && (
+            <p className="mt-6 text-center text-sm text-gray-500">
+              Waking up the server — this can take up to a minute on first load.
+            </p>
+          )}
         </div>
       ) : error ? (
         <ErrorState

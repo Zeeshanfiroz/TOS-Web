@@ -11,6 +11,17 @@ export default function Announcements() {
   const dispatch = useDispatch();
   const { list, pagination, isLoading, error } = useSelector((s) => s.announcements);
   const [page, setPage] = useState(1);
+  const [isSlowLoading, setIsSlowLoading] = useState(false);
+
+  useEffect(() => {
+    if (!isLoading) {
+      setIsSlowLoading(false);
+      return undefined;
+    }
+
+    const timer = setTimeout(() => setIsSlowLoading(true), 4000);
+    return () => clearTimeout(timer);
+  }, [isLoading]);
 
   useEffect(() => {
     dispatch(fetchAnnouncements({ page }));
@@ -32,6 +43,11 @@ export default function Announcements() {
           {Array.from({ length: 6 }).map((_, i) => (
             <SkeletonCard key={i} hasImage={false} />
           ))}
+          {isSlowLoading && (
+            <p className="sm:col-span-2 lg:col-span-3 text-center text-sm text-gray-500">
+              Waking up the server — this can take up to a minute on first load.
+            </p>
+          )}
         </div>
       ) : error ? (
         <ErrorState

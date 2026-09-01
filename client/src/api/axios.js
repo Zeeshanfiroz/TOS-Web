@@ -29,7 +29,7 @@ export const clearAuthTokens = () => {
 const api = axios.create({
   baseURL: API_BASE,
   withCredentials: true, // cookies still work on same-origin deployments
-  timeout: 20000,
+  timeout: 45000,
 });
 
 // Attach the Bearer token to every request when we have one

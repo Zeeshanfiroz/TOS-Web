@@ -121,6 +121,17 @@ export default function Projects() {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [isSlowLoading, setIsSlowLoading] = useState(false);
+
+  useEffect(() => {
+    if (!loading) {
+      setIsSlowLoading(false);
+      return undefined;
+    }
+
+    const timer = setTimeout(() => setIsSlowLoading(true), 4000);
+    return () => clearTimeout(timer);
+  }, [loading]);
 
   useEffect(() => {
     const load = async () => {
@@ -163,7 +174,14 @@ export default function Projects() {
       </div>
 
       {loading ? (
-        <div className="py-12"><Spinner /></div>
+        <div className="py-12">
+          <Spinner />
+          {isSlowLoading && (
+            <p className="mt-6 text-center text-sm text-gray-500">
+              Waking up the server — this can take up to a minute on first load.
+            </p>
+          )}
+        </div>
       ) : error ? (
         <ErrorState message={error} onRetry={() => window.location.reload()} />
       ) : projects.length === 0 ? (
