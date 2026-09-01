@@ -103,7 +103,7 @@ export default function EventDetail() {
   if (isLoading || !event) return <Spinner fullPage />;
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 lg:py-14">
       <SEO
         title={event.title}
         description={`${event.title} — ${formatDate(event.date)} at ${event.location}. ${event.description?.slice(0, 100) || ''}`}
@@ -118,7 +118,7 @@ export default function EventDetail() {
         className="mt-6 bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-sm"
       >
         {/* Banner */}
-        <div className="relative min-h-64 overflow-hidden bg-gradient-to-br from-forest-50 via-white to-emerald-50 md:min-h-96">
+        <div className="relative flex min-h-64 w-full items-center justify-center overflow-hidden bg-gradient-to-br from-forest-50 via-white to-emerald-50 md:min-h-[32rem]">
           {galleryImages[0]?.url ? (
             <>
               <motion.img
@@ -128,7 +128,7 @@ export default function EventDetail() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.7 }}
-                className="relative z-10 h-64 w-full object-contain p-3 drop-shadow-xl md:h-96 md:p-5"
+                className="relative z-10 max-h-[70vh] min-h-64 w-full object-contain p-2 drop-shadow-xl md:min-h-[32rem] md:p-4"
               />
             </>
           ) : (
