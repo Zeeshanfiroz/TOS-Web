@@ -188,7 +188,7 @@ export default function EventDetail() {
                 </p>
                 <p className="text-sm text-gray-500">
                   {rsvped
-                    ? 'This interest is locked in and can no longer be cancelled.'
+                    ? 'We will keep you informed and connected with the event updates.'
                     : 'Mark yourself interested so we know who wants to join.'}
                 </p>
               </div>
