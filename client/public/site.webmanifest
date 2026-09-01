@@ -2,10 +2,10 @@
   "name": "Team of Sustainability — VSSUT Burla",
   "short_name": "TOS VSSUT",
   "icons": [
-    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" },
-    { "src": "/favicon-32x32.png", "sizes": "32x32", "type": "image/png" },
-    { "src": "/favicon-16x16.png", "sizes": "16x16", "type": "image/png" },
-    { "src": "/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" }
+    { "src": "/Logo.png", "sizes": "256x256", "type": "image/png" },
+    { "src": "/Logo.png", "sizes": "32x32", "type": "image/png" },
+    { "src": "/Logo.png", "sizes": "16x16", "type": "image/png" },
+    { "src": "/Logo.png", "sizes": "180x180", "type": "image/png" }
   ],
   "theme_color": "#14532d",
   "background_color": "#f0fdf4",
