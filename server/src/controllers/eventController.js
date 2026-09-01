@@ -6,7 +6,7 @@ import { uploadImage, deleteImage } from '../config/imagekit.js';
  * Public — list events with filter, search and pagination.
  */
 export const getEvents = async (req, res) => {
-  const { filter = 'organized', search = '', page = 1, limit = 9 } = req.query;
+  const { filter = 'organized', search = '', page = 1, limit = 9, includeRsvps = 'false' } = req.query;
 
   const query = {};
   const normalizedFilter = String(filter).toLowerCase();
@@ -27,13 +27,21 @@ export const getEvents = async (req, res) => {
   }
 
   const skip = (Number(page) - 1) * Number(limit);
+  const includeRsvpList = String(includeRsvps).toLowerCase() === 'true';
+
+  const eventQuery = Event.find(query)
+    .sort(normalizedFilter === 'participated' || normalizedFilter === 'past' ? { date: -1 } : { date: 1 })
+    .skip(skip)
+    .limit(Number(limit));
+
+  if (includeRsvpList) {
+    eventQuery.populate('rsvps.user', 'name avatar email');
+  } else {
+    eventQuery.select('-rsvps');
+  }
 
   const [events, total] = await Promise.all([
-    Event.find(query)
-      .sort(normalizedFilter === 'participated' || normalizedFilter === 'past' ? { date: -1 } : { date: 1 })
-      .skip(skip)
-      .limit(Number(limit))
-      .select('-rsvps'),
+    eventQuery.exec(),
     Event.countDocuments(query),
   ]);
 
@@ -159,19 +167,32 @@ export const toggleRsvp = async (req, res) => {
   }
 
   const userId = req.user._id;
-  const index = event.rsvps.findIndex((r) => r.user.toString() === userId.toString());
+  const existingIndex = event.rsvps.findIndex((r) => r.user.toString() === userId.toString());
 
-  let rsvped;
-  if (index >= 0) {
-    event.rsvps.splice(index, 1); // cancel RSVP
-    rsvped = false;
-  } else {
-    event.rsvps.push({ user: userId }); // add RSVP
-    rsvped = true;
+  if (existingIndex >= 0) {
+    return res.json({
+      success: true,
+      data: {
+        rsvped: true,
+        rsvpCount: event.rsvps.length,
+        locked: true,
+        message: 'You already marked interest for this event and can no longer cancel it.',
+      },
+    });
   }
 
+  event.rsvps.push({ user: userId });
   await event.save();
-  res.json({ success: true, data: { rsvped, rsvpCount: event.rsvps.length } });
+
+  res.json({
+    success: true,
+    data: {
+      rsvped: true,
+      rsvpCount: event.rsvps.length,
+      locked: true,
+      message: 'Marked as interested successfully. This interest is now locked in.',
+    },
+  });
 };
 
 /**

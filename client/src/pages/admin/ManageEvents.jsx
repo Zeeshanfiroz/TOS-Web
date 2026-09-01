@@ -26,7 +26,7 @@ export default function ManageEvents() {
   const loadEvents = async () => {
     setLoading(true);
     try {
-      const { data } = await api.get('/events', { params: { filter: 'all', limit: 100 } });
+      const { data } = await api.get('/events', { params: { filter: 'all', limit: 100, includeRsvps: true } });
       setEvents(data.data);
     } catch (err) {
       toast.error(err.response?.data?.message || 'Unable to load events right now.');
@@ -144,7 +144,16 @@ export default function ManageEvents() {
                     {new Date(ev.date).toLocaleDateString('en-IN')}
                   </td>
                   <td className="px-5 py-3.5 text-gray-600 hidden md:table-cell">
-                    {ev.rsvps?.length || 0}
+                    <div className="max-w-xs">
+                      <div className="font-medium text-forest-700">{ev.rsvps?.length || 0}</div>
+                      {ev.rsvps?.length ? (
+                        <div className="text-[11px] text-gray-500 mt-1 line-clamp-2">
+                          {ev.rsvps.map((r) => r.user?.name || 'Unknown').join(', ')}
+                        </div>
+                      ) : (
+                        <div className="text-[11px] text-gray-400 mt-1">No interested members</div>
+                      )}
+                    </div>
                   </td>
                   <td className="px-5 py-3.5 text-right whitespace-nowrap">
                     <button

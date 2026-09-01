@@ -70,12 +70,19 @@ export default function EventDetail() {
       navigate('/login', { state: { from: `/events/${id}` } });
       return;
     }
+
+    if (rsvped) {
+      toast.info('You already marked interest for this event and it cannot be cancelled.');
+      return;
+    }
+
     setRsvpBusy(true);
     const result = await dispatch(toggleRsvp(id));
     setRsvpBusy(false);
     if (toggleRsvp.fulfilled.match(result)) {
-      toast.success(result.payload.rsvped ? 'Marked as interested! 🌱' : 'Your interest has been removed.');
-      dispatch(fetchEventById(id)); // refresh interested list
+      const message = result.payload?.message || 'Marked as interested! 🌱';
+      toast.success(message);
+      dispatch(fetchEventById(id));
     } else {
       toast.error(result.payload || 'Could not update your interest status.');
     }
@@ -173,20 +180,20 @@ export default function EventDetail() {
                 </p>
                 <p className="text-sm text-gray-500">
                   {rsvped
-                    ? 'We will keep you updated about the event.'
+                    ? 'This interest is locked in and can no longer be cancelled.'
                     : 'Mark yourself interested so we know who wants to join.'}
                 </p>
               </div>
               <button
                 onClick={handleRsvp}
-                disabled={rsvpBusy}
+                disabled={rsvpBusy || rsvped}
                 className={`px-8 py-3 rounded-xl font-semibold transition-all disabled:opacity-60 ${
                   rsvped
-                    ? 'bg-red-50 text-red-600 hover:bg-red-100 border border-red-200'
+                    ? 'bg-forest-100 text-forest-700 border border-forest-200 cursor-default'
                     : 'bg-forest-600 text-white hover:bg-forest-700 shadow-lg shadow-forest-200'
                 }`}
               >
-                {rsvpBusy ? 'Please wait...' : rsvped ? 'Cancel Interest' : 'Interested 🌱'}
+                {rsvpBusy ? 'Please wait...' : rsvped ? 'Interested ✓' : 'Interested 🌱'}
               </button>
             </div>
           )}
