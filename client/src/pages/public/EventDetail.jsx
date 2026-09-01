@@ -118,16 +118,9 @@ export default function EventDetail() {
         className="mt-6 bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-sm"
       >
         {/* Banner */}
-        <div className="relative min-h-64 overflow-hidden bg-forest-950 md:min-h-96">
+        <div className="relative min-h-64 overflow-hidden bg-gradient-to-br from-forest-50 via-white to-emerald-50 md:min-h-96">
           {galleryImages[0]?.url ? (
             <>
-              <img
-                src={galleryImages[photoIndex]?.url}
-                alt=""
-                aria-hidden="true"
-                className="absolute inset-0 h-full w-full scale-110 object-cover opacity-35 blur-2xl"
-              />
-              <div className="absolute inset-0 bg-black/20" />
               <motion.img
                 key={galleryImages[photoIndex]?.url}
                 src={galleryImages[photoIndex]?.url}
@@ -135,7 +128,7 @@ export default function EventDetail() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.7 }}
-                className="relative z-10 h-64 w-full object-contain md:h-96"
+                className="relative z-10 h-64 w-full object-contain p-3 drop-shadow-xl md:h-96 md:p-5"
               />
             </>
           ) : (
@@ -147,13 +140,16 @@ export default function EventDetail() {
             {eventTimelineLabel}
           </span>
           {galleryImages.length > 1 && (
-            <div className="absolute bottom-4 left-1/2 z-20 flex -translate-x-1/2 gap-1.5 rounded-full bg-black/45 px-2.5 py-1.5 backdrop-blur-sm" aria-label={`${galleryImages.length} event photos`}>
+            <div className="absolute bottom-4 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2 rounded-full bg-white/90 px-3 py-1.5 shadow-md backdrop-blur-sm" aria-label={`${galleryImages.length} event photos`}>
               {galleryImages.map((photo, index) => (
                 <span
                   key={photo.url}
-                  className={`h-1.5 w-1.5 rounded-full transition-colors ${index === photoIndex ? 'bg-white' : 'bg-white/45'}`}
+                  className={`h-1.5 w-1.5 rounded-full transition-colors ${index === photoIndex ? 'bg-forest-600' : 'bg-forest-200'}`}
                 />
               ))}
+              <span className="ml-1 text-[11px] font-semibold text-forest-800">
+                {photoIndex + 1} / {galleryImages.length}
+              </span>
             </div>
           )}
         </div>
