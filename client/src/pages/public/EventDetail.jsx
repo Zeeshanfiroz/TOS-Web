@@ -118,25 +118,34 @@ export default function EventDetail() {
         className="mt-6 bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-sm"
       >
         {/* Banner */}
-        <div className="h-64 md:h-80 bg-gradient-to-br from-forest-400 to-forest-700 relative">
+        <div className="relative min-h-64 overflow-hidden bg-forest-950 md:min-h-96">
           {galleryImages[0]?.url ? (
-            <motion.img
-              key={galleryImages[photoIndex]?.url}
-              src={galleryImages[photoIndex]?.url}
-              alt={`${event.title} photo ${photoIndex + 1}`}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.7 }}
-              className="w-full h-full object-cover"
-            />
+            <>
+              <img
+                src={galleryImages[photoIndex]?.url}
+                alt=""
+                aria-hidden="true"
+                className="absolute inset-0 h-full w-full scale-110 object-cover opacity-35 blur-2xl"
+              />
+              <div className="absolute inset-0 bg-black/20" />
+              <motion.img
+                key={galleryImages[photoIndex]?.url}
+                src={galleryImages[photoIndex]?.url}
+                alt={`${event.title} photo ${photoIndex + 1}`}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.7 }}
+                className="relative z-10 h-64 w-full object-contain md:h-96"
+              />
+            </>
           ) : (
             <div className="w-full h-full flex items-center justify-center text-7xl opacity-60">🌿</div>
           )}
-          <span className="absolute top-4 left-4 text-xs font-semibold px-3 py-1 rounded-full bg-white/85 text-forest-800 shadow-sm">
+          <span className="absolute left-4 top-4 z-20 rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-forest-800 shadow-sm backdrop-blur-sm">
             {eventTimelineLabel}
           </span>
           {galleryImages.length > 1 && (
-            <div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 gap-1.5 rounded-full bg-black/35 px-2.5 py-1.5" aria-label={`${galleryImages.length} event photos`}>
+            <div className="absolute bottom-4 left-1/2 z-20 flex -translate-x-1/2 gap-1.5 rounded-full bg-black/45 px-2.5 py-1.5 backdrop-blur-sm" aria-label={`${galleryImages.length} event photos`}>
               {galleryImages.map((photo, index) => (
                 <span
                   key={photo.url}
@@ -147,7 +156,7 @@ export default function EventDetail() {
           )}
         </div>
 
-        <div className="p-6 md:p-10">
+        <div className="p-6 md:p-10 md:pt-8">
           <div className="flex flex-wrap items-center gap-3">
             <span className="text-xs font-semibold px-3 py-1 rounded-full bg-forest-100 text-forest-700">
               {eventStatus}
