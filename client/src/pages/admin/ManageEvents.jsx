@@ -125,12 +125,12 @@ export default function ManageEvents() {
       ) : (
         <div className="mt-6 bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm">
           <div className="overflow-x-auto">
-            <table className="w-full text-sm min-w-[560px]">
+            <table className="w-full min-w-[720px] text-sm">
             <thead className="bg-forest-50 text-left text-forest-800">
               <tr>
                 <th className="px-5 py-3 font-semibold">Event</th>
                 <th className="px-5 py-3 font-semibold">Date</th>
-                <th className="px-5 py-3 font-semibold hidden md:table-cell">RSVPs</th>
+                <th className="px-5 py-3 font-semibold">Interested members</th>
                 <th className="px-5 py-3 font-semibold text-right">Actions</th>
               </tr>
             </thead>
@@ -144,9 +144,11 @@ export default function ManageEvents() {
                   <td className="px-5 py-3.5 text-gray-600 whitespace-nowrap">
                     {new Date(ev.date).toLocaleDateString('en-IN')}
                   </td>
-                  <td className="px-5 py-3.5 text-gray-600 hidden md:table-cell">
-                    <div className="max-w-xs">
-                      <div className="font-medium text-forest-700">{ev.rsvps?.length || 0}</div>
+                  <td className="px-5 py-3.5 text-gray-600">
+                    <div className="max-w-sm">
+                      <div className="font-medium text-forest-700">
+                        {ev.rsvps?.length || 0} interested
+                      </div>
                       {ev.rsvps?.length ? (
                         <div className="text-[11px] text-gray-500 mt-1 line-clamp-2">
                           {ev.rsvps.map((r) => r.user?.name || 'Unknown').join(', ')}
