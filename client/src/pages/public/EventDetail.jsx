@@ -120,17 +120,15 @@ export default function EventDetail() {
         {/* Banner */}
         <div className="relative h-[clamp(18rem,65vh,42rem)] w-full overflow-hidden bg-forest-50">
           {galleryImages[0]?.url ? (
-            <>
-              <motion.img
-                key={galleryImages[photoIndex]?.url}
-                src={galleryImages[photoIndex]?.url}
-                alt={`${event.title} photo ${photoIndex + 1}`}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.7 }}
-                className="relative z-10 h-full w-full object-cover"
-              />
-            </>
+            <motion.img
+              key={galleryImages[photoIndex]?.url}
+              src={galleryImages[photoIndex]?.url}
+              alt={`${event.title} photo ${photoIndex + 1}`}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.7 }}
+              className="relative z-10 h-full w-full object-contain"
+            />
           ) : (
             <div className="flex h-full min-h-64 w-full items-center justify-center bg-forest-50 md:min-h-96">
               <img src="/Logo.png" alt="Team of Sustainability" className="h-40 w-40 object-contain opacity-80 md:h-52 md:w-52" />
