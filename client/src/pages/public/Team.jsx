@@ -63,7 +63,12 @@ export default function Team() {
               role: groupName,
               members: [...members].sort((a, b) => (a.order || 0) - (b.order || 0)),
             }))
-            .sort((a, b) => a.role.localeCompare(b.role))
+            .sort((a, b) => {
+              const aIsGuidingHands = a.role.trim().toLowerCase() === 'guiding hands';
+              const bIsGuidingHands = b.role.trim().toLowerCase() === 'guiding hands';
+              if (aIsGuidingHands !== bIsGuidingHands) return aIsGuidingHands ? -1 : 1;
+              return a.role.localeCompare(b.role);
+            })
         );
       } catch {
         setTeamGroups([]);
