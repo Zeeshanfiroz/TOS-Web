@@ -1,5 +1,32 @@
 import { Link } from 'react-router-dom';
 
+function SocialIcon({ type }) {
+  if (type === 'instagram') {
+    return (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true" className="h-5 w-5">
+        <rect x="3.5" y="3.5" width="17" height="17" rx="4.5" />
+        <circle cx="12" cy="12" r="4" />
+        <circle cx="17.5" cy="6.5" r=".8" fill="currentColor" stroke="none" />
+      </svg>
+    );
+  }
+
+  if (type === 'linkedin') {
+    return (
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className="h-5 w-5">
+        <path d="M5.2 8.2H2.8V21h2.4V8.2ZM4 3a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3ZM21.2 13.7c0-3.85-2.05-5.64-4.78-5.64-2.2 0-3.18 1.22-3.73 2.08V8.2h-2.4V21h2.4v-6.33c0-1.67.32-3.29 2.39-3.29 2.04 0 2.07 1.92 2.07 3.4V21h2.4l.01-7.3Z" />
+      </svg>
+    );
+  }
+
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true" className="h-5 w-5">
+      <rect x="3" y="5" width="18" height="14" rx="2.5" />
+      <path d="m4.5 7 7.5 6 7.5-6" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 export default function Footer() {
   return (
     <footer className="bg-forest-900 text-forest-100 mt-auto">
@@ -40,13 +67,16 @@ export default function Footer() {
           {/* Contact + Social */}
           <div>
             <h3 className="font-display font-semibold text-white mb-3">Get in Touch</h3>
-            <ul className="space-y-2 text-sm text-forest-200/80">
+            <ul className="space-y-3 text-sm text-forest-200/80">
               <li>
                 <a
                   href="mailto:teamofsustainabilityvssut@gmail.com"
-                  className="hover:text-white transition-colors"
+                  className="group flex items-center gap-3 transition-colors hover:text-white"
                 >
-                  📧 teamofsustainabilityvssut@gmail.com
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white/10 text-forest-200 transition-colors group-hover:bg-white group-hover:text-forest-800">
+                    <SocialIcon type="mail" />
+                  </span>
+                  <span className="break-all">teamofsustainabilityvssut@gmail.com</span>
                 </a>
               </li>
               <li>
@@ -54,9 +84,12 @@ export default function Footer() {
                   href="https://www.instagram.com/teamofsustainability_vssut/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hover:text-white transition-colors"
+                  className="group flex items-center gap-3 transition-colors hover:text-white"
                 >
-                  📸 Instagram
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white/10 text-forest-200 transition-colors group-hover:bg-white group-hover:text-forest-800">
+                    <SocialIcon type="instagram" />
+                  </span>
+                  <span>Instagram</span>
                 </a>
               </li>
               <li>
@@ -64,9 +97,12 @@ export default function Footer() {
                   href="https://www.linkedin.com/in/team-of-sustainability-vssut-burla-501251298?utm_source=share_via&utm_content=profile&utm_medium=member_android"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hover:text-white transition-colors"
+                  className="group flex items-center gap-3 transition-colors hover:text-white"
                 >
-                  💼 LinkedIn
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white/10 text-forest-200 transition-colors group-hover:bg-white group-hover:text-forest-800">
+                    <SocialIcon type="linkedin" />
+                  </span>
+                  <span>LinkedIn</span>
                 </a>
               </li>
             </ul>
