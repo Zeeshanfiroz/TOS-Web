@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 export default function ImageUploadDropzone({
   label,
@@ -14,9 +14,20 @@ export default function ImageUploadDropzone({
   const [isDragging, setIsDragging] = useState(false);
 
   const selectedFiles = Array.isArray(value) ? value : value ? [value] : [];
-  const previewUrl = selectedFiles[0] && selectedFiles[0].type?.startsWith('image/')
-    ? URL.createObjectURL(selectedFiles[0])
-    : '';
+  const firstSelectedFile = selectedFiles[0];
+  const [previewUrl, setPreviewUrl] = useState('');
+
+  useEffect(() => {
+    const firstFile = firstSelectedFile;
+    if (!firstFile?.type?.startsWith('image/')) {
+      setPreviewUrl('');
+      return undefined;
+    }
+
+    const objectUrl = URL.createObjectURL(firstFile);
+    setPreviewUrl(objectUrl);
+    return () => URL.revokeObjectURL(objectUrl);
+  }, [firstSelectedFile]);
 
   const handleFiles = (fileList) => {
     if (!fileList || !fileList.length || disabled) return;
@@ -34,12 +45,40 @@ export default function ImageUploadDropzone({
     event.target.value = '';
   };
 
+  const handlePaste = (event) => {
+    if (disabled) return;
+
+    const pastedImages = Array.from(event.clipboardData?.items || [])
+      .filter((item) => item.kind === 'file' && item.type.startsWith('image/'))
+      .map((item) => item.getAsFile())
+      .filter(Boolean);
+
+    if (!pastedImages.length) return;
+
+    event.preventDefault();
+    if (multiple) {
+      onChange([...selectedFiles, ...pastedImages]);
+    } else {
+      onChange(pastedImages[0]);
+    }
+  };
+
   return (
     <div>
       {label && <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>}
 
       <div
         onClick={() => !disabled && inputRef.current?.click()}
+        onPaste={handlePaste}
+        onKeyDown={(event) => {
+          if ((event.key === 'Enter' || event.key === ' ') && !disabled) {
+            event.preventDefault();
+            inputRef.current?.click();
+          }
+        }}
+        role="button"
+        tabIndex={disabled ? -1 : 0}
+        aria-label={label || 'Upload image'}
         onDragOver={(event) => {
           event.preventDefault();
           if (!disabled) setIsDragging(true);
@@ -88,7 +127,9 @@ export default function ImageUploadDropzone({
         <p className="text-sm font-medium text-gray-700">
           {isDragging ? 'Drop the image here' : placeholder}
         </p>
-        <p className="mt-1 text-xs text-gray-500">{multiple ? 'Click or drop multiple images' : 'Click or drop an image'}</p>
+        <p className="mt-1 text-xs text-gray-500">
+          {multiple ? 'Click, drop, or paste multiple images' : 'Click, drop, or paste an image'}
+        </p>
       </div>
 
       {selectedFiles.length > 0 && (
