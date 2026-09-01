@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import useLockBodyScroll from '../../hooks/useLockBodyScroll';
 import useFocusTrap from '../../hooks/useFocusTrap';
 import Spinner from '../../components/ui/Spinner';
+import ImageUploadDropzone from '../../components/ui/ImageUploadDropzone';
 
 const emptyForm = { title: '', description: '', date: '', location: '', eventType: 'organized' };
 
@@ -252,30 +253,21 @@ export default function ManageEvents() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Banner Image {editing && '(leave empty to keep current)'}
-                </label>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => setBanner(e.target.files[0])}
-                  className="w-full text-sm text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-forest-50 file:text-forest-700 file:text-sm file:font-semibold cursor-pointer"
+                <ImageUploadDropzone
+                  label={editing ? 'Banner Image (leave empty to keep current)' : 'Banner Image'}
+                  value={banner}
+                  onChange={(file) => setBanner(file || null)}
+                  helperText={banner ? `Selected: ${banner.name}` : 'Landscape image works best for event banners'}
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Extra Event Photos (optional)
-                </label>
-                <input
-                  type="file"
-                  accept="image/*"
+                <ImageUploadDropzone
+                  label="Extra Event Photos (optional)"
+                  value={galleryFiles}
+                  onChange={(files) => setGalleryFiles(files || [])}
                   multiple
-                  onChange={(e) => setGalleryFiles(Array.from(e.target.files || []))}
-                  className="w-full text-sm text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-forest-50 file:text-forest-700 file:text-sm file:font-semibold cursor-pointer"
+                  helperText={galleryFiles.length ? `${galleryFiles.length} image(s) selected` : 'Optional gallery for the event'}
                 />
-                {galleryFiles.length > 0 && (
-                  <p className="mt-1 text-xs text-gray-500">{galleryFiles.length} image(s) selected</p>
-                )}
               </div>
 
               <div className="flex gap-3 pt-2">

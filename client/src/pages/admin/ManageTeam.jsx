@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import api from '../../api/axios';
 import { toast } from 'react-toastify';
 import Spinner from '../../components/ui/Spinner';
+import ImageUploadDropzone from '../../components/ui/ImageUploadDropzone';
 
 const initialForm = {
   name: '',
@@ -168,12 +169,11 @@ export default function ManageTeam() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Photo</label>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={(e) => setPhoto(e.target.files?.[0] || null)}
-            className="w-full text-sm text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-forest-50 file:text-forest-700 file:text-sm file:font-semibold cursor-pointer"
+          <ImageUploadDropzone
+            label="Photo"
+            value={photo}
+            onChange={(file) => setPhoto(file || null)}
+            helperText={photo ? `Selected: ${photo.name}` : 'Recommended size: square crop, high quality'}
           />
         </div>
 
