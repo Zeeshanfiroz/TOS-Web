@@ -61,7 +61,7 @@ export default function EventDetail() {
   const eventStatus = normalizedEventType === 'participated' ? 'Participated' : 'Organised';
   const isUpcoming = event?.date ? new Date(event.date) > new Date() : false;
   const eventTimelineLabel = isUpcoming ? 'Upcoming' : 'Past Event';
-  const canRsvp = normalizedEventType === 'organized';
+  const canRsvp = normalizedEventType === 'organized' && isUpcoming;
   const rsvped = event?.rsvps?.some((r) => r.user?._id === user?._id || r.user === user?._id);
 
   const handleRsvp = async () => {

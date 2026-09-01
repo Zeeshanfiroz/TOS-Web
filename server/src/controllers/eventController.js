@@ -166,6 +166,10 @@ export const toggleRsvp = async (req, res) => {
     return res.status(404).json({ success: false, message: 'Event not found' });
   }
 
+  if (event.eventType !== 'organized' || event.date <= new Date()) {
+    return res.status(400).json({ success: false, message: 'Interest can only be marked for upcoming organised events.' });
+  }
+
   const userId = req.user._id;
   const existingIndex = event.rsvps.findIndex((r) => r.user.toString() === userId.toString());
 
