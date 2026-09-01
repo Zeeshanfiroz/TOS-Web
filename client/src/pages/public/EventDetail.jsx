@@ -36,7 +36,6 @@ export default function EventDetail() {
     dispatch(fetchEventById(id));
   }, [dispatch, id]);
 
-  const [showGallery, setShowGallery] = useState(false);
   const [photoIndex, setPhotoIndex] = useState(0);
 
   const galleryImages = [
@@ -45,17 +44,18 @@ export default function EventDetail() {
   ];
 
   useEffect(() => {
-    if (!showGallery || galleryImages.length === 0) return;
+    setPhotoIndex(0);
+  }, [event?._id]);
 
-    const onKey = (e) => {
-      if (e.key === 'Escape') setShowGallery(false);
-      if (e.key === 'ArrowRight') setPhotoIndex((i) => (i + 1) % galleryImages.length);
-      if (e.key === 'ArrowLeft') setPhotoIndex((i) => (i - 1 + galleryImages.length) % galleryImages.length);
-    };
+  useEffect(() => {
+    if (galleryImages.length < 2) return undefined;
 
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [showGallery, galleryImages.length]);
+    const rotationTimer = window.setInterval(() => {
+      setPhotoIndex((index) => (index + 1) % galleryImages.length);
+    }, 4000);
+
+    return () => window.clearInterval(rotationTimer);
+  }, [galleryImages.length]);
 
   const normalizedEventType = normalizeEventType(event?.eventType);
   const eventStatus = normalizedEventType === 'participated' ? 'Participated' : 'Organised';
@@ -120,13 +120,31 @@ export default function EventDetail() {
         {/* Banner */}
         <div className="h-64 md:h-80 bg-gradient-to-br from-forest-400 to-forest-700 relative">
           {galleryImages[0]?.url ? (
-            <img src={galleryImages[0].url} alt={event.title} className="w-full h-full object-cover" />
+            <motion.img
+              key={galleryImages[photoIndex]?.url}
+              src={galleryImages[photoIndex]?.url}
+              alt={`${event.title} photo ${photoIndex + 1}`}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.7 }}
+              className="w-full h-full object-cover"
+            />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-7xl opacity-60">🌿</div>
           )}
           <span className="absolute top-4 left-4 text-xs font-semibold px-3 py-1 rounded-full bg-white/85 text-forest-800 shadow-sm">
             {eventTimelineLabel}
           </span>
+          {galleryImages.length > 1 && (
+            <div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 gap-1.5 rounded-full bg-black/35 px-2.5 py-1.5" aria-label={`${galleryImages.length} event photos`}>
+              {galleryImages.map((photo, index) => (
+                <span
+                  key={photo.url}
+                  className={`h-1.5 w-1.5 rounded-full transition-colors ${index === photoIndex ? 'bg-white' : 'bg-white/45'}`}
+                />
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="p-6 md:p-10">
@@ -155,21 +173,6 @@ export default function EventDetail() {
           <p className="mt-6 text-gray-600 leading-relaxed whitespace-pre-wrap">
             {event.description}
           </p>
-
-          {galleryImages.length > 1 && (
-            <div className="mt-8">
-              <button
-                type="button"
-                onClick={() => {
-                  setPhotoIndex(0);
-                  setShowGallery(true);
-                }}
-                className="px-4 py-2 rounded-xl bg-forest-600 text-white font-semibold hover:bg-forest-700"
-              >
-                View more photos
-              </button>
-            </div>
-          )}
 
           {/* Interested */}
           {canRsvp && (
@@ -201,49 +204,6 @@ export default function EventDetail() {
         </div>
       </motion.div>
 
-      {showGallery && galleryImages.length > 0 && (
-        <div
-          className="fixed inset-0 z-[100] bg-black/85 flex items-center justify-center p-4"
-          onClick={() => setShowGallery(false)}
-        >
-          <button
-            className="absolute top-5 right-5 text-white text-3xl"
-            onClick={() => setShowGallery(false)}
-            aria-label="Close gallery"
-          >
-            ×
-          </button>
-          <button
-            className="absolute left-5 text-white text-4xl"
-            onClick={(e) => {
-              e.stopPropagation();
-              setPhotoIndex((i) => (i - 1 + galleryImages.length) % galleryImages.length);
-            }}
-            aria-label="Previous photo"
-          >
-            ‹
-          </button>
-          <img
-            src={galleryImages[photoIndex].url}
-            alt={galleryImages[photoIndex].caption}
-            className="max-h-[80vh] max-w-[90vw] object-contain rounded-2xl"
-            onClick={(e) => e.stopPropagation()}
-          />
-          <button
-            className="absolute right-5 text-white text-4xl"
-            onClick={(e) => {
-              e.stopPropagation();
-              setPhotoIndex((i) => (i + 1) % galleryImages.length);
-            }}
-            aria-label="Next photo"
-          >
-            ›
-          </button>
-          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-center text-sm text-white/90">
-            {photoIndex + 1} / {galleryImages.length}
-          </div>
-        </div>
-      )}
     </div>
   );
 }
