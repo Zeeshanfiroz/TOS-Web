@@ -168,6 +168,49 @@ export default function EventDetail() {
             {event.title}
           </h1>
 
+          {/* ── PROMINENT registration CTA (upcoming events with links) — right
+              under the title so visitors see it first, before anything else ── */}
+          {isUpcoming && (event.registrationLink || event.ruleBookUrl) && (
+            <div className="mt-5 rounded-2xl bg-gradient-to-r from-forest-600 to-emerald-600 p-1 shadow-lg shadow-forest-200">
+              <div className="rounded-[14px] bg-white/95 backdrop-blur px-5 py-4 flex flex-col sm:flex-row sm:items-center gap-4">
+                <div className="flex-1">
+                  <p className="font-display font-bold text-forest-800 flex items-center gap-2">
+                    <span className="relative flex h-2.5 w-2.5">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-forest-500 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-forest-600"></span>
+                    </span>
+                    Registrations open!
+                  </p>
+                  <p className="text-xs text-gray-500 mt-0.5">
+                    {event.fee ? `Entry: ${event.fee} · ` : ''}Secure your spot for {event.title}
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-3">
+                  {event.registrationLink && (
+                    <a
+                      href={event.registrationLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-6 py-2.5 rounded-xl bg-forest-600 text-white text-sm font-bold hover:bg-forest-700 shadow-md transition-all hover:-translate-y-0.5"
+                    >
+                      🔗 Register Now
+                    </a>
+                  )}
+                  {event.ruleBookUrl && (
+                    <a
+                      href={event.ruleBookUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-6 py-2.5 rounded-xl bg-white border-2 border-forest-600 text-forest-700 text-sm font-bold hover:bg-forest-50 transition-all hover:-translate-y-0.5"
+                    >
+                      📖 Rule Book
+                    </a>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
           <div className="mt-4 grid sm:grid-cols-2 gap-3 text-sm">
             <p className="flex items-center gap-2 text-gray-700">
               📅 <span>{formatDate(event.date)}</span>
