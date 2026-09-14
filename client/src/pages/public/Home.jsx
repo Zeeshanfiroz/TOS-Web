@@ -134,12 +134,12 @@ export default function Home() {
 
     const loadStats = async () => {
       try {
-        const [usersRes, eventsRes] = await Promise.all([
-          api.get('/users?limit=1'),
+        const [statsRes, eventsRes] = await Promise.all([
+          api.get('/users/stats'),
           api.get('/events?filter=organized&limit=1'),
         ]);
 
-        const activeMembers = Number(usersRes.data?.pagination?.total || 0);
+        const activeMembers = Number(statsRes.data?.data?.activeMembers || 0);
         const eventsOrganised = Number(eventsRes.data?.pagination?.total || 10);
 
         if (!isMounted) return;

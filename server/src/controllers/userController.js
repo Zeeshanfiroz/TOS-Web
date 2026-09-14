@@ -1,6 +1,21 @@
 import User from '../models/User.js';
 
 /**
+ * GET /api/users/stats  (PUBLIC)
+ * Member count for the home-page "Active Members" stat. Returns only an
+ * aggregate number — no user data — so it's safe to expose without auth.
+ * (The home page used to call GET /api/users?limit=1, which is admin-only,
+ * so public visitors got a 401 and the counter fell back to 0.)
+ */
+export const getPublicStats = async (req, res) => {
+  const total = await User.countDocuments({ isVerified: true });
+  res.json({
+    success: true,
+    data: { activeMembers: total },
+  });
+};
+
+/**
  * GET /api/users?page=1&limit=20&search=...  (admin)
  * List all members.
  */
