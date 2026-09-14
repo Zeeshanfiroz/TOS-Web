@@ -49,3 +49,29 @@ export const eventValidator = [
       return true;
     }),
 ];
+
+// ── Event queries & RSVP mailing ──
+export const askQueryValidator = [
+  body('question')
+    .trim()
+    .notEmpty().withMessage('Please type your question')
+    .isLength({ max: 500 }).withMessage('Question must be under 500 characters'),
+];
+
+export const answerQueryValidator = [
+  body('answer')
+    .trim()
+    .notEmpty().withMessage('Please write a reply')
+    .isLength({ max: 1000 }).withMessage('Reply must be under 1000 characters'),
+];
+
+export const emailRsvpsValidator = [
+  body('subject')
+    .trim()
+    .notEmpty().withMessage('Subject is required')
+    .isLength({ max: 120 }).withMessage('Subject must be under 120 characters'),
+  body('message')
+    .trim()
+    .notEmpty().withMessage('Message is required')
+    .isLength({ max: 3000 }).withMessage('Message must be under 3000 characters'),
+];

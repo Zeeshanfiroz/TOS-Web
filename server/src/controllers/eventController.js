@@ -1,5 +1,7 @@
 import Event from '../models/Event.js';
+import User from '../models/User.js';
 import { uploadImage, deleteImage } from '../config/imagekit.js';
+import { sendEmail } from '../config/mailer.js';
 
 /**
  * GET /api/events?filter=conduct|participate|all&search=...&page=1&limit=9
@@ -62,7 +64,9 @@ export const getEvents = async (req, res) => {
  * Public — event detail (includes RSVP count).
  */
 export const getEventById = async (req, res) => {
-  const event = await Event.findById(req.params.id).populate('rsvps.user', 'name avatar');
+  const event = await Event.findById(req.params.id)
+    .populate('rsvps.user', 'name avatar')
+    .populate('queries.user', 'name'); // public Q&A shows asker's first name
   if (!event) {
     return res.status(404).json({ success: false, message: 'Event not found' });
   }
@@ -247,4 +251,158 @@ export const toggleRsvp = async (req, res) => {
 export const myRsvps = async (req, res) => {
   const events = await Event.find({ 'rsvps.user': req.user._id }).sort({ date: 1 });
   res.json({ success: true, data: events });
+};
+
+// ─────────────────────────────────────────────────────────────
+// Event Queries (Q&A)
+// ─────────────────────────────────────────────────────────────
+
+/**
+ * POST /api/events/:id/queries  (protected)  body: { question }
+ * Member asks a question about an event → ALL admins get an email.
+ */
+export const askQuery = async (req, res) => {
+  const { question } = req.body;
+  const event = await Event.findById(req.params.id);
+  if (!event) {
+    return res.status(404).json({ success: false, message: 'Event not found' });
+  }
+
+  event.queries.push({ user: req.user._id, question });
+  await event.save();
+
+  // Notify every admin by email (background queue — never blocks the response)
+  const admins = await User.find({ role: 'admin' }).select('email');
+  const askerName = req.user.name || 'A member';
+  const askerEmail = req.user.email;
+  const eventUrl = `${process.env.CLIENT_URL}/events/${event._id}`;
+  for (const admin of admins) {
+    sendEmail(
+      admin.email,
+      `❓ New question on "${event.title}"`,
+      `<h2>New event question</h2>
+       <p><strong>${askerName}</strong> (${askerEmail}) asked about
+       <strong>${event.title}</strong>:</p>
+       <blockquote style="border-left:4px solid #16a34a;padding-left:12px;color:#333;">${question}</blockquote>
+       <p><a href="${eventUrl}" style="display:inline-block;padding:10px 20px;background:#16a34a;color:#fff;border-radius:8px;text-decoration:none;">Open event page</a></p>
+       <p style="color:#888;font-size:13px;">Reply from Admin → Manage Events → Queries to answer them by email.</p>`
+    );
+  }
+
+  res.status(201).json({
+    success: true,
+    message: 'Question sent! Our team will get back to you soon. 🌱',
+    data: { queriesCount: event.queries.length },
+  });
+};
+
+/**
+ * GET /api/events/:id/queries  (admin) — all questions with asker name + email
+ */
+export const getEventQueries = async (req, res) => {
+  const event = await Event.findById(req.params.id)
+    .populate('queries.user', 'name email');
+  if (!event) {
+    return res.status(404).json({ success: false, message: 'Event not found' });
+  }
+  res.json({ success: true, data: event.queries || [] });
+};
+
+/**
+ * POST /api/events/:id/queries/:queryId/answer  (admin)  body: { answer }
+ * Saves the reply AND emails it to the asker.
+ */
+export const answerQuery = async (req, res) => {
+  const { answer } = req.body;
+  const event = await Event.findById(req.params.id).populate('queries.user', 'name email');
+  if (!event) {
+    return res.status(404).json({ success: false, message: 'Event not found' });
+  }
+
+  const query = event.queries.id(req.params.queryId);
+  if (!query) {
+    return res.status(404).json({ success: false, message: 'Question not found' });
+  }
+
+  query.answer = answer;
+  query.answeredAt = new Date();
+  await event.save();
+
+  if (query.user?.email) {
+    sendEmail(
+      query.user.email,
+      `Reply to your question on "${event.title}"`,
+      `<h2>Your question has been answered 🌱</h2>
+       <p>Regarding <strong>${event.title}</strong>, you asked:</p>
+       <blockquote style="border-left:4px solid #94a3b8;padding-left:12px;color:#333;">${query.question}</blockquote>
+       <p><strong>Team of Sustainability replied:</strong></p>
+       <blockquote style="border-left:4px solid #16a34a;padding-left:12px;color:#333;">${answer}</blockquote>
+       <p><a href="${process.env.CLIENT_URL}/events/${event._id}">View the event page</a></p>`
+    );
+  }
+
+  res.json({ success: true, message: 'Reply sent — the member has been emailed.', data: query });
+};
+
+// ─────────────────────────────────────────────────────────────
+// RSVP list & bulk email (admin)
+// ─────────────────────────────────────────────────────────────
+
+/**
+ * GET /api/events/:id/rsvps  (admin) — full interested list: name + email
+ */
+export const getEventRsvps = async (req, res) => {
+  const event = await Event.findById(req.params.id).populate('rsvps.user', 'name email joinedAt');
+  if (!event) {
+    return res.status(404).json({ success: false, message: 'Event not found' });
+  }
+  res.json({
+    success: true,
+    data: {
+      eventTitle: event.title,
+      rsvps: (event.rsvps || []).map((r) => ({
+        _id: r._id,
+        name: r.user?.name || 'Unknown',
+        email: r.user?.email || '—',
+        createdAt: r.createdAt,
+      })),
+    },
+  });
+};
+
+/**
+ * POST /api/events/:id/rsvps/email  (admin)  body: { subject, message }
+ * Sends an update email to EVERY interested member of the event.
+ */
+export const emailRsvps = async (req, res) => {
+  const { subject, message } = req.body;
+  const event = await Event.findById(req.params.id).populate('rsvps.user', 'name email');
+  if (!event) {
+    return res.status(404).json({ success: false, message: 'Event not found' });
+  }
+
+  const recipients = (event.rsvps || []).map((r) => r.user?.email).filter(Boolean);
+  if (!recipients.length) {
+    return res.status(400).json({ success: false, message: 'No interested members to email yet.' });
+  }
+
+  // One email per recipient (fire-and-forget queue keeps this fast)
+  for (const email of recipients) {
+    sendEmail(
+      email,
+      subject,
+      `<h2>${subject}</h2>
+       <p>Update about <strong>${event.title}</strong>
+       (${new Date(event.date).toLocaleDateString('en-IN')} · ${event.location}) —
+       an event you marked yourself interested in:</p>
+       <div style="color:#333;line-height:1.6;">${message.replace(/\n/g, '<br/>')}</div>
+       <p><a href="${process.env.CLIENT_URL}/events/${event._id}">View event page</a></p>
+       <p style="color:#888;font-size:13px;">You received this because you marked interest in this event on the TOS VSSUT website.</p>`
+    );
+  }
+
+  res.json({
+    success: true,
+    message: `Update queued for ${recipients.length} interested member(s). 📧`,
+  });
 };

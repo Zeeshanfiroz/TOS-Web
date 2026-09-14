@@ -131,6 +131,91 @@ export default function ManageEvents() {
     }
   };
 
+  // ── Interested list modal (names + emails + bulk email) ──
+  const [rsvpModal, setRsvpModal] = useState(null); // { eventTitle, rsvps: [] }
+  const [rsvpLoading, setRsvpLoading] = useState(false);
+  const [mailSubject, setMailSubject] = useState('');
+  const [mailMessage, setMailMessage] = useState('');
+  const [mailSending, setMailSending] = useState(false);
+
+  const openRsvps = async (event) => {
+    setRsvpLoading(true);
+    setRsvpModal({ _id: event._id, eventTitle: event.title, rsvps: [] });
+    setMailSubject('');
+    setMailMessage('');
+    try {
+      const { data } = await api.get(`/events/${event._id}/rsvps`);
+      setRsvpModal({ eventTitle: data.data.eventTitle, rsvps: data.data.rsvps });
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Could not load the interested list.');
+      setRsvpModal(null);
+    } finally {
+      setRsvpLoading(false);
+    }
+  };
+
+  const sendBulkEmail = async () => {
+    if (!mailSubject.trim() || !mailMessage.trim()) {
+      toast.error('Please write both a subject and a message.');
+      return;
+    }
+    setMailSending(true);
+    try {
+      const { data } = await api.post(`/events/${rsvpModal._id}/rsvps/email`, {
+        subject: mailSubject,
+        message: mailMessage,
+      });
+      toast.success(data.message || 'Emails queued!');
+      setMailSubject('');
+      setMailMessage('');
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Could not send the emails.');
+    } finally {
+      setMailSending(false);
+    }
+  };
+
+  // ── Queries modal (questions with asker name/email + reply) ──
+  const [queryModal, setQueryModal] = useState(null); // { eventTitle, queries: [] }
+  const [queryLoading, setQueryLoading] = useState(false);
+  const [replyDrafts, setReplyDrafts] = useState({});
+  const [replyBusyId, setReplyBusyId] = useState(null);
+
+  const openQueries = async (event) => {
+    setQueryLoading(true);
+    setQueryModal({ eventTitle: event.title, queries: [] });
+    setReplyDrafts({});
+    try {
+      const { data } = await api.get(`/events/${event._id}/queries`);
+      setQueryModal({ _id: event._id, eventTitle: event.title, queries: data.data });
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Could not load the questions.');
+      setQueryModal(null);
+    } finally {
+      setQueryLoading(false);
+    }
+  };
+
+  const sendReply = async (queryId) => {
+    const answer = replyDrafts[queryId]?.trim();
+    if (!answer) {
+      toast.error('Please write a reply first.');
+      return;
+    }
+    setReplyBusyId(queryId);
+    try {
+      await api.post(`/events/${queryModal._id}/queries/${queryId}/answer`, { answer });
+      toast.success('Reply sent — the member has been emailed. ✅');
+      const { data } = await api.get(`/events/${queryModal._id}/queries`);
+      setQueryModal((m) => ({ ...m, queries: data.data }));
+      setReplyDrafts((d) => ({ ...d, [queryId]: '' }));
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Could not send the reply.');
+    } finally {
+      setReplyBusyId(null);
+    }
+  };
+
   return (
     <div>
       <div className="flex items-center justify-between">
@@ -169,9 +254,13 @@ export default function ManageEvents() {
                   </td>
                   <td className="px-5 py-3.5 text-gray-600">
                     <div className="max-w-sm">
-                      <div className="font-medium text-forest-700">
-                        {ev.rsvps?.length || 0} interested
-                      </div>
+                      <button
+                        onClick={() => openRsvps(ev)}
+                        className="font-medium text-forest-700 hover:text-forest-800 hover:underline text-left"
+                        title="View names + emails, send an update"
+                      >
+                        {ev.rsvps?.length || 0} interested 👥
+                      </button>
                       {ev.rsvps?.length ? (
                         <div className="text-[11px] text-gray-500 mt-1 line-clamp-2">
                           {ev.rsvps.map((r) => r.user?.name || 'Unknown').join(', ')}
@@ -182,6 +271,13 @@ export default function ManageEvents() {
                     </div>
                   </td>
                   <td className="px-5 py-3.5 text-right whitespace-nowrap">
+                    <button
+                      onClick={() => openQueries(ev)}
+                      className="text-amber-600 hover:text-amber-700 font-medium mr-4"
+                      title="View questions and reply"
+                    >
+                      {ev.queries?.length ? `Queries (${ev.queries.length})` : 'Queries'}
+                    </button>
                     <button
                       onClick={() => openEdit(ev)}
                       className="text-forest-600 hover:text-forest-800 font-medium mr-4"
@@ -394,6 +490,134 @@ export default function ManageEvents() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* ── Interested members modal: names + emails + bulk email ── */}
+      {rsvpModal && (
+        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4" onClick={() => setRsvpModal(null)}>
+          <div
+            className="bg-white rounded-2xl w-full max-w-lg max-h-[85vh] overflow-y-auto p-6"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h2 className="font-display text-lg font-bold text-gray-900">Interested Members</h2>
+                <p className="text-xs text-gray-500">{rsvpModal.eventTitle}</p>
+              </div>
+              <button onClick={() => setRsvpModal(null)} className="text-gray-400 hover:text-gray-600 text-xl" aria-label="Close">✕</button>
+            </div>
+
+            {rsvpLoading ? (
+              <Spinner />
+            ) : rsvpModal.rsvps.length === 0 ? (
+              <p className="text-sm text-gray-500">No one has marked interest yet.</p>
+            ) : (
+              <>
+                <div className="rounded-xl border border-gray-100 divide-y divide-gray-100 max-h-56 overflow-y-auto mb-4">
+                  {rsvpModal.rsvps.map((r) => (
+                    <div key={r._id} className="px-4 py-2.5 flex items-center justify-between gap-3 text-sm">
+                      <div>
+                        <p className="font-medium text-gray-900">{r.name}</p>
+                        <p className="text-xs text-gray-500">{r.email}</p>
+                      </div>
+                      <a
+                        href={`mailto:${r.email}`}
+                        className="text-xs text-forest-600 hover:text-forest-800 font-medium whitespace-nowrap"
+                      >
+                        Email
+                      </a>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="rounded-xl bg-forest-50 border border-forest-100 p-4">
+                  <p className="text-sm font-semibold text-forest-800 mb-2">
+                    📧 Send an update to all {rsvpModal.rsvps.length} interested member(s)
+                  </p>
+                  <input
+                    type="text"
+                    value={mailSubject}
+                    onChange={(e) => setMailSubject(e.target.value)}
+                    placeholder="Subject (e.g. Venue change for RE:GEN)"
+                    className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-forest-300 mb-2 text-sm"
+                  />
+                  <textarea
+                    rows={4}
+                    value={mailMessage}
+                    onChange={(e) => setMailMessage(e.target.value)}
+                    placeholder="Write the update... (line breaks are preserved in the email)"
+                    className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-forest-300 resize-none text-sm"
+                  />
+                  <button
+                    onClick={sendBulkEmail}
+                    disabled={mailSending}
+                    className="mt-2 w-full py-2.5 rounded-xl bg-forest-600 hover:bg-forest-700 text-white text-sm font-semibold disabled:opacity-60"
+                  >
+                    {mailSending ? 'Sending...' : `Send to ${rsvpModal.rsvps.length} member(s)`}
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* ── Queries modal: questions with name/email + reply ── */}
+      {queryModal && (
+        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4" onClick={() => setQueryModal(null)}>
+          <div
+            className="bg-white rounded-2xl w-full max-w-lg max-h-[85vh] overflow-y-auto p-6"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h2 className="font-display text-lg font-bold text-gray-900">Event Queries</h2>
+                <p className="text-xs text-gray-500">{queryModal.eventTitle}</p>
+              </div>
+              <button onClick={() => setQueryModal(null)} className="text-gray-400 hover:text-gray-600 text-xl" aria-label="Close">✕</button>
+            </div>
+
+            {queryLoading ? (
+              <Spinner />
+            ) : queryModal.queries.length === 0 ? (
+              <p className="text-sm text-gray-500">No questions yet. Members can ask from the event page.</p>
+            ) : (
+              <div className="space-y-4">
+                {queryModal.queries.map((q) => (
+                  <div key={q._id} className="rounded-xl border border-gray-100 p-4">
+                    <p className="text-sm text-gray-800 font-medium">Q. {q.question}</p>
+                    <p className="text-xs text-gray-500 mt-1">
+                      — {q.user?.name || 'Unknown'} ({q.user?.email || 'no email'})
+                    </p>
+                    {q.answer ? (
+                      <div className="mt-3 pl-3 border-l-2 border-forest-300">
+                        <p className="text-xs font-semibold text-forest-700">Your reply:</p>
+                        <p className="text-sm text-gray-700">{q.answer}</p>
+                      </div>
+                    ) : (
+                      <div className="mt-3">
+                        <textarea
+                          rows={3}
+                          value={replyDrafts[q._id] || ''}
+                          onChange={(e) => setReplyDrafts((d) => ({ ...d, [q._id]: e.target.value }))}
+                          placeholder="Write a reply — it will be emailed to the member..."
+                          className="w-full px-3 py-2 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-forest-300 resize-none text-sm"
+                        />
+                        <button
+                          onClick={() => sendReply(q._id)}
+                          disabled={replyBusyId === q._id}
+                          className="mt-2 px-4 py-2 rounded-xl bg-forest-600 hover:bg-forest-700 text-white text-xs font-semibold disabled:opacity-60"
+                        >
+                          {replyBusyId === q._id ? 'Sending...' : 'Send Reply'}
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       )}

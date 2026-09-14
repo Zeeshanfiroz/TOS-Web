@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
 import { fetchEventById, toggleRsvp } from '../../features/events/eventsSlice';
 import { selectUser } from '../../features/auth/authSlice';
+import api from '../../api/axios';
 import Spinner from '../../components/ui/Spinner';
 import ErrorState from '../../components/ui/ErrorState';
 import SEO from '../../components/events/common/SEO';
@@ -31,6 +32,7 @@ export default function EventDetail() {
   const user = useSelector(selectUser);
   const { current: event, isLoading, error } = useSelector((s) => s.events);
   const [rsvpBusy, setRsvpBusy] = useState(false);
+  const [queryBusy, setQueryBusy] = useState(false);
 
   useEffect(() => {
     dispatch(fetchEventById(id));
@@ -222,6 +224,84 @@ export default function EventDetail() {
                   >
                     🔗 {link.label}
                   </a>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* ── Ask a question ── */}
+          <div className="mt-8 pt-6 border-t border-gray-100">
+            <p className="font-semibold text-gray-900">Have a question? 💬</p>
+            {user ? (
+              <form
+                onSubmit={async (e) => {
+                  e.preventDefault();
+                  const question = e.target.elements.question.value.trim();
+                  if (!question) return;
+                  setQueryBusy(true);
+                  try {
+                    await api.post(`/events/${id}/queries`, { question });
+                    toast.success('Question sent! Our team will reply soon. 🌱');
+                    e.target.reset();
+                    dispatch(fetchEventById(id)); // refresh Q&A list
+                  } catch (err) {
+                    toast.error(err.response?.data?.message || 'Could not send your question.');
+                  } finally {
+                    setQueryBusy(false);
+                  }
+                }}
+                className="mt-3"
+              >
+                <textarea
+                  name="question"
+                  rows={3}
+                  maxLength={500}
+                  placeholder={`Ask anything about ${event.title}...`}
+                  className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-forest-300 resize-none text-sm"
+                />
+                <button
+                  type="submit"
+                  disabled={queryBusy}
+                  className="mt-2 px-6 py-2.5 rounded-xl bg-forest-600 text-white text-sm font-semibold hover:bg-forest-700 disabled:opacity-60"
+                >
+                  {queryBusy ? 'Sending...' : 'Send Question'}
+                </button>
+              </form>
+            ) : (
+              <p className="text-sm text-gray-500 mt-2">
+                <Link to="/login" state={{ from: `/events/${id}` }} className="text-forest-600 font-semibold hover:underline">
+                  Log in
+                </Link>{' '}
+                to ask the team a question about this event.
+              </p>
+            )}
+          </div>
+
+          {/* ── Q&A list (answered questions show the official reply) ── */}
+          {event.queries?.length > 0 && (
+            <div className="mt-6">
+              <p className="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-3">
+                Questions & Answers ({event.queries.length})
+              </p>
+              <div className="space-y-4">
+                {event.queries.map((q) => (
+                  <div key={q._id} className="rounded-xl bg-gray-50 border border-gray-100 p-4">
+                    <p className="text-sm text-gray-800">
+                      <span className="font-semibold">Q. {q.question}</span>
+                    </p>
+                    <p className="text-xs text-gray-400 mt-1">— {q.user?.name || 'Member'}</p>
+                    {q.answer ? (
+                      <div className="mt-3 pl-4 border-l-2 border-forest-300">
+                        <p className="text-sm text-gray-700">
+                          <span className="font-semibold text-forest-700">A. </span>
+                          {q.answer}
+                        </p>
+                        <p className="text-[11px] text-gray-400 mt-1">— Team of Sustainability</p>
+                      </div>
+                    ) : (
+                      <p className="mt-2 text-xs text-amber-600">Awaiting reply from the team…</p>
+                    )}
+                  </div>
                 ))}
               </div>
             </div>

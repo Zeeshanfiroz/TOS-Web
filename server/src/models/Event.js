@@ -65,6 +65,20 @@ const eventSchema = new mongoose.Schema(
         createdAt: { type: Date, default: Date.now },
       },
     ],
+    // Public Q&A — members ask, admins reply (reply emails the asker)
+    queries: [
+      {
+        user: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'User',
+          required: true,
+        },
+        question: { type: String, required: true, trim: true, maxlength: 500 },
+        answer: { type: String, trim: true, maxlength: 1000 },
+        answeredAt: { type: Date },
+        createdAt: { type: Date, default: Date.now },
+      },
+    ],
   },
   { timestamps: true }
 );
