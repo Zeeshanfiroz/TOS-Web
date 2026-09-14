@@ -34,8 +34,26 @@ app.use(
     contentSecurityPolicy: {
       directives: {
         ...helmet.contentSecurityPolicy.getDefaultDirectives(),
-        'img-src': ["'self'", 'data:', 'https:'],
-        'connect-src': ["'self'", 'https:'],
+        // Pinned hosts instead of blanket 'https:':
+        //  - ik.imagekit.io            → club photos & banners
+        //  - picsum.photos             → seed-data placeholder images
+        //  - avatars.githubusercontent.com / *.googleusercontent.com → OAuth avatars
+        'img-src': [
+          "'self'",
+          'data:',
+          'https://ik.imagekit.io',
+          'https://picsum.photos',
+          'https://avatars.githubusercontent.com',
+          'https://*.googleusercontent.com',
+          'https://*.google-analytics.com',
+        ],
+        // The SPA talks only to this API (or itself); GA4 beacons allowed
+        // for when analytics is consented on the frontend.
+        'connect-src': [
+          "'self'",
+          'https://*.google-analytics.com',
+          'https://ik.imagekit.io',
+        ],
         'script-src': ["'self'", 'https://www.googletagmanager.com'],
       },
     },
@@ -62,12 +80,12 @@ if (process.env.NODE_ENV !== 'production') {
 // blocking a launch-day burst of real users.
 // ⚠️ NAT/shared-IP caveat: the limit is per-IP, so many users behind ONE
 // public IP (campus wifi, college NAT, corporate VPN) share this budget —
-// 1000 req/15min can be exhausted by ~50-100 active users on the same
-// network. If you ever see legit campus users hitting 429s, raise `max`
-// here rather than removing the limiter.
+// the default 1000 req/15min can be exhausted by ~50-100 active users on the
+// same network. Tune via RATE_LIMIT_MAX in .env if legit campus users hit 429s
+// rather than removing the limiter.
 const globalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 1000, // per IP per 15 min — far above what a real user generates
+  max: Number(process.env.RATE_LIMIT_MAX) || 1000, // per IP per 15 min
   standardHeaders: true,
   legacyHeaders: false,
 });

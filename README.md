@@ -45,6 +45,17 @@ member accounts with event RSVPs, and a complete admin panel.
 - Input validation on every endpoint (express-validator) + NoSQL operator sanitization
 - OTP brute-force guard (5 wrong attempts → OTP invalidated)
 
+> **Token storage trade-off:** in addition to httpOnly cookies, the API also returns
+> both JWTs in the response body and the client mirrors them in `localStorage`,
+> sending `Authorization: Bearer` headers. This exists because browsers
+> (Chrome's third-party-cookie phase-out, Safari ITP, Brave, Firefox strict)
+> silently drop `Set-Cookie` headers on cross-origin deployments (e.g. Vercel
+> frontend + Render API), which would log users out immediately. The cost: tokens
+> in `localStorage` are readable by any XSS payload, so the httpOnly cookie's
+> XSS protection is only fully effective on same-origin deployments. The
+> refresh-token rotation + replay detection is the backstop that limits the
+> damage of a stolen refresh token to one session.
+
 ### Known Accepted Risks
 
 | Package | Severity | Reason Accepted | Revisit When |
