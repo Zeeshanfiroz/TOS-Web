@@ -6,7 +6,17 @@ import useFocusTrap from '../../hooks/useFocusTrap';
 import Spinner from '../../components/ui/Spinner';
 import ImageUploadDropzone from '../../components/ui/ImageUploadDropzone';
 
-const emptyForm = { title: '', description: '', date: '', location: '', eventType: 'organized' };
+const emptyForm = {
+  title: '',
+  description: '',
+  date: '',
+  location: '',
+  eventType: 'organized',
+  registrationLink: '',
+  ruleBookUrl: '',
+  fee: '',
+  externalLinks: [], // [{ label, url }]
+};
 
 export default function ManageEvents() {
   const [events, setEvents] = useState([]);
@@ -56,6 +66,10 @@ export default function ManageEvents() {
       date: new Date(event.date).toISOString().slice(0, 10),
       location: event.location,
       eventType: event.eventType || 'organized',
+      registrationLink: event.registrationLink || '',
+      ruleBookUrl: event.ruleBookUrl || '',
+      fee: event.fee || '',
+      externalLinks: event.externalLinks || [],
     });
     setBanner(null);
     setGalleryFiles([]);
@@ -76,6 +90,15 @@ export default function ManageEvents() {
       fd.append('date', form.date);
       fd.append('location', form.location);
       fd.append('eventType', form.eventType || 'organized');
+      // Optional detail fields (sent only if filled — nothing is required)
+      if (form.registrationLink.trim()) fd.append('registrationLink', form.registrationLink.trim());
+      else if (editing) fd.append('registrationLink', ''); // clear on edit
+      if (form.ruleBookUrl.trim()) fd.append('ruleBookUrl', form.ruleBookUrl.trim());
+      else if (editing) fd.append('ruleBookUrl', '');
+      if (form.fee.trim()) fd.append('fee', form.fee.trim());
+      else if (editing) fd.append('fee', '');
+      const validLinks = form.externalLinks.filter((l) => l.label?.trim() && l.url?.trim());
+      fd.append('externalLinks', JSON.stringify(validLinks));
       if (banner) fd.append('image', banner);
       if (galleryFiles.length) {
         galleryFiles.forEach((file) => fd.append('images', file));
@@ -253,6 +276,88 @@ export default function ManageEvents() {
                   className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-forest-300"
                   placeholder="Main Campus Lawn"
                 />
+              </div>
+
+              {/* ── Optional details (none of these are required) ── */}
+              <div className="border-t border-gray-100 pt-4 mt-2">
+                <p className="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-3">Extra details (all optional)</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Registration Link</label>
+                    <input
+                      type="url"
+                      value={form.registrationLink}
+                      onChange={(e) => setForm({ ...form, registrationLink: e.target.value })}
+                      className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-forest-300"
+                      placeholder="https://unstop.com/..."
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Rule Book Link</label>
+                    <input
+                      type="url"
+                      value={form.ruleBookUrl}
+                      onChange={(e) => setForm({ ...form, ruleBookUrl: e.target.value })}
+                      className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-forest-300"
+                      placeholder="https://.../rulebook.pdf"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Entry Fee</label>
+                    <input
+                      type="text"
+                      value={form.fee}
+                      onChange={(e) => setForm({ ...form, fee: e.target.value })}
+                      className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-forest-300"
+                      placeholder='e.g. "Free" or "₹50 per team"'
+                    />
+                  </div>
+                </div>
+
+                <div className="mt-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Other Links</label>
+                  {form.externalLinks.map((link, i) => (
+                    <div key={i} className="flex gap-2 mb-2">
+                      <input
+                        type="text"
+                        value={link.label}
+                        onChange={(e) => {
+                          const links = [...form.externalLinks];
+                          links[i] = { ...links[i], label: e.target.value };
+                          setForm({ ...form, externalLinks: links });
+                        }}
+                        className="w-40 px-3 py-2 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-forest-300"
+                        placeholder="Label (e.g. Brochure)"
+                      />
+                      <input
+                        type="url"
+                        value={link.url}
+                        onChange={(e) => {
+                          const links = [...form.externalLinks];
+                          links[i] = { ...links[i], url: e.target.value };
+                          setForm({ ...form, externalLinks: links });
+                        }}
+                        className="flex-1 px-3 py-2 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-forest-300"
+                        placeholder="https://..."
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setForm({ ...form, externalLinks: form.externalLinks.filter((_, j) => j !== i) })}
+                        className="px-3 py-2 rounded-xl bg-red-50 text-red-500 hover:bg-red-100 text-sm font-medium"
+                        aria-label="Remove link"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() => setForm({ ...form, externalLinks: [...form.externalLinks, { label: '', url: '' }] })}
+                    className="mt-1 text-sm font-semibold text-forest-600 hover:text-forest-700"
+                  >
+                    + Add a link (WhatsApp group, brochure, results...)
+                  </button>
+                </div>
               </div>
               <div>
                 <ImageUploadDropzone

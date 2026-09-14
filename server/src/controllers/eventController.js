@@ -83,6 +83,25 @@ export const createEvent = async (req, res) => {
     eventType: ['organized', 'participated'].includes(eventType) ? eventType : 'organized',
   };
 
+  // Optional detail fields — only set when provided (never required)
+  if (req.body.registrationLink) eventData.registrationLink = req.body.registrationLink.trim();
+  if (req.body.ruleBookUrl) eventData.ruleBookUrl = req.body.ruleBookUrl.trim();
+  if (req.body.fee) eventData.fee = req.body.fee.trim();
+  if (req.body.externalLinks) {
+    try {
+      const links = typeof req.body.externalLinks === 'string'
+        ? JSON.parse(req.body.externalLinks)
+        : req.body.externalLinks;
+      if (Array.isArray(links) && links.length) {
+        eventData.externalLinks = links
+          .filter((l) => l?.label && l?.url)
+          .map((l) => ({ label: String(l.label).trim().slice(0, 60), url: String(l.url).trim() }));
+      }
+    } catch {
+      // invalid JSON — ignore; the validator already rejects it
+    }
+  }
+
   const uploadedFile = req.file || req.files?.image?.[0] || req.files?.banner?.[0];
   if (uploadedFile) {
     const bannerResult = await uploadImage(uploadedFile.buffer, uploadedFile.originalname, '/events');
@@ -119,6 +138,29 @@ export const updateEvent = async (req, res) => {
   if (location) event.location = location;
   if (eventType && ['organized', 'participated'].includes(eventType)) {
     event.eventType = eventType;
+  }
+
+  // Optional detail fields — set when provided, clearable with an empty string
+  if (req.body.registrationLink !== undefined) {
+    event.registrationLink = req.body.registrationLink.trim() || undefined;
+  }
+  if (req.body.ruleBookUrl !== undefined) {
+    event.ruleBookUrl = req.body.ruleBookUrl.trim() || undefined;
+  }
+  if (req.body.fee !== undefined) {
+    event.fee = req.body.fee.trim() || undefined;
+  }
+  if (req.body.externalLinks !== undefined) {
+    try {
+      const links = typeof req.body.externalLinks === 'string'
+        ? JSON.parse(req.body.externalLinks)
+        : req.body.externalLinks;
+      event.externalLinks = Array.isArray(links)
+        ? links.filter((l) => l?.label && l?.url).map((l) => ({ label: String(l.label).trim().slice(0, 60), url: String(l.url).trim() }))
+        : [];
+    } catch {
+      // invalid JSON — keep existing links; the validator already rejects it
+    }
   }
 
   const uploadedFile = req.file || req.files?.image?.[0] || req.files?.banner?.[0];

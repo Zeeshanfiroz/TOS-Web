@@ -179,6 +179,54 @@ export default function EventDetail() {
             {event.description}
           </p>
 
+          {/* ── Optional event details (shown only when the admin filled them) ── */}
+          {(event.fee || event.registrationLink || event.ruleBookUrl || (event.externalLinks?.length > 0)) && (
+            <div className="mt-6 rounded-2xl bg-forest-50 border border-forest-100 p-5">
+              <p className="text-xs font-semibold uppercase tracking-wide text-forest-600 mb-3">Event Details</p>
+
+              {event.fee && (
+                <p className="flex items-center gap-2 text-sm text-gray-700 mb-3">
+                  <span className="text-base">🎟️</span>
+                  <span><span className="font-semibold">Entry Fee:</span> {event.fee}</span>
+                </p>
+              )}
+
+              <div className="flex flex-wrap gap-3">
+                {event.registrationLink && (
+                  <a
+                    href={event.registrationLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-forest-600 text-white text-sm font-semibold hover:bg-forest-700 shadow-md shadow-forest-200 transition-colors"
+                  >
+                    🔗 Register Now
+                  </a>
+                )}
+                {event.ruleBookUrl && (
+                  <a
+                    href={event.ruleBookUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white border border-forest-200 text-forest-700 text-sm font-semibold hover:bg-forest-50 transition-colors"
+                  >
+                    📖 Rule Book
+                  </a>
+                )}
+                {event.externalLinks?.map((link) => (
+                  <a
+                    key={link.url}
+                    href={link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white border border-forest-200 text-forest-700 text-sm font-semibold hover:bg-forest-50 transition-colors"
+                  >
+                    🔗 {link.label}
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Interested */}
           {canRsvp && (
             <div className="mt-8 pt-6 border-t border-gray-100 flex flex-col sm:flex-row items-start sm:items-center gap-4 justify-between">

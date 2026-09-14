@@ -28,6 +28,26 @@ const eventSchema = new mongoose.Schema(
       default: 'organized',
       index: true,
     },
+    // ── Optional event details (all non-required) ──
+    registrationLink: {
+      type: String, // Unstop / Google Form / any registration page
+      trim: true,
+    },
+    ruleBookUrl: {
+      type: String, // Rule book / brochure PDF link
+      trim: true,
+    },
+    fee: {
+      type: String, // e.g. "Free" or "₹50 per team" (string — flexible)
+      trim: true,
+      maxlength: 100,
+    },
+    externalLinks: [
+      {
+        label: { type: String, trim: true, maxlength: 60 },
+        url: { type: String, trim: true },
+      },
+    ],
     banner: { url: String, fileId: String },
     gallery: [
       {
