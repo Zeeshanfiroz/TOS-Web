@@ -10,6 +10,7 @@ import { API_BASE } from '../../api/axios';
 import PasswordInput from '../../components/ui/PasswordInput';
 import TextField from '../../components/ui/FormFields';
 import SEO from '../../components/events/common/SEO';
+import { getAuthRedirect } from '../../utils/authRedirect';
 
 const loginSchema = Yup.object({
   email: Yup.string().email('Invalid email address').required('Email is required'),
@@ -26,7 +27,11 @@ export default function Login() {
 
   // Already logged in? Redirect
   useEffect(() => {
-    if (user) navigate(location.state?.from || (user.role === 'admin' ? '/admin' : '/dashboard'));
+    if (user) {
+      const fallback = user.role === 'admin' ? '/admin' : '/dashboard';
+      const destination = getAuthRedirect(location.state?.from, fallback);
+      if (destination) navigate(destination, { replace: true });
+    }
   }, [user, navigate, location.state]);
 
   // OAuth failure feedback (spec D4)
@@ -104,6 +109,7 @@ export default function Login() {
                 <p className="text-center text-sm">
                   <Link
                     to="/forgot-password"
+                    state={{ from: location.state?.from }}
                     className="text-forest-600 font-medium hover:underline"
                   >
                     Forgot password?
@@ -147,7 +153,7 @@ export default function Login() {
 
           <p className="text-center text-sm text-gray-500 mt-6">
             New here?{' '}
-            <Link to="/signup" className="font-semibold text-forest-600 hover:underline">
+            <Link to="/signup" state={{ from: location.state?.from }} className="font-semibold text-forest-600 hover:underline">
               Create an account
             </Link>
           </p>

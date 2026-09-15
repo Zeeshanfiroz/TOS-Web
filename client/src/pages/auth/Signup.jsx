@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
@@ -9,6 +9,7 @@ import { signup, verifyOtp, resendOtp } from '../../features/auth/authSlice';
 import PasswordInput from '../../components/ui/PasswordInput';
 import TextField from '../../components/ui/FormFields';
 import SEO from '../../components/events/common/SEO';
+import { getAuthRedirect } from '../../utils/authRedirect';
 
 const signupSchema = Yup.object({
   name: Yup.string().trim().required('Name is required').max(80),
@@ -24,6 +25,7 @@ const signupSchema = Yup.object({
 export default function Signup() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
   const user = useSelector((s) => s.auth.user);
   const isLoading = useSelector((s) => s.auth.isLoading);
 
@@ -34,8 +36,11 @@ export default function Signup() {
 
   // Logged in (after OTP verified) → dashboard
   useEffect(() => {
-    if (user) navigate('/dashboard');
-  }, [user, navigate]);
+    if (user) {
+      const destination = getAuthRedirect(location.state?.from);
+      if (destination) navigate(destination, { replace: true });
+    }
+  }, [user, navigate, location.state]);
 
   // Resend countdown timer
   useEffect(() => {
@@ -252,7 +257,7 @@ export default function Signup() {
           {step === 1 && (
             <p className="text-center text-sm text-gray-500 mt-6">
               Already a member?{' '}
-              <Link to="/login" className="font-semibold text-forest-600 hover:underline">
+              <Link to="/login" state={{ from: location.state?.from }} className="font-semibold text-forest-600 hover:underline">
                 Login here
               </Link>
             </p>

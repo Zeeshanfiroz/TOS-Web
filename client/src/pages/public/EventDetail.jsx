@@ -66,6 +66,16 @@ export default function EventDetail() {
   const canRsvp = normalizedEventType === 'organized' && isUpcoming;
   const rsvped = event?.rsvps?.some((r) => r.user?._id === user?._id || r.user === user?._id);
 
+  const openEventLink = (url) => {
+    if (!user) {
+      toast.info('Please log in or create an account to continue.');
+      navigate('/login', { state: { from: url } });
+      return;
+    }
+
+    window.open(url, '_blank', 'noopener,noreferrer');
+  };
+
   const handleRsvp = async () => {
     if (!user) {
       toast.info('Please log in to mark your interest in this event.');
@@ -187,24 +197,22 @@ export default function EventDetail() {
                 </div>
                 <div className="flex flex-wrap gap-3">
                   {event.registrationLink && (
-                    <a
-                      href={event.registrationLink}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    <button
+                      type="button"
+                      onClick={() => openEventLink(event.registrationLink)}
                       className="px-6 py-2.5 rounded-xl bg-forest-600 text-white text-sm font-bold hover:bg-forest-700 shadow-md transition-all hover:-translate-y-0.5"
                     >
                       🔗 Register Now
-                    </a>
+                    </button>
                   )}
                   {event.ruleBookUrl && (
-                    <a
-                      href={event.ruleBookUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    <button
+                      type="button"
+                      onClick={() => openEventLink(event.ruleBookUrl)}
                       className="px-6 py-2.5 rounded-xl bg-white border-2 border-forest-600 text-forest-700 text-sm font-bold hover:bg-forest-50 transition-all hover:-translate-y-0.5"
                     >
                       📖 Rule Book
-                    </a>
+                    </button>
                   )}
                 </div>
               </div>
@@ -238,35 +246,32 @@ export default function EventDetail() {
 
               <div className="flex flex-wrap gap-3">
                 {event.registrationLink && (
-                  <a
-                    href={event.registrationLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <button
+                    type="button"
+                    onClick={() => openEventLink(event.registrationLink)}
                     className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-forest-600 text-white text-sm font-semibold hover:bg-forest-700 shadow-md shadow-forest-200 transition-colors"
                   >
                     🔗 Register Now
-                  </a>
+                  </button>
                 )}
                 {event.ruleBookUrl && (
-                  <a
-                    href={event.ruleBookUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <button
+                    type="button"
+                    onClick={() => openEventLink(event.ruleBookUrl)}
                     className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white border border-forest-200 text-forest-700 text-sm font-semibold hover:bg-forest-50 transition-colors"
                   >
                     📖 Rule Book
-                  </a>
+                  </button>
                 )}
                 {event.externalLinks?.map((link) => (
-                  <a
+                  <button
                     key={link.url}
-                    href={link.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                    type="button"
+                    onClick={() => openEventLink(link.url)}
                     className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white border border-forest-200 text-forest-700 text-sm font-semibold hover:bg-forest-50 transition-colors"
                   >
                     🔗 {link.label}
-                  </a>
+                  </button>
                 ))}
               </div>
             </div>

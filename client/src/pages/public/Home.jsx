@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { motion, AnimatePresence, useInView, useReducedMotion } from 'framer-motion';
 import api from '../../api/axios';
@@ -9,6 +9,8 @@ import Spinner from '../../components/ui/Spinner';
 import MagneticButton from '../../components/ui/MagneticButton';
 import Marquee from '../../components/ui/Marquee';
 import SEO from '../../components/events/common/SEO';
+import { selectUser } from '../../features/auth/authSlice';
+import { toast } from 'react-toastify';
 
 /* ---------- Animated counter (respects prefers-reduced-motion) ---------- */
 function Counter({ target, suffix = '' }) {
@@ -118,6 +120,8 @@ const process = [
 export default function Home() {
   const dispatch = useDispatch();
   const events = useSelector((s) => s.events.list);
+  const user = useSelector(selectUser);
+  const navigate = useNavigate();
   const eventsLoading = useSelector((s) => s.events.isLoading);
   const [showStickyCTA, setShowStickyCTA] = useState(false);
   const [stats, setStats] = useState(fallbackStats);
@@ -125,6 +129,16 @@ export default function Home() {
   const featuredEvent = events.find((event) =>
     String(event?.title || '').toLowerCase().includes('regen')
   ) || events[0] || null;
+
+  const openFeaturedEventLink = (url) => {
+    if (!user) {
+      toast.info('Please log in or create an account to continue.');
+      navigate('/login', { state: { from: url } });
+      return;
+    }
+
+    window.open(url, '_blank', 'noopener,noreferrer');
+  };
 
   // Sticky mobile CTA appears after scrolling past the hero (item #10)
   useEffect(() => {
@@ -330,24 +344,22 @@ export default function Home() {
 
                   <div className="mt-7 flex flex-wrap gap-3">
                     {featuredEvent.registrationLink && (
-                      <a
-                        href={featuredEvent.registrationLink}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                      <button
+                        type="button"
+                        onClick={() => openFeaturedEventLink(featuredEvent.registrationLink)}
                         className="inline-flex items-center justify-center px-7 py-3 rounded-xl bg-forest-600 text-white font-semibold shadow-lg shadow-forest-200 hover:bg-forest-700 transition-colors"
                       >
                         🔗 Register Now
-                      </a>
+                      </button>
                     )}
                     {featuredEvent.ruleBookUrl && (
-                      <a
-                        href={featuredEvent.ruleBookUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                      <button
+                        type="button"
+                        onClick={() => openFeaturedEventLink(featuredEvent.ruleBookUrl)}
                         className="inline-flex items-center justify-center px-7 py-3 rounded-xl border border-forest-500 text-forest-700 font-semibold hover:bg-forest-50 transition-colors"
                       >
                         📖 Rule Book
-                      </a>
+                      </button>
                     )}
                     <Link
                       to={`/events/${featuredEvent._id}`}
