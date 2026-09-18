@@ -1,5 +1,22 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import api, { clearAuthTokens, getRefreshToken } from '../../api/axios';
+import api, { clearAuthTokens, getAccessToken, getRefreshToken } from '../../api/axios';
+
+export const initializeAuth = () => async (dispatch) => {
+  const hasStoredSession = Boolean(getAccessToken() || getRefreshToken());
+
+  if (!hasStoredSession) {
+    dispatch(markInitialized());
+    return null;
+  }
+
+  try {
+    await dispatch(getMe()).unwrap();
+  } finally {
+    dispatch(markInitialized());
+  }
+
+  return null;
+};
 
 // Thunks
 export const signup = createAsyncThunk('auth/signup', async (formData, { rejectWithValue }) => {
@@ -76,6 +93,9 @@ const authSlice = createSlice({
     setOAuthToken: (state, action) => {
       state.user = action.payload || state.user;
     },
+    markInitialized: (state) => {
+      state.isInitialized = true;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -137,6 +157,8 @@ const authSlice = createSlice({
       });
   },
 });
+
+export const { markInitialized } = authSlice.actions;
 
 // Selectors
 export const selectUser = (state) => state.auth.user;

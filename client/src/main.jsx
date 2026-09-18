@@ -10,12 +10,13 @@ import 'react-toastify/dist/ReactToastify.css'
 import App from './App.jsx'
 import ErrorBoundary from './components/ErrorBoundary.jsx'
 import { store } from './app/store.js'
-import { getMe } from './features/auth/authSlice.js'
+import { initializeAuth } from './features/auth/authSlice.js'
 import { clearAuthTokens } from './api/axios.js'
 import './index.css'
 
-// Restore the logged-in session on app load
-store.dispatch(getMe())
+// Restore the logged-in session on app load only when a stored session exists.
+// This avoids a slow blank page after refresh for public visitors with no token.
+store.dispatch(initializeAuth())
 
 // Auto-logout when the API reports an expired/invalid session
 window.addEventListener('auth:logout', () => {
