@@ -145,7 +145,8 @@ export default function ManageEvents() {
     setMailMessage('');
     try {
       const { data } = await api.get(`/events/${event._id}/rsvps`);
-      setRsvpModal({ eventTitle: data.data.eventTitle, rsvps: data.data.rsvps });
+      // Preserve the event _id for the bulk email API call
+      setRsvpModal({ _id: event._id, eventTitle: data.data.eventTitle, rsvps: data.data.rsvps });
     } catch (err) {
       toast.error(err.response?.data?.message || 'Could not load the interested list.');
       setRsvpModal(null);

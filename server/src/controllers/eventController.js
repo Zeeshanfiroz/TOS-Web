@@ -381,9 +381,17 @@ export const emailRsvps = async (req, res) => {
     return res.status(404).json({ success: false, message: 'Event not found' });
   }
 
-  const recipients = (event.rsvps || []).map((r) => r.user?.email).filter(Boolean);
+  // Extract and validate emails — filter out invalid formats to prevent "format error"
+  const emailRegex = /^\S+@\S+\.\S+$/;
+  const recipients = (event.rsvps || [])
+    .map((r) => r.user?.email)
+    .filter((email) => email && emailRegex.test(email));
+
   if (!recipients.length) {
-    return res.status(400).json({ success: false, message: 'No interested members to email yet.' });
+    return res.status(400).json({
+      success: false,
+      message: 'No interested members with valid email addresses to email yet.',
+    });
   }
 
   // One email per recipient (fire-and-forget queue keeps this fast)
