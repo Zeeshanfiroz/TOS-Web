@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { motion, AnimatePresence } from 'framer-motion';
 import { logout, selectUser, selectIsAdmin } from '../../features/auth/authSlice';
 
 const links = [
@@ -44,10 +43,7 @@ export default function Navbar() {
     'block px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-forest-700 hover:bg-forest-50 transition-colors';
 
   return (
-    <motion.header
-      initial={{ y: -70, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+    <header
       className={`sticky top-0 z-50 border-b transition-all duration-300 relative bg-white ${
         scrolled
           ? 'border-humus/20 shadow-[0_8px_24px_-16px_rgba(38,32,26,0.45)]'
@@ -88,11 +84,7 @@ export default function Navbar() {
                   <>
                     {l.label}
                     {isActive && (
-                      <motion.span
-                        layoutId="nav-underline"
-                        className="absolute inset-x-2 -bottom-0.5 h-0.5 rounded-full bg-forest-500"
-                        transition={{ type: 'spring', stiffness: 380, damping: 30 }}
-                      />
+                      <span className="absolute inset-x-2 -bottom-0.5 h-0.5 rounded-full bg-forest-500" />
                     )}
                   </>
                 )}
@@ -163,76 +155,60 @@ export default function Navbar() {
       </nav>
 
       {/* Mobile menu */}
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            id="mobile-menu"
-            initial={{ opacity: 0, y: -12 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -12 }}
-            transition={{ duration: 0.2, ease: 'easeOut' }}
-            className="lg:hidden absolute inset-x-0 top-full z-40 overflow-hidden border-t border-humus/15 bg-white shadow-[0_18px_30px_-22px_rgba(38,32,26,0.45)]"
-          >
-            <div className="px-4 py-3 space-y-1">
-              {links.map((l, i) => (
-                <motion.div
-                  key={l.to}
-                  initial={{ opacity: 0, x: -12 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.04, duration: 0.2 }}
+      {open && (
+        <div
+          id="mobile-menu"
+          className="lg:hidden absolute inset-x-0 top-full z-40 overflow-hidden border-t border-humus/15 bg-white shadow-[0_18px_30px_-22px_rgba(38,32,26,0.45)] animate-[fadeIn_0.2s_ease-out]"
+        >
+          <div className="px-4 py-3 space-y-1">
+            {links.map((l) => (
+              <div key={l.to}>
+                <NavLink
+                  to={l.to}
+                  className={linkClass}
+                  end={l.to === '/'}
+                  onClick={() => setOpen(false)}
                 >
-                  <NavLink
-                    to={l.to}
-                    className={linkClass}
-                    end={l.to === '/'}
+                  {l.label}
+                </NavLink>
+              </div>
+            ))}
+            <div className="pt-2 border-t border-forest-100 space-y-1">
+              {user ? (
+                <>
+                  <Link to="/dashboard" className={mobileLinkClass} onClick={() => setOpen(false)}>
+                    My Dashboard
+                  </Link>
+                  {isAdmin && (
+                    <Link to="/admin" className={mobileLinkClass} onClick={() => setOpen(false)}>
+                      Admin Panel
+                    </Link>
+                  )}
+                  <button
+                    onClick={handleLogout}
+                    className="w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50"
+                  >
+                    Logout
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link to="/login" className={mobileLinkClass} onClick={() => setOpen(false)}>
+                    Login
+                  </Link>
+                  <Link
+                    to="/signup"
+                    className="block px-3 py-2 rounded-lg text-sm font-semibold text-white bg-forest-600"
                     onClick={() => setOpen(false)}
                   >
-                    {l.label}
-                  </NavLink>
-                </motion.div>
-              ))}
-              <motion.div
-                initial={{ opacity: 0, x: -12 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: links.length * 0.04, duration: 0.2 }}
-                className="pt-2 border-t border-forest-100 space-y-1"
-              >
-                {user ? (
-                  <>
-                    <Link to="/dashboard" className={mobileLinkClass} onClick={() => setOpen(false)}>
-                      My Dashboard
-                    </Link>
-                    {isAdmin && (
-                      <Link to="/admin" className={mobileLinkClass} onClick={() => setOpen(false)}>
-                        Admin Panel
-                      </Link>
-                    )}
-                    <button
-                      onClick={handleLogout}
-                      className="w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50"
-                    >
-                      Logout
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <Link to="/login" className={mobileLinkClass} onClick={() => setOpen(false)}>
-                      Login
-                    </Link>
-                    <Link
-                      to="/signup"
-                      className="block px-3 py-2 rounded-lg text-sm font-semibold text-white bg-forest-600"
-                      onClick={() => setOpen(false)}
-                    >
-                      Join Us
-                    </Link>
-                  </>
-                )}
-              </motion.div>
+                    Join Us
+                  </Link>
+                </>
+              )}
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.header>
+          </div>
+        </div>
+      )}
+    </header>
   );
 }

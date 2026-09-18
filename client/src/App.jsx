@@ -1,5 +1,6 @@
 import { lazy, Suspense, useEffect } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
+import { prefetchLikelyRoutes } from './utils/prefetchRoutes';
 
 // Layout (tiny, kept eager — needed on every page)
 import Layout from './components/layout/Layout';
@@ -60,6 +61,10 @@ export default function App() {
     trackPageview(location.pathname);
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
   }, [location.pathname]);
+
+  useEffect(() => {
+    prefetchLikelyRoutes();
+  }, []);
 
   return (
     // Suspense fallback while a lazy page chunk downloads

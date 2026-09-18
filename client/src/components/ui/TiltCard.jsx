@@ -1,42 +1,37 @@
-import { useRef } from 'react';
-import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
+import { useRef, useState } from 'react';
 
 /**
- * TiltCard — subtle 3D perspective tilt that follows the cursor.
+ * Lightweight 3D tilt using CSS transforms instead of the heavy animation library.
  */
 export default function TiltCard({ children, className = '', max = 8 }) {
   const ref = useRef(null);
-  const px = useMotionValue(0.5);
-  const py = useMotionValue(0.5);
-
-  const rotateX = useSpring(useTransform(py, [0, 1], [max, -max]), {
-    stiffness: 260,
-    damping: 18,
-  });
-  const rotateY = useSpring(useTransform(px, [0, 1], [-max, max]), {
-    stiffness: 260,
-    damping: 18,
-  });
+  const [tilt, setTilt] = useState({ x: 0, y: 0 });
 
   const onMove = (e) => {
     const r = ref.current.getBoundingClientRect();
-    px.set((e.clientX - r.left) / r.width);
-    py.set((e.clientY - r.top) / r.height);
-  };
-  const onLeave = () => {
-    px.set(0.5);
-    py.set(0.5);
+    const px = (e.clientX - r.left) / r.width;
+    const py = (e.clientY - r.top) / r.height;
+    setTilt({
+      x: (0.5 - py) * max * 2,
+      y: (px - 0.5) * max * 2,
+    });
   };
 
+  const onLeave = () => setTilt({ x: 0, y: 0 });
+
   return (
-    <motion.div
+    <div
       ref={ref}
       onMouseMove={onMove}
       onMouseLeave={onLeave}
-      style={{ rotateX, rotateY, transformStyle: 'preserve-3d', perspective: 900 }}
+      style={{
+        transform: `perspective(900px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
+        transformStyle: 'preserve-3d',
+        transition: 'transform 180ms ease-out',
+      }}
       className={className}
     >
       {children}
-    </motion.div>
+    </div>
   );
 }

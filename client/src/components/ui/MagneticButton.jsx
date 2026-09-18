@@ -1,41 +1,33 @@
-import { useRef } from 'react';
-import { motion, useMotionValue, useSpring } from 'framer-motion';
+import { useRef, useState } from 'react';
 
 /**
- * MagneticButton — element gently follows the cursor, springs back on leave.
- * Wrap any button/link: <MagneticButton><Link .../></MagneticButton>
- *
- * Props:
- *   children — the interactive element to wrap
- *   className — extra classes on the motion wrapper
- *   strength — 0..1, how strongly the element follows the cursor (default 0.3)
+ * Lightweight magnetic hover effect without the heavy animation library.
  */
 export default function MagneticButton({ children, className = '', strength = 0.3 }) {
   const ref = useRef(null);
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-  const sx = useSpring(x, { stiffness: 180, damping: 14, mass: 0.4 });
-  const sy = useSpring(y, { stiffness: 180, damping: 14, mass: 0.4 });
+  const [offset, setOffset] = useState({ x: 0, y: 0 });
 
   const onMove = (e) => {
     const r = ref.current.getBoundingClientRect();
-    x.set((e.clientX - r.left - r.width / 2) * strength);
-    y.set((e.clientY - r.top - r.height / 2) * strength);
-  };
-  const onLeave = () => {
-    x.set(0);
-    y.set(0);
+    const x = (e.clientX - r.left - r.width / 2) * strength;
+    const y = (e.clientY - r.top - r.height / 2) * strength;
+    setOffset({ x, y });
   };
 
+  const onLeave = () => setOffset({ x: 0, y: 0 });
+
   return (
-    <motion.div
+    <div
       ref={ref}
       onMouseMove={onMove}
       onMouseLeave={onLeave}
-      style={{ x: sx, y: sy }}
+      style={{
+        transform: `translate(${offset.x}px, ${offset.y}px)`,
+        transition: 'transform 180ms ease-out',
+      }}
       className={`inline-block ${className}`}
     >
       {children}
-    </motion.div>
+    </div>
   );
 }

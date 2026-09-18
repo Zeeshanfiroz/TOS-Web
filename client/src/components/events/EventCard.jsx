@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import TiltCard from '../ui/TiltCard';
 
 // const formatDate = (d) =>
@@ -14,12 +13,7 @@ export default function EventCard({ event, index = 0 }) {
   const isUpcoming = new Date(event.date) > new Date();
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 24 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.4, delay: (index % 3) * 0.1 }}
-    >
+    <div style={{ opacity: 1, transform: 'translateY(0)', transition: `opacity 0.4s ease ${Math.min(index % 3, 2) * 0.1}s, transform 0.4s ease ${Math.min(index % 3, 2) * 0.1}s` }}>
       <TiltCard>
         <div className="shine group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-shadow border border-gray-100 h-full">
           <Link to={`/events/${event._id}`}>
@@ -71,6 +65,6 @@ export default function EventCard({ event, index = 0 }) {
           </Link>
         </div>
       </TiltCard>
-    </motion.div>
+    </div>
   );
 }
